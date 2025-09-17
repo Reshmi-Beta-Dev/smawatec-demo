@@ -1,0 +1,353 @@
+/* Device Organizer Component Styles - Based on device-organizer folder */
+
+.app {
+    max-width: 100%;
+    width: 100%;
+    font-size: 14px;
+    padding: 0 24px 12px;
+    position: relative;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Search Section */
+.search-section {
+    margin-bottom: 24px;
+}
+
+.search-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.search-panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: none;
+}
+
+.search-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.form-group {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+    align-items: center;
+}
+
+.form-group label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    text-align: left;
+}
+
+.form-group input {
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #7b61ff;
+    box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.1);
+}
+
+/* Device Information Section */
+.device-info-section {
+    margin-bottom: 24px;
+}
+
+.device-info-panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.device-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.device-field {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.device-label {
+    font-size: 13px;
+    font-weight: 500;
+    color: #555;
+    min-width: 120px;
+}
+
+.device-value {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+
+.device-actions {
+    display: flex;
+    gap: 8px;
+}
+
+/* Building Groups Section */
+.building-groups-section {
+    margin-bottom: 24px;
+}
+
+.building-groups-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.groups-panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: none;
+}
+
+/* Building Section */
+.building-section {
+    margin-bottom: 24px;
+}
+
+.building-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.building-panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: none;
+}
+
+/* Unassigned Devices Section */
+.unassigned-devices-section {
+    margin-bottom: 0;
+}
+
+.unassigned-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.unassigned-header h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.unassigned-panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    box-shadow: none;
+}
+
+/* Data Tables */
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    font-size: 13px;
+    background: transparent;
+}
+
+.data-table thead th {
+    font-size: 13px;
+    text-align: left;
+    color: #3e424c;
+    padding: 8px 8px;
+    border: 0;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: #eeeeef;
+    z-index: 1;
+}
+
+.data-table tbody tr {
+    background: transparent;
+    border-radius: 12px;
+    box-shadow: none;
+    height: 34px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.data-table tbody tr:hover td {
+    background: #f4dfe3;
+}
+
+.data-table tbody tr.selected td {
+    background: #f4dfe3;
+}
+
+.data-table tbody td {
+    padding: 8px 8px;
+    border: 0;
+    white-space: nowrap;
+}
+
+.data-table tbody tr td:first-child {
+    border-left: 0;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    width: 28px;
+    color: #666;
+}
+
+.data-table tbody tr td:last-child {
+    border-right: 0;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Button Styles */
+.pill {
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: #6c5ce7;
+    padding: 8px 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.pill:hover {
+    background: #5b4ce6;
+    transform: scale(1.05);
+}
+
+.pill:active {
+    transform: scale(0.95);
+}
+
+.pill.outline {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    color: #4b4f58;
+}
+
+.pill.outline:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .search-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .device-info-panel {
+        flex-direction: column;
+        gap: 16px;
+        align-items: flex-start;
+    }
+    
+    .device-actions {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 768px) {
+    .app {
+        padding: 0 16px 16px;
+    }
+    
+    .search-panel,
+    .device-info-panel,
+    .groups-panel,
+    .building-panel,
+    .unassigned-panel {
+        padding: 16px;
+    }
+    
+    .data-table {
+        font-size: 12px;
+    }
+    
+    .data-table thead th,
+    .data-table tbody td {
+        padding: 6px 4px;
+    }
+    
+    .form-group {
+        grid-template-columns: 100px 1fr;
+        gap: 8px;
+    }
+    
+    .device-field {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .device-label {
+        min-width: auto;
+    }
+    
+    .unassigned-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 480px) {
+    .form-group {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+    
+    .form-group label {
+        text-align: left;
+    }
+    
+    .device-actions {
+        flex-direction: column;
+    }
+}

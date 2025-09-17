@@ -1,0 +1,357 @@
+/* Home Component Styles - Based on home folder */
+
+.app {
+    max-width: 100%;
+    width: 100%;
+    font-size: 14px;
+    padding: 0 24px 12px;
+    position: relative;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Toggle Section */
+.toggle-section {
+    margin-bottom: 20px;
+    padding: 16px 0;
+}
+
+.toggle-section .pill {
+    background: #7b61ff;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.toggle-section .pill:hover {
+    background: #6b51ef;
+    transform: translateY(-1px);
+}
+
+/* Message Board Section */
+.message-board-section {
+    margin-bottom: 24px;
+}
+
+.message-board-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.table-container {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 10px 12px;
+    box-shadow: none;
+    overflow: auto;
+    margin-bottom: 16px;
+}
+
+.message-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    font-size: 13px;
+    background: transparent;
+}
+
+.message-table thead th {
+    font-size: 13px;
+    text-align: left;
+    color: #3e424c;
+    padding: 8px 8px;
+    border: 0;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: #eeeeef;
+    z-index: 1;
+}
+
+.message-table tbody tr {
+    background: transparent;
+    border-radius: 12px;
+    box-shadow: none;
+    height: 34px;
+    cursor: pointer;
+}
+
+.message-table tbody tr.alarm-row.major {
+    background: #f4dfe3;
+}
+
+.message-table tbody tr.alarm-row.major:hover td {
+    background: #f4dfe3;
+}
+
+.message-table tbody tr.selected {
+    background: #f4dfe3;
+}
+
+.message-table tbody tr:hover td {
+    background: #f4dfe3;
+}
+
+.message-table tbody td {
+    padding: 8px 8px;
+    border: 0;
+    white-space: nowrap;
+}
+
+.message-table tbody tr td:first-child {
+    border-left: 0;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    width: 28px;
+    color: #666;
+}
+
+.message-table tbody tr td:last-child {
+    border-right: 0;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Alarm Badges */
+.alarm-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.alarm-badge.major {
+    background: #ffe4e6;
+    color: #b91c1c;
+}
+
+.alarm-badge.low-temp {
+    background: #fff3d6;
+    color: #b45309;
+}
+
+.alarm-badge.medium {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.alarm-badge.micro {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* Table Actions */
+.table-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-start;
+    margin-top: 16px;
+}
+
+/* Bottom Panels */
+.bottom-panels {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    align-items: start;
+}
+
+.panel-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.panel-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    border: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    flex: 1;
+}
+
+.panel-content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.current-section,
+.history-section {
+    margin-bottom: 16px;
+}
+
+.current-section h4,
+.history-section h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 8px 0;
+    color: #555;
+    padding-left: 22px;
+}
+
+.stat-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 12px;
+    background: #eeeeef;
+    border-radius: 8px;
+    font-size: 13px;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    color: #555;
+    font-weight: 500;
+    flex: 1;
+}
+
+.stat-value {
+    color: #333;
+    font-weight: 600;
+    text-align: right;
+}
+
+/* Chart Panel */
+.chart-panel .chart-container {
+    background: #eeeeef;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.04);
+    height: 300px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-container h4 {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    color: #333;
+    text-align: center;
+}
+
+.chart-container canvas {
+    flex: 1;
+    max-height: 250px;
+}
+
+/* Actions in table */
+.actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.actions .pill {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: auto;
+}
+
+/* Button Styles */
+.pill {
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: #6c5ce7;
+    padding: 8px 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+    font-size: 12px;
+}
+
+.pill.outline {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    color: #4b4f58;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .bottom-panels {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .panel-section:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .app {
+        padding: 0 16px 16px;
+    }
+    
+    .bottom-panels {
+        grid-template-columns: 1fr;
+    }
+    
+    .table-actions {
+        flex-direction: column;
+    }
+    
+    .actions {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .message-table {
+        font-size: 12px;
+    }
+    
+    .message-table thead th,
+    .message-table tbody td {
+        padding: 6px 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .panel {
+        padding: 16px;
+    }
+    
+    .chart-container {
+        height: 250px;
+    }
+    
+    .stat-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .stat-value {
+        text-align: left;
+    }
+}

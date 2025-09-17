@@ -1,0 +1,15 @@
+@import url("../../shared/header/header.component.css");
+
+.app {
+    max-width: 100%;
+    width: 100%;
+    margin: 0 auto;
+    padding: 56px 24px 12px;
+    position: relative;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}

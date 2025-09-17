@@ -1,0 +1,249 @@
+<div class="app">
+    <main class="content">
+        <!-- Alarm Summary Section -->
+        <div class="alarm-summary">
+            <!-- Major Alarms -->
+            <div class="alarm-section major-alarms-section">
+                <h3>Major Alarms</h3>
+                <div class="summary-panel major-alarms">
+                    <div class="alarm-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Major Leaks</span>
+                            <span class="stat-value highlight">1</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">auto shut-off non resolved</span>
+                            <span class="stat-value highlight">1</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Low Temperature</span>
+                            <span class="stat-value highlight">1</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Minor Alarms -->
+            <div class="alarm-section minor-alarms-section">
+                <h3>Minor Alarms</h3>
+                <div class="summary-panel minor-alarms">
+                    <div class="alarm-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Medium Leaks</span>
+                            <span class="stat-value highlight">54</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Minor Leaks</span>
+                            <span class="stat-value highlight">3</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Messages -->
+            <div class="alarm-section system-messages-section">
+                <h3>System Messages</h3>
+                <div class="summary-panel system-messages">
+                    <div class="alarm-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Wifi Connection Lost</span>
+                            <span class="stat-value highlight">1</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Power Loss</span>
+                            <span class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Valve Failure</span>
+                            <span class="stat-value">0</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">poor Wifi</span>
+                            <span class="stat-value highlight">2</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Message Board Section -->
+        <div class="message-board-section">
+            <h2>Message Board</h2>
+            <div class="table-container">
+                <table class="message-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Building</th>
+                            <th>Address</th>
+                            <th>Apartment</th>
+                            <th>Tenant</th>
+                            <th>Alarm</th>
+                            <th>Message</th>
+                            <th>Action</th>
+                            <th class="action-header">
+                                <button class="pill outline" (click)="unhideAllAlarms()">Unhide Alarm</button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="alarm-row critical" (click)="onRowClick(0)" [class.selected]="selectedRow === 0">
+                            <td>1</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge major">Major Leak</span></td>
+                            <td>poss. Pipe break</td>
+                            <td>auto shut off</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                        <tr class="alarm-row critical" (click)="onRowClick(1)" [class.selected]="selectedRow === 1">
+                            <td>2</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge low-temp">Low Temp.</span></td>
+                            <td>Ice warming</td>
+                            <td>None</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                        <tr class="alarm-row" (click)="onRowClick(2)" [class.selected]="selectedRow === 2">
+                            <td>3</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge medium">Medium Leak</span></td>
+                            <td>poss. Tap / Toilet</td>
+                            <td>None</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                        <tr class="alarm-row" (click)="onRowClick(3)" [class.selected]="selectedRow === 3">
+                            <td>4</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge micro">Micro Leak</span></td>
+                            <td>poss. Toilet</td>
+                            <td>None</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                        <tr class="alarm-row" (click)="onRowClick(4)" [class.selected]="selectedRow === 4">
+                            <td>5</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge micro">Micro Leak</span></td>
+                            <td>poss. Toilet</td>
+                            <td>None</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                        <tr class="alarm-row" (click)="onRowClick(5)" [class.selected]="selectedRow === 5">
+                            <td>6</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge micro">Micro Leak</span></td>
+                            <td>poss. Tap</td>
+                            <td>None</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                        <tr class="alarm-row" (click)="onRowClick(6)" [class.selected]="selectedRow === 6">
+                            <td>7</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge micro">Micro Leak</span></td>
+                            <td>poss. Tap</td>
+                            <td>None</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                        <tr class="alarm-row" (click)="onRowClick(7)" [class.selected]="selectedRow === 7">
+                            <td>8</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge micro">Micro Leak</span></td>
+                            <td>poss. Tap</td>
+                            <td>None</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                        <tr class="alarm-row" (click)="onRowClick(8)" [class.selected]="selectedRow === 8">
+                            <td>9</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge micro">Micro Leak</span></td>
+                            <td>poss. Tap</td>
+                            <td>None</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                        <tr class="alarm-row" (click)="onRowClick(9)" [class.selected]="selectedRow === 9">
+                            <td>10</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge micro">Micro Lea.</span></td>
+                            <td>poss. Toilet</td>
+                            <td>None</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                        <tr class="alarm-row" (click)="onRowClick(10)" [class.selected]="selectedRow === 10">
+                            <td>11</td>
+                            <td>PAR - B12012</td>
+                            <td>Paris, Champs Elysees, Rue de la P</td>
+                            <td>Block 1,L23, Apt 12</td>
+                            <td>Duvall</td>
+                            <td><span class="alarm-badge micro">Micro Leak</span></td>
+                            <td>poss. Tap</td>
+                            <td>None</td>
+                            <td class="actions">
+                                <button class="pill" (click)="showDetails($event)">Details</button>
+                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+</div>

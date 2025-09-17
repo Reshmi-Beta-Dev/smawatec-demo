@@ -1,0 +1,226 @@
+/* Common Header Component Styles - Moved from menu folder */
+
+/* Top Bar */
+.topbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 24px;
+    background: white;
+    border-bottom: 1px solid #e5e7eb;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+/* Brand/Logo */
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Nunito', sans-serif;
+}
+
+.logo-img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+}
+
+.brand-name {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f2937;
+    letter-spacing: -0.025em;
+}
+
+/* Navigation Pills */
+.pill-nav {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Hamburger Menu */
+.hamburger {
+    display: none;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 30px;
+    height: 30px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+    z-index: 1001;
+}
+
+.hamburger-line {
+    width: 100%;
+    height: 3px;
+    background: #1f2937;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+}
+
+.hamburger.active .hamburger-line:nth-child(1) {
+    transform: rotate(45deg) translate(6px, 6px);
+}
+
+.hamburger.active .hamburger-line:nth-child(2) {
+    opacity: 0;
+}
+
+.hamburger.active .hamburger-line:nth-child(3) {
+    transform: rotate(-45deg) translate(6px, -6px);
+}
+
+.pill {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 16px;
+    background: #7b61ff;
+    color: white;
+    text-decoration: none;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 500;
+    font-family: 'Nunito', sans-serif;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    border: none;
+    position: relative;
+    overflow: hidden;
+}
+
+.pill:hover {
+    background: #6b51ef;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(123, 97, 255, 0.3);
+}
+
+.pill:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(123, 97, 255, 0.3);
+}
+
+.pill.active {
+    background: #7b61ff;
+    position: relative;
+}
+
+.pill.active::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 3px;
+    background: #7b61ff;
+    border-radius: 2px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .pill-nav {
+        gap: 6px;
+    }
+    
+    .pill {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hamburger {
+        display: flex;
+    }
+    
+    .topbar {
+        padding: 12px 20px;
+    }
+    
+    .brand-name {
+        font-size: 18px;
+    }
+    
+    .pill-nav {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        width: 280px;
+        height: 100vh;
+        background: white;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: flex-start;
+        padding: 80px 20px 20px;
+        box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+        transition: right 0.3s ease;
+        z-index: 1000;
+    }
+    
+    .pill-nav.active {
+        right: 0;
+    }
+    
+    .pill-nav .pill {
+        width: 100%;
+        padding: 12px 16px;
+        margin: 4px 0;
+        text-align: left;
+        border-radius: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .topbar {
+        padding: 8px 12px;
+    }
+    
+    .brand-name {
+        font-size: 16px;
+    }
+    
+    .pill-nav {
+        gap: 2px;
+    }
+    
+    .pill {
+        padding: 4px 8px;
+        font-size: 11px;
+    }
+}
+
+/* Focus states for accessibility */
+.pill:focus {
+    outline: 2px solid #7b61ff;
+    outline-offset: 2px;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    .pill {
+        border: 2px solid currentColor;
+    }
+    
+    .pill.active {
+        border-color: #7b61ff;
+    }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+    .pill {
+        transition: none;
+    }
+    
+    .pill:hover {
+        transform: none;
+    }
+}

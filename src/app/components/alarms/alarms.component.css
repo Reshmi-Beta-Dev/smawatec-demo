@@ -1,0 +1,310 @@
+/* Alarms Component Styles - Based on alarms folder */
+
+.app {
+    max-width: 100%;
+    width: 100%;
+    font-size: 14px;
+    padding: 0 24px 12px;
+    position: relative;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Alarm Summary Section */
+.alarm-summary {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 24px;
+    align-items: stretch;
+}
+
+.alarm-section {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.alarm-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.summary-panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    border: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: 1;
+    transition: all 0.2s ease;
+}
+
+.summary-panel:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.alarm-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 12px;
+    background: #eeeeef;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.stat-label {
+    color: #555;
+    font-weight: 500;
+    flex: 1;
+}
+
+.stat-value {
+    color: #333;
+    font-weight: 600;
+    text-align: right;
+}
+
+.stat-value.highlight {
+    color: #b91c1c;
+    font-weight: 700;
+}
+
+/* Message Board Section */
+.message-board-section {
+    margin-bottom: 24px;
+}
+
+.message-board-section h2 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.table-container {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 10px 12px;
+    box-shadow: none;
+    overflow: auto;
+    margin-bottom: 16px;
+}
+
+.message-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 4px;
+    font-size: 13px;
+    background: transparent;
+}
+
+.message-table thead th {
+    font-size: 13px;
+    text-align: left;
+    color: #3e424c;
+    padding: 8px 8px;
+    border: 0;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: #eeeeef;
+    z-index: 1;
+}
+
+.message-table tbody tr {
+    background: transparent;
+    border-radius: 12px;
+    box-shadow: none;
+    height: 34px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.message-table tbody tr.alarm-row.critical {
+    background: #f4dfe3;
+}
+
+.message-table tbody tr.alarm-row.critical:hover td {
+    background: #f4dfe3;
+}
+
+.message-table tbody tr.selected {
+    background: #f4dfe3;
+}
+
+.message-table tbody tr:hover td {
+    background: #f4dfe3;
+}
+
+.message-table tbody td {
+    padding: 8px 8px;
+    border: 0;
+    white-space: nowrap;
+}
+
+.message-table tbody tr td:first-child {
+    border-left: 0;
+    border-top-left-radius: 12px;
+    border-bottom-left-radius: 12px;
+    width: 28px;
+    color: #666;
+}
+
+.message-table tbody tr td:last-child {
+    border-right: 0;
+    border-top-right-radius: 12px;
+    border-bottom-right-radius: 12px;
+}
+
+/* Alarm Badges */
+.alarm-badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.alarm-badge.major {
+    background: #ffe4e6;
+    color: #b91c1c;
+}
+
+.alarm-badge.low-temp {
+    background: #fff3d6;
+    color: #b45309;
+}
+
+.alarm-badge.medium {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+.alarm-badge.micro {
+    background: #dbeafe;
+    color: #2563eb;
+}
+
+/* Actions in table */
+.actions {
+    display: flex;
+    gap: 6px;
+    justify-content: flex-end;
+}
+
+.actions .pill {
+    padding: 4px 8px;
+    font-size: 11px;
+    min-width: auto;
+}
+
+.action-header {
+    text-align: center;
+}
+
+/* Button Styles */
+.pill {
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: #6c5ce7;
+    padding: 8px 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.pill:hover {
+    background: #5b4ce6;
+    transform: scale(1.05);
+}
+
+.pill:active {
+    transform: scale(0.95);
+}
+
+.pill.outline {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    color: #4b4f58;
+}
+
+.pill.outline:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .alarm-summary {
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .alarm-section:last-child {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 768px) {
+    .app {
+        padding: 0 16px 16px;
+    }
+    
+    .alarm-summary {
+        grid-template-columns: 1fr;
+    }
+    
+    .actions {
+        flex-direction: column;
+        gap: 4px;
+    }
+    
+    .message-table {
+        font-size: 12px;
+    }
+    
+    .message-table thead th,
+    .message-table tbody td {
+        padding: 6px 4px;
+    }
+}
+
+@media (max-width: 480px) {
+    .summary-panel {
+        padding: 16px;
+    }
+    
+    .stat-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+    }
+    
+    .stat-value {
+        text-align: left;
+    }
+}

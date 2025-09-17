@@ -1,0 +1,192 @@
+<div class="app">
+    <main class="content">
+        <!-- Top Row -->
+        <div class="top-row">
+            <!-- Device Panel -->
+            <div class="panel-section">
+                <h3>Device</h3>
+                <div class="panel device-panel">
+                    <div class="device-info">
+                        <div class="info-row">
+                            <span class="info-label">Device Name:</span>
+                            <span class="info-value">PAR-GP1-B12012-3232</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Building Group:</span>
+                            <span class="info-value">BG1</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Wifi Strengh:</span>
+                            <span class="info-value">89%</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Valve Status:</span>
+                            <span class="info-value valve-status">Closed</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Serial Number:</span>
+                            <span class="info-value">SM23210901E2</span>
+                        </div>
+                    </div>
+                    <div class="device-actions">
+                        <button class="pill warn">Shut Valve</button>
+                        <button class="pill info">Open Valve</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Apartment Panel -->
+            <div class="panel-section">
+                <h3>Apartment</h3>
+                <div class="panel apartment-panel">
+                    <div class="apartment-info">
+                        <div class="info-row">
+                            <span class="info-label">Apartment:</span>
+                            <span class="info-value">Block 1, L23, Apt 12</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">City:</span>
+                            <span class="info-value">Paris</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">ZIP Code:</span>
+                            <span class="info-value">30900</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Street, #:</span>
+                            <span class="info-value">Champs Elysees, 23</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Additional Info:</span>
+                            <span class="info-value">Rue de la Place</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Tenant:</span>
+                            <span class="info-value">Napoleon Bonaparte</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consumption Chart Panel -->
+            <div class="panel-section">
+                <h3>Consumption</h3>
+                <div class="panel chart-panel">
+                    <div class="chart-header">
+                        <button class="nav-btn">←</button>
+                        <h4>Today</h4>
+                        <button class="nav-btn">→</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="consumptionChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Middle Row -->
+        <div class="middle-row">
+            <!-- Alarm Panel -->
+            <div class="panel-section">
+                <h3>Alarm</h3>
+                <div class="panel alarm-panel">
+                    <div class="alarm-info">
+                        <div class="info-row">
+                            <span class="info-label">Alarm:</span>
+                            <span class="info-value alarm-major">Major Leak</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Occurred:</span>
+                            <span class="info-value">Monday, 23.12.2021; 14:34</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Possible Reason:</span>
+                            <span class="info-value">Major Pipe Break, auto shut off</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Action:</span>
+                            <span class="info-value">auto shut off</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Time of Action:</span>
+                            <span class="info-value">Monday, 23.12.2021, 14:36</span>
+                        </div>
+                    </div>
+                    <div class="alarm-actions">
+                        <button class="pill warn">Shut Valve</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Consumption Details Panel -->
+            <div class="panel-section">
+                <h3>Consumption Details</h3>
+                <div class="panel consumption-details-panel">
+                    <div class="consumption-info">
+                        <div class="info-row">
+                            <span class="info-label">Last Flow Rate:</span>
+                            <span class="info-value">34.4 L/min</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Date:</span>
+                            <span class="info-value">16:34; 24.12.2024</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">latest data on:</span>
+                            <span class="info-value">16:45, 24.12.2024</span>
+                        </div>
+                    </div>
+                    <div class="consumption-actions">
+                        <button class="pill outline">Get latest data</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Row -->
+        <div class="bottom-row">
+            <!-- Alarm History Panel -->
+            <div class="panel-section">
+                <h3>Alarm History</h3>
+                <div class="panel history-panel">
+                    <div class="table-container">
+                        <table class="history-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Date</th>
+                                    <th>Time</th>
+                                    <th>Alarm</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr (click)="onRowClick(0)" [class.selected]="selectedRow === 0">
+                                    <td>1</td>
+                                    <td>23.12.2023</td>
+                                    <td>14:34</td>
+                                    <td><span class="alarm-badge major">Major Leak</span></td>
+                                    <td>auto shut off</td>
+                                </tr>
+                                <tr (click)="onRowClick(1)" [class.selected]="selectedRow === 1">
+                                    <td>2</td>
+                                    <td>25.12.2023</td>
+                                    <td>14:34</td>
+                                    <td><span class="alarm-badge minor">Minor Leak</span></td>
+                                    <td>manual shut off</td>
+                                </tr>
+                                <tr (click)="onRowClick(2)" [class.selected]="selectedRow === 2">
+                                    <td>3</td>
+                                    <td>23.12.2023</td>
+                                    <td>14:34</td>
+                                    <td><span class="alarm-badge power">Power Loss</span></td>
+                                    <td>none</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

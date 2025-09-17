@@ -1,0 +1,225 @@
+<div class="app">
+    <main class="content">
+
+        <!-- Home Content (when showOverview is false) -->
+        <div>
+            <!-- Message Board Section -->
+            <div class="message-board-section">
+                <h2>Message Board</h2>
+                <div class="table-container">
+                    <table class="message-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Building</th>
+                                <th>Address</th>
+                                <th>Apartment</th>
+                                <th>Tenant</th>
+                                <th>Alarm</th>
+                                <th>Message</th>
+                                <th>Action</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="alarm-row major" (click)="onRowClick(0)" [class.selected]="selectedRow === 0">
+                                <td>1</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge major">Major Leak</span></td>
+                                <td>poss. Pipe break</td>
+                                <td>auto shut off</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row major" (click)="onRowClick(1)" [class.selected]="selectedRow === 1">
+                                <td>2</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge low-temp">Low Temp</span></td>
+                                <td>Ice warning</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(2)" [class.selected]="selectedRow === 2">
+                                <td>3</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge medium">Medium Leak</span></td>
+                                <td>poss. Tap / Toilet</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(3)" [class.selected]="selectedRow === 3">
+                                <td>4</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge micro">Micro Leak</span></td>
+                                <td>poss. Toilet</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(4)" [class.selected]="selectedRow === 4">
+                                <td>5</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge micro">Micro Leak</span></td>
+                                <td>poss. Toilet</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(5)" [class.selected]="selectedRow === 5">
+                                <td>6</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge micro">Micro Leak</span></td>
+                                <td>poss. Tap</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(6)" [class.selected]="selectedRow === 6">
+                                <td>7</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge micro">Micro Leak</span></td>
+                                <td>poss. Tap</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(7)" [class.selected]="selectedRow === 7">
+                                <td>8</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge micro">Micro Leak</span></td>
+                                <td>poss. Tap</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-actions">
+                    <button class="pill">Sort by Importance</button>
+                    <button class="pill outline">View all alarms</button>
+                </div>
+            </div>
+
+            <!-- Bottom Panels -->
+            <div class="bottom-panels">
+                <!-- Alarms Panel -->
+                <div class="panel-section">
+                    <h3>Alarms</h3>
+                    <div class="panel alarms-panel">
+                        <div class="panel-content">
+                            <div class="current-section">
+                                <h4>Current:</h4>
+                                <div class="stat-row">
+                                    <span class="stat-label">Major Alarms:</span>
+                                    <span class="stat-value">2</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">System Alarms:</span>
+                                    <span class="stat-value">3</span>
+                                </div>
+                            </div>
+                            <div class="history-section">
+                                <h4>Total History:</h4>
+                                <div class="stat-row">
+                                    <span class="stat-label">total leakage alarms:</span>
+                                    <span class="stat-value">143</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">estimated loss after Alarm:</span>
+                                    <span class="stat-value">234 m3</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">estimated water savings through shut off:</span>
+                                    <span class="stat-value">789 m3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Consumption Panel -->
+                <div class="panel-section">
+                    <h3>Consumption</h3>
+                    <div class="panel consumption-panel">
+                        <div class="panel-content">
+                            <div class="stat-row">
+                                <span class="stat-label">2025 to Sept:</span>
+                                <span class="stat-value">343 234 m3</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">2024 to Sept:</span>
+                                <span class="stat-value">332 789 m3</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">2024:</span>
+                                <span class="stat-value">378 278 m3</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">2023:</span>
+                                <span class="stat-value">378 278 m3</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">2022:</span>
+                                <span class="stat-value">378 278 m3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Total 2025 Panel with Chart -->
+                <div class="panel-section">
+                    <h3>Total 2025</h3>
+                    <div class="panel chart-panel">
+                        <div class="chart-container">
+                            <h4>Monthly</h4>
+                            <canvas id="monthlyChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

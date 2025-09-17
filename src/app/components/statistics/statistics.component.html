@@ -1,0 +1,248 @@
+<div class="app">
+    <main class="content">
+        <div class="main-layout">
+            <!-- Left Side Content -->
+            <div class="left-content">
+                <!-- Search Section -->
+                <div class="search-section">
+                    <h2>Search</h2>
+                    <div class="search-form">
+                        <div class="search-column">
+                            <div class="form-group">
+                                <label>Keyword</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.keyword">
+                            </div>
+                            <div class="form-group">
+                                <label>Building</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.building">
+                            </div>
+                            <div class="form-group">
+                                <label>Building Group</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.buildingGroup">
+                            </div>
+                            <div class="form-group">
+                                <label>Device Name</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.deviceName">
+                            </div>
+                        </div>
+                        <div class="search-column">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.city">
+                            </div>
+                            <div class="form-group">
+                                <label>Zip Code</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.zipCode">
+                            </div>
+                            <div class="form-group">
+                                <label>Tenant</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.tenant">
+                            </div>
+                            <div class="form-group">
+                                <label>Tenant ID</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.tenantId">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Building Groups Table -->
+                <div class="building-groups-section">
+                    <h3>Building Groups</h3>
+                    <div class="box">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Group</th>
+                                        <th>Building</th>
+                                        <th>Zip Code</th>
+                                        <th>Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr (click)="onBuildingGroupRowClick(0)" [class.selected]="selectedBuildingGroupRow === 0">
+                                        <td>1</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(1)" [class.selected]="selectedBuildingGroupRow === 1">
+                                        <td>2</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23234</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(2)" [class.selected]="selectedBuildingGroupRow === 2">
+                                        <td>3</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(3)" [class.selected]="selectedBuildingGroupRow === 3">
+                                        <td>4</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(4)" [class.selected]="selectedBuildingGroupRow === 4">
+                                        <td>5</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(5)" [class.selected]="selectedBuildingGroupRow === 5">
+                                        <td>6</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(6)" [class.selected]="selectedBuildingGroupRow === 6">
+                                        <td>7</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(7)" [class.selected]="selectedBuildingGroupRow === 7">
+                                        <td>8</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Building Table -->
+                <div class="building-section">
+                    <h3>Building</h3>
+                    <div class="box">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Building</th>
+                                        <th>Zip Code</th>
+                                        <th>Address</th>
+                                        <th>Apartment</th>
+                                        <th>Tenant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr (click)="onBuildingRowClick(0)" [class.selected]="selectedBuildingRow === 0">
+                                        <td>1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                        <td>Block 1, L23, Ap12</td>
+                                        <td>Bonaparte, Napoleon</td>
+                                    </tr>
+                                    <tr (click)="onBuildingRowClick(1)" [class.selected]="selectedBuildingRow === 1">
+                                        <td>1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                        <td>Block 1, L23, Ap12</td>
+                                        <td>Bonaparte, Napoleon</td>
+                                    </tr>
+                                    <tr (click)="onBuildingRowClick(2)" [class.selected]="selectedBuildingRow === 2">
+                                        <td>1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                        <td>Block 1, L23, Ap12</td>
+                                        <td>Bonaparte, Napoleon</td>
+                                    </tr>
+                                    <tr (click)="onBuildingRowClick(3)" [class.selected]="selectedBuildingRow === 3">
+                                        <td>1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                        <td>Block 1, L23, Ap12</td>
+                                        <td>Bonaparte, Napoleon</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side Content -->
+            <div class="right-content">
+                <!-- Chart Section -->
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <button class="nav-btn" (click)="previousPeriod()">←</button>
+                        <h3>&nbsp;</h3>
+                        <button class="nav-btn" (click)="nextPeriod()">→</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="waterChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Today:</span>
+                            <span class="stat-value">123 Liter</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Yesterday:</span>
+                            <span class="stat-value">230 Liter</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">this week:</span>
+                            <span class="stat-value">899 Liter</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">this Month:</span>
+                            <span class="stat-value">22 m3</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">this Year:</span>
+                            <span class="stat-value">342m3</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">last year:</span>
+                            <span class="stat-value">388m3</span>
+                        </div>
+                    </div>
+
+                    <!-- Period Inputs -->
+                    <div class="period-inputs">
+                        <div class="form-group">
+                            <label>Period from</label>
+                            <input type="text" placeholder="" [(ngModel)]="periodFrom">
+                        </div>
+                        <div class="form-group">
+                            <label>Period to</label>
+                            <input type="text" placeholder="" [(ngModel)]="periodTo">
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="pill" (click)="resetPeriod()">Reset Period</button>
+                        <button class="pill outline" (click)="exportPDF()">Export PDF</button>
+                        <button class="pill outline" (click)="exportXLS()">Export XLS</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
