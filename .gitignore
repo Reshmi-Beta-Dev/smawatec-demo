@@ -44,12 +44,7 @@ yarn-error.log
 Thumbs.db
 
 # Angular specific
-/angular.json
-/package-lock.json
-/package.json
-/tsconfig.json
-/tsconfig.app.json
-/tsconfig.spec.json
+# Note: angular.json, package.json, and tsconfig files are needed for deployment
 
 # Environment files
 .env
