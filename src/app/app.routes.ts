@@ -13,7 +13,7 @@ export const routes: Routes = [
   { path: 'alarms', component: AlarmsComponent },
   { path: 'statistics', component: StatisticsComponent },
   { path: 'buildings', component: BuildingComponent },
-  { path: 'devices', component: DeviceDetailsComponent },
+  { path: 'device-organizer', component: DeviceDetailsComponent },
   { path: 'settings', component: SettingsComponent },
   { path: '**', redirectTo: '/home' }
 ];

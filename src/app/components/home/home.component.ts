@@ -1,30 +1,14 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatIconModule } from '@angular/material/icon';
-import { MatProgressBarModule } from '@angular/material/progress-bar';
-import { MatDividerModule } from '@angular/material/divider';
+import { OverviewComponent } from '../overview/overview.component';
 
 declare var Chart: any;
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [
-    CommonModule, 
-    RouterModule, 
-    MatCardModule,
-    MatTableModule,
-    MatButtonModule,
-    MatChipsModule,
-    MatIconModule,
-    MatProgressBarModule,
-    MatDividerModule
-  ],
+  imports: [CommonModule, RouterModule, OverviewComponent],
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css']
 })
@@ -32,91 +16,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedRow: number | null = null;
   showOverview: boolean = true; // Toggle between overview and home content
   private chart: any;
-
-  // Table data for Material Design table
-  displayedColumns: string[] = ['id', 'building', 'address', 'apartment', 'tenant', 'alarm', 'message', 'action', 'actions'];
-  alarmData = [
-    {
-      id: 1,
-      building: 'PAR - B12012',
-      address: 'Paris, Champs Elysees, Rue de la P',
-      apartment: 'Block 1,L23, Apt 12',
-      tenant: 'Duvall',
-      alarm: { type: 'Major Leak', severity: 'major' },
-      message: 'poss. Pipe break',
-      action: 'auto shut off'
-    },
-    {
-      id: 2,
-      building: 'PAR - B12012',
-      address: 'Paris, Champs Elysees, Rue de la P',
-      apartment: 'Block 1,L23, Apt 12',
-      tenant: 'Duvall',
-      alarm: { type: 'Low Temp', severity: 'low-temp' },
-      message: 'Ice warning',
-      action: 'None'
-    },
-    {
-      id: 3,
-      building: 'PAR - B12012',
-      address: 'Paris, Champs Elysees, Rue de la P',
-      apartment: 'Block 1,L23, Apt 12',
-      tenant: 'Duvall',
-      alarm: { type: 'Medium Leak', severity: 'medium' },
-      message: 'poss. Tap / Toilet',
-      action: 'None'
-    },
-    {
-      id: 4,
-      building: 'PAR - B12012',
-      address: 'Paris, Champs Elysees, Rue de la P',
-      apartment: 'Block 1,L23, Apt 12',
-      tenant: 'Duvall',
-      alarm: { type: 'Micro Leak', severity: 'micro' },
-      message: 'poss. Toilet',
-      action: 'None'
-    },
-    {
-      id: 5,
-      building: 'PAR - B12012',
-      address: 'Paris, Champs Elysees, Rue de la P',
-      apartment: 'Block 1,L23, Apt 12',
-      tenant: 'Duvall',
-      alarm: { type: 'Micro Leak', severity: 'micro' },
-      message: 'poss. Toilet',
-      action: 'None'
-    },
-    {
-      id: 6,
-      building: 'PAR - B12012',
-      address: 'Paris, Champs Elysees, Rue de la P',
-      apartment: 'Block 1,L23, Apt 12',
-      tenant: 'Duvall',
-      alarm: { type: 'Micro Leak', severity: 'micro' },
-      message: 'poss. Tap',
-      action: 'None'
-    },
-    {
-      id: 7,
-      building: 'PAR - B12012',
-      address: 'Paris, Champs Elysees, Rue de la P',
-      apartment: 'Block 1,L23, Apt 12',
-      tenant: 'Duvall',
-      alarm: { type: 'Micro Leak', severity: 'micro' },
-      message: 'poss. Tap',
-      action: 'None'
-    },
-    {
-      id: 8,
-      building: 'PAR - B12012',
-      address: 'Paris, Champs Elysees, Rue de la P',
-      apartment: 'Block 1,L23, Apt 12',
-      tenant: 'Duvall',
-      alarm: { type: 'Micro Leak', severity: 'micro' },
-      message: 'poss. Tap',
-      action: 'None'
-    }
-  ];
 
   ngOnInit() {
     // Initialize any component logic here

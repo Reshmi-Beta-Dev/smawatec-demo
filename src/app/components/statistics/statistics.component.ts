@@ -1,34 +1,13 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatInputModule } from '@angular/material/input';
-import { MatChipsModule } from '@angular/material/chips';
-import { MatDividerModule } from '@angular/material/divider';
-import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 declare var Chart: any;
 
 @Component({
   selector: 'app-statistics',
   standalone: true,
-  imports: [
-    CommonModule, 
-    FormsModule,
-    MatCardModule,
-    MatTableModule,
-    MatButtonModule,
-    MatIconModule,
-    MatFormFieldModule,
-    MatInputModule,
-    MatChipsModule,
-    MatDividerModule,
-    MatSnackBarModule
-  ],
+  imports: [CommonModule, FormsModule],
   templateUrl: './statistics.component.html',
   styleUrls: ['./statistics.component.css']
 })
@@ -48,39 +27,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   periodFrom: string = '';
   periodTo: string = '';
   private chart: any;
-
-  // Table data for Material Design tables
-  buildingGroupColumns: string[] = ['id', 'group', 'building', 'zipCode', 'address'];
-  buildingGroupData = [
-    { id: 1, group: 'PAR - GP1', building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-    { id: 2, group: 'PAR - GP1', building: 'PAR-GP1-B12012', zipCode: '23234', address: 'Paris, Champs Elysees, Rue de la Place' },
-    { id: 3, group: 'PAR - GP1', building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-    { id: 4, group: 'PAR - GP1', building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-    { id: 5, group: 'PAR - GP1', building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-    { id: 6, group: 'PAR - GP1', building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-    { id: 7, group: 'PAR - GP1', building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-    { id: 8, group: 'PAR - GP1', building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' }
-  ];
-
-  buildingColumns: string[] = ['id', 'building', 'zipCode', 'address', 'apartment', 'tenant'];
-  buildingData = [
-    { id: 1, building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 1, L23, Ap12', tenant: 'Bonaparte, Napoleon' },
-    { id: 2, building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 1, L23, Ap12', tenant: 'Bonaparte, Napoleon' },
-    { id: 3, building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 1, L23, Ap12', tenant: 'Bonaparte, Napoleon' },
-    { id: 4, building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 1, L23, Ap12', tenant: 'Bonaparte, Napoleon' }
-  ];
-
-  // Statistics data
-  statisticsData = [
-    { label: 'Today:', value: '123 Liter', icon: 'today' },
-    { label: 'Yesterday:', value: '230 Liter', icon: 'yesterday' },
-    { label: 'This week:', value: '899 Liter', icon: 'date_range' },
-    { label: 'This Month:', value: '22 m³', icon: 'calendar_month' },
-    { label: 'This Year:', value: '342m³', icon: 'calendar_today' },
-    { label: 'Last year:', value: '388m³', icon: 'history' }
-  ];
-
-  constructor(private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     // Initialize any component logic here
@@ -110,11 +56,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   previousPeriod() {
-    this.snackBar.open('Previous period navigation', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+    this.showNotification('Previous period navigation');
     // Reinitialize chart after navigation
     setTimeout(() => {
       this.initializeChart();
@@ -122,11 +64,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   nextPeriod() {
-    this.snackBar.open('Next period navigation', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+    this.showNotification('Next period navigation');
     // Reinitialize chart after navigation
     setTimeout(() => {
       this.initializeChart();
@@ -136,27 +74,15 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   resetPeriod() {
     this.periodFrom = '';
     this.periodTo = '';
-    this.snackBar.open('Period has been reset to default', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+    this.showNotification('Period has been reset to default');
   }
 
   exportPDF() {
-    this.snackBar.open('PDF export functionality would generate a PDF report', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+    this.showNotification('PDF export functionality would generate a PDF report');
   }
 
   exportXLS() {
-    this.snackBar.open('Excel export functionality would generate an Excel file', 'Close', {
-      duration: 3000,
-      horizontalPosition: 'right',
-      verticalPosition: 'top'
-    });
+    this.showNotification('Excel export functionality would generate an Excel file');
   }
 
   private initializeChart() {
@@ -191,8 +117,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         label: 'Water Usage (Liters)',
         data: [20, 15, 10, 25, 30, 45, 130, 110, 80, 60, 50, 45, 
                40, 35, 30, 25, 40, 60, 80, 120, 100, 70, 50, 30],
-        backgroundColor: '#7b61ff',
-        borderColor: '#7b61ff',
+        backgroundColor: '#3b82f6',
+        borderColor: '#3b82f6',
         borderWidth: 0,
         borderRadius: 4,
         borderSkipped: false,
@@ -255,4 +181,40 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private showNotification(message: string) {
+    // Create a simple notification
+    const notification = document.createElement('div');
+    notification.style.cssText = `
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      background: #7b61ff;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 14px;
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      transform: translateX(100%);
+      transition: transform 0.3s ease;
+    `;
+    notification.textContent = message;
+    
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => {
+      notification.style.transform = 'translateX(0)';
+    }, 10);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+      notification.style.transform = 'translateX(100%)';
+      setTimeout(() => {
+        if (document.body.contains(notification)) {
+          document.body.removeChild(notification);
+        }
+      }, 300);
+    }, 3000);
+  }
 }

@@ -1,229 +1,248 @@
-<!-- Material Design Statistics Page -->
-<div class="statistics-container">
-  <div class="main-layout">
-    <!-- Left Side Content -->
-    <div class="left-content">
-      <!-- Search Section -->
-      <mat-card class="search-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>search</mat-icon>
-            Search
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="search-form">
-            <div class="search-column">
-              <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Keyword</mat-label>
-                <input matInput [(ngModel)]="searchData.keyword">
-              </mat-form-field>
-              <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Building</mat-label>
-                <input matInput [(ngModel)]="searchData.building">
-              </mat-form-field>
-              <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Building Group</mat-label>
-                <input matInput [(ngModel)]="searchData.buildingGroup">
-              </mat-form-field>
-              <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Device Name</mat-label>
-                <input matInput [(ngModel)]="searchData.deviceName">
-              </mat-form-field>
+<div class="app">
+    <main class="content">
+        <div class="main-layout">
+            <!-- Left Side Content -->
+            <div class="left-content">
+                <!-- Search Section -->
+                <div class="search-section">
+                    <h2>Search</h2>
+                    <div class="search-form">
+                        <div class="search-column">
+                            <div class="form-group">
+                                <label>Keyword</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.keyword">
+                            </div>
+                            <div class="form-group">
+                                <label>Building</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.building">
+                            </div>
+                            <div class="form-group">
+                                <label>Building Group</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.buildingGroup">
+                            </div>
+                            <div class="form-group">
+                                <label>Device Name</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.deviceName">
+                            </div>
+                        </div>
+                        <div class="search-column">
+                            <div class="form-group">
+                                <label>City</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.city">
+                            </div>
+                            <div class="form-group">
+                                <label>Zip Code</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.zipCode">
+                            </div>
+                            <div class="form-group">
+                                <label>Tenant</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.tenant">
+                            </div>
+                            <div class="form-group">
+                                <label>Tenant ID</label>
+                                <input type="text" placeholder="" [(ngModel)]="searchData.tenantId">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Building Groups Table -->
+                <div class="building-groups-section">
+                    <h3>Building Groups</h3>
+                    <div class="box">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Group</th>
+                                        <th>Building</th>
+                                        <th>Zip Code</th>
+                                        <th>Address</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr (click)="onBuildingGroupRowClick(0)" [class.selected]="selectedBuildingGroupRow === 0">
+                                        <td>1</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(1)" [class.selected]="selectedBuildingGroupRow === 1">
+                                        <td>2</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23234</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(2)" [class.selected]="selectedBuildingGroupRow === 2">
+                                        <td>3</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(3)" [class.selected]="selectedBuildingGroupRow === 3">
+                                        <td>4</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(4)" [class.selected]="selectedBuildingGroupRow === 4">
+                                        <td>5</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(5)" [class.selected]="selectedBuildingGroupRow === 5">
+                                        <td>6</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(6)" [class.selected]="selectedBuildingGroupRow === 6">
+                                        <td>7</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                    <tr (click)="onBuildingGroupRowClick(7)" [class.selected]="selectedBuildingGroupRow === 7">
+                                        <td>8</td>
+                                        <td>PAR - GP1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Building Table -->
+                <div class="building-section">
+                    <h3>Building</h3>
+                    <div class="box">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Building</th>
+                                        <th>Zip Code</th>
+                                        <th>Address</th>
+                                        <th>Apartment</th>
+                                        <th>Tenant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr (click)="onBuildingRowClick(0)" [class.selected]="selectedBuildingRow === 0">
+                                        <td>1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                        <td>Block 1, L23, Ap12</td>
+                                        <td>Bonaparte, Napoleon</td>
+                                    </tr>
+                                    <tr (click)="onBuildingRowClick(1)" [class.selected]="selectedBuildingRow === 1">
+                                        <td>1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                        <td>Block 1, L23, Ap12</td>
+                                        <td>Bonaparte, Napoleon</td>
+                                    </tr>
+                                    <tr (click)="onBuildingRowClick(2)" [class.selected]="selectedBuildingRow === 2">
+                                        <td>1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                        <td>Block 1, L23, Ap12</td>
+                                        <td>Bonaparte, Napoleon</td>
+                                    </tr>
+                                    <tr (click)="onBuildingRowClick(3)" [class.selected]="selectedBuildingRow === 3">
+                                        <td>1</td>
+                                        <td>PAR-GP1-B12012</td>
+                                        <td>23212</td>
+                                        <td>Paris, Champs Elysees, Rue de la Place</td>
+                                        <td>Block 1, L23, Ap12</td>
+                                        <td>Bonaparte, Napoleon</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div class="search-column">
-              <mat-form-field appearance="outline" class="search-field">
-                <mat-label>City</mat-label>
-                <input matInput [(ngModel)]="searchData.city">
-              </mat-form-field>
-              <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Zip Code</mat-label>
-                <input matInput [(ngModel)]="searchData.zipCode">
-              </mat-form-field>
-              <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Tenant</mat-label>
-                <input matInput [(ngModel)]="searchData.tenant">
-              </mat-form-field>
-              <mat-form-field appearance="outline" class="search-field">
-                <mat-label>Tenant ID</mat-label>
-                <input matInput [(ngModel)]="searchData.tenantId">
-              </mat-form-field>
+
+            <!-- Right Side Content -->
+            <div class="right-content">
+                <!-- Chart Section -->
+                <div class="chart-section">
+                    <div class="chart-header">
+                        <button class="nav-btn" (click)="previousPeriod()">←</button>
+                        <h3>&nbsp;</h3>
+                        <button class="nav-btn" (click)="nextPeriod()">→</button>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="waterChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+
+                <!-- Statistics Section -->
+                <div class="stats-section">
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <span class="stat-label">Today:</span>
+                            <span class="stat-value">123 Liter</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Yesterday:</span>
+                            <span class="stat-value">230 Liter</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">this week:</span>
+                            <span class="stat-value">899 Liter</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">this Month:</span>
+                            <span class="stat-value">22 m3</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">this Year:</span>
+                            <span class="stat-value">342m3</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">last year:</span>
+                            <span class="stat-value">388m3</span>
+                        </div>
+                    </div>
+
+                    <!-- Period Inputs -->
+                    <div class="period-inputs">
+                        <div class="form-group">
+                            <label>Period from</label>
+                            <input type="text" placeholder="" [(ngModel)]="periodFrom">
+                        </div>
+                        <div class="form-group">
+                            <label>Period to</label>
+                            <input type="text" placeholder="" [(ngModel)]="periodTo">
+                        </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div class="action-buttons">
+                        <button class="pill" (click)="resetPeriod()">Reset Period</button>
+                        <button class="pill outline" (click)="exportPDF()">Export PDF</button>
+                        <button class="pill outline" (click)="exportXLS()">Export XLS</button>
+                    </div>
+                </div>
             </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Building Groups Table -->
-      <mat-card class="table-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>group_work</mat-icon>
-            Building Groups
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="table-container">
-            <table mat-table [dataSource]="buildingGroupData" class="building-groups-table">
-              <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef>#</th>
-                <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="group">
-                <th mat-header-cell *matHeaderCellDef>Group</th>
-                <td mat-cell *matCellDef="let element">{{ element.group }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="building">
-                <th mat-header-cell *matHeaderCellDef>Building</th>
-                <td mat-cell *matCellDef="let element">{{ element.building }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="zipCode">
-                <th mat-header-cell *matHeaderCellDef>Zip Code</th>
-                <td mat-cell *matCellDef="let element">{{ element.zipCode }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="address">
-                <th mat-header-cell *matHeaderCellDef>Address</th>
-                <td mat-cell *matCellDef="let element">{{ element.address }}</td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="buildingGroupColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: buildingGroupColumns;" 
-                  (click)="onBuildingGroupRowClick(row.id - 1)"
-                  [class.selected]="selectedBuildingGroupRow === (row.id - 1)"></tr>
-            </table>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Building Table -->
-      <mat-card class="table-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>business</mat-icon>
-            Building
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="table-container">
-            <table mat-table [dataSource]="buildingData" class="building-table">
-              <ng-container matColumnDef="id">
-                <th mat-header-cell *matHeaderCellDef>#</th>
-                <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="building">
-                <th mat-header-cell *matHeaderCellDef>Building</th>
-                <td mat-cell *matCellDef="let element">{{ element.building }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="zipCode">
-                <th mat-header-cell *matHeaderCellDef>Zip Code</th>
-                <td mat-cell *matCellDef="let element">{{ element.zipCode }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="address">
-                <th mat-header-cell *matHeaderCellDef>Address</th>
-                <td mat-cell *matCellDef="let element">{{ element.address }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="apartment">
-                <th mat-header-cell *matHeaderCellDef>Apartment</th>
-                <td mat-cell *matCellDef="let element">{{ element.apartment }}</td>
-              </ng-container>
-
-              <ng-container matColumnDef="tenant">
-                <th mat-header-cell *matHeaderCellDef>Tenant</th>
-                <td mat-cell *matCellDef="let element">{{ element.tenant }}</td>
-              </ng-container>
-
-              <tr mat-header-row *matHeaderRowDef="buildingColumns"></tr>
-              <tr mat-row *matRowDef="let row; columns: buildingColumns;" 
-                  (click)="onBuildingRowClick(row.id - 1)"
-                  [class.selected]="selectedBuildingRow === (row.id - 1)"></tr>
-            </table>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-
-    <!-- Right Side Content -->
-    <div class="right-content">
-      <!-- Chart Section -->
-      <mat-card class="chart-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>bar_chart</mat-icon>
-            Water Usage Chart
-          </mat-card-title>
-          <div class="chart-navigation">
-            <button mat-icon-button (click)="previousPeriod()" class="nav-button">
-              <mat-icon>chevron_left</mat-icon>
-            </button>
-            <button mat-icon-button (click)="nextPeriod()" class="nav-button">
-              <mat-icon>chevron_right</mat-icon>
-            </button>
-          </div>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="chart-container">
-            <canvas id="waterChart" width="400" height="200"></canvas>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Statistics Section -->
-      <mat-card class="stats-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>analytics</mat-icon>
-            Statistics
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="stats-grid">
-            <div class="stat-item" *ngFor="let stat of statisticsData">
-              <div class="stat-content">
-                <mat-icon class="stat-icon">{{ stat.icon }}</mat-icon>
-                <span class="stat-label">{{ stat.label }}</span>
-              </div>
-              <span class="stat-value">{{ stat.value }}</span>
-            </div>
-          </div>
-
-          <mat-divider></mat-divider>
-
-          <!-- Period Inputs -->
-          <div class="period-inputs">
-            <mat-form-field appearance="outline" class="period-field">
-              <mat-label>Period from</mat-label>
-              <input matInput [(ngModel)]="periodFrom">
-            </mat-form-field>
-            <mat-form-field appearance="outline" class="period-field">
-              <mat-label>Period to</mat-label>
-              <input matInput [(ngModel)]="periodTo">
-            </mat-form-field>
-          </div>
-
-          <!-- Action Buttons -->
-          <div class="action-buttons">
-            <button mat-raised-button color="primary" (click)="resetPeriod()" class="action-button">
-              <mat-icon>refresh</mat-icon>
-              Reset Period
-            </button>
-            <button mat-stroked-button (click)="exportPDF()" class="action-button">
-              <mat-icon>picture_as_pdf</mat-icon>
-              Export PDF
-            </button>
-            <button mat-stroked-button (click)="exportXLS()" class="action-button">
-              <mat-icon>table_chart</mat-icon>
-              Export XLS
-            </button>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </div>
+        </div>
+    </main>
 </div>

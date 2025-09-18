@@ -1,196 +1,225 @@
-<!-- Material Design Home Component -->
-<div class="home-container">
-  <main class="content">
-    <!-- Message Board Section -->
-    <mat-card class="message-board-card">
-      <mat-card-header>
-        <mat-card-title>
-          <mat-icon>message</mat-icon>
-          Message Board
-        </mat-card-title>
-        <mat-card-subtitle>Current alarm status and management</mat-card-subtitle>
-      </mat-card-header>
-      
-      <mat-card-content>
-        <div class="table-container">
-          <table mat-table [dataSource]="alarmData" class="alarm-table">
-            <!-- ID Column -->
-            <ng-container matColumnDef="id">
-              <th mat-header-cell *matHeaderCellDef>#</th>
-              <td mat-cell *matCellDef="let element">{{ element.id }}</td>
-            </ng-container>
+<div class="app">
+    <main class="content">
 
-            <!-- Building Column -->
-            <ng-container matColumnDef="building">
-              <th mat-header-cell *matHeaderCellDef>Building</th>
-              <td mat-cell *matCellDef="let element">{{ element.building }}</td>
-            </ng-container>
+        <!-- Home Content (when showOverview is false) -->
+        <div>
+            <!-- Message Board Section -->
+            <div class="message-board-section">
+                <h2>Message Board</h2>
+                <div class="table-container">
+                    <table class="message-table">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Building</th>
+                                <th>Address</th>
+                                <th>Apartment</th>
+                                <th>Tenant</th>
+                                <th>Alarm</th>
+                                <th>Message</th>
+                                <th>Action</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="alarm-row major" (click)="onRowClick(0)" [class.selected]="selectedRow === 0">
+                                <td>1</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge major">Major Leak</span></td>
+                                <td>poss. Pipe break</td>
+                                <td>auto shut off</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row major" (click)="onRowClick(1)" [class.selected]="selectedRow === 1">
+                                <td>2</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge low-temp">Low Temp</span></td>
+                                <td>Ice warning</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(2)" [class.selected]="selectedRow === 2">
+                                <td>3</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge medium">Medium Leak</span></td>
+                                <td>poss. Tap / Toilet</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(3)" [class.selected]="selectedRow === 3">
+                                <td>4</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge micro">Micro Leak</span></td>
+                                <td>poss. Toilet</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(4)" [class.selected]="selectedRow === 4">
+                                <td>5</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge micro">Micro Leak</span></td>
+                                <td>poss. Toilet</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(5)" [class.selected]="selectedRow === 5">
+                                <td>6</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge micro">Micro Leak</span></td>
+                                <td>poss. Tap</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(6)" [class.selected]="selectedRow === 6">
+                                <td>7</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge micro">Micro Leak</span></td>
+                                <td>poss. Tap</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                            <tr class="alarm-row" (click)="onRowClick(7)" [class.selected]="selectedRow === 7">
+                                <td>8</td>
+                                <td>PAR - B12012</td>
+                                <td>Paris, Champs Elysees, Rue de la P</td>
+                                <td>Block 1,L23, Apt 12</td>
+                                <td>Duvall</td>
+                                <td><span class="alarm-badge micro">Micro Leak</span></td>
+                                <td>poss. Tap</td>
+                                <td>None</td>
+                                <td class="actions">
+                                    <button class="pill">Details</button>
+                                    <button class="pill outline">Hide Alarm</button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="table-actions">
+                    <button class="pill">Sort by Importance</button>
+                    <button class="pill outline">View all alarms</button>
+                </div>
+            </div>
 
-            <!-- Address Column -->
-            <ng-container matColumnDef="address">
-              <th mat-header-cell *matHeaderCellDef>Address</th>
-              <td mat-cell *matCellDef="let element">{{ element.address }}</td>
-            </ng-container>
+            <!-- Bottom Panels -->
+            <div class="bottom-panels">
+                <!-- Alarms Panel -->
+                <div class="panel-section">
+                    <h3>Alarms</h3>
+                    <div class="panel alarms-panel">
+                        <div class="panel-content">
+                            <div class="current-section">
+                                <h4>Current:</h4>
+                                <div class="stat-row">
+                                    <span class="stat-label">Major Alarms:</span>
+                                    <span class="stat-value">2</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">System Alarms:</span>
+                                    <span class="stat-value">3</span>
+                                </div>
+                            </div>
+                            <div class="history-section">
+                                <h4>Total History:</h4>
+                                <div class="stat-row">
+                                    <span class="stat-label">total leakage alarms:</span>
+                                    <span class="stat-value">143</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">estimated loss after Alarm:</span>
+                                    <span class="stat-value">234 m3</span>
+                                </div>
+                                <div class="stat-row">
+                                    <span class="stat-label">estimated water savings through shut off:</span>
+                                    <span class="stat-value">789 m3</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Apartment Column -->
-            <ng-container matColumnDef="apartment">
-              <th mat-header-cell *matHeaderCellDef>Apartment</th>
-              <td mat-cell *matCellDef="let element">{{ element.apartment }}</td>
-            </ng-container>
+                <!-- Consumption Panel -->
+                <div class="panel-section">
+                    <h3>Consumption</h3>
+                    <div class="panel consumption-panel">
+                        <div class="panel-content">
+                            <div class="stat-row">
+                                <span class="stat-label">2025 to Sept:</span>
+                                <span class="stat-value">343 234 m3</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">2024 to Sept:</span>
+                                <span class="stat-value">332 789 m3</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">2024:</span>
+                                <span class="stat-value">378 278 m3</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">2023:</span>
+                                <span class="stat-value">378 278 m3</span>
+                            </div>
+                            <div class="stat-row">
+                                <span class="stat-label">2022:</span>
+                                <span class="stat-value">378 278 m3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-            <!-- Tenant Column -->
-            <ng-container matColumnDef="tenant">
-              <th mat-header-cell *matHeaderCellDef>Tenant</th>
-              <td mat-cell *matCellDef="let element">{{ element.tenant }}</td>
-            </ng-container>
-
-            <!-- Alarm Column -->
-            <ng-container matColumnDef="alarm">
-              <th mat-header-cell *matHeaderCellDef>Alarm</th>
-              <td mat-cell *matCellDef="let element">
-                <mat-chip [class]="'alarm-chip-' + element.alarm.severity">
-                  {{ element.alarm.type }}
-                </mat-chip>
-              </td>
-            </ng-container>
-
-            <!-- Message Column -->
-            <ng-container matColumnDef="message">
-              <th mat-header-cell *matHeaderCellDef>Message</th>
-              <td mat-cell *matCellDef="let element">{{ element.message }}</td>
-            </ng-container>
-
-            <!-- Action Column -->
-            <ng-container matColumnDef="action">
-              <th mat-header-cell *matHeaderCellDef>Action</th>
-              <td mat-cell *matCellDef="let element">{{ element.action }}</td>
-            </ng-container>
-
-            <!-- Actions Column -->
-            <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Actions</th>
-              <td mat-cell *matCellDef="let element">
-                <button mat-button color="primary" class="action-button">
-                  <mat-icon>info</mat-icon>
-                  Details
-                </button>
-                <button mat-button color="accent" class="action-button">
-                  <mat-icon>visibility_off</mat-icon>
-                  Hide
-                </button>
-              </td>
-            </ng-container>
-
-            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-            <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
-                [class.selected-row]="selectedRow === row.id"
-                (click)="onRowClick(row.id)"></tr>
-          </table>
+                <!-- Total 2025 Panel with Chart -->
+                <div class="panel-section">
+                    <h3>Total 2025</h3>
+                    <div class="panel chart-panel">
+                        <div class="chart-container">
+                            <h4>Monthly</h4>
+                            <canvas id="monthlyChart" width="400" height="200"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-      </mat-card-content>
-
-      <mat-card-actions>
-        <button mat-raised-button color="primary">
-          <mat-icon>sort</mat-icon>
-          Sort by Importance
-        </button>
-        <button mat-stroked-button color="primary">
-          <mat-icon>list</mat-icon>
-          View all alarms
-        </button>
-      </mat-card-actions>
-    </mat-card>
-
-    <!-- Bottom Panels -->
-    <div class="bottom-panels">
-      <!-- Alarms Panel -->
-      <mat-card class="stats-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>warning</mat-icon>
-            Alarms
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="stats-section">
-            <h4>Current:</h4>
-            <div class="stat-item">
-              <span class="stat-label">Major Alarms:</span>
-              <span class="stat-value">2</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">System Alarms:</span>
-              <span class="stat-value">3</span>
-            </div>
-          </div>
-          
-          <mat-divider></mat-divider>
-          
-          <div class="stats-section">
-            <h4>Total History:</h4>
-            <div class="stat-item">
-              <span class="stat-label">total leakage alarms:</span>
-              <span class="stat-value">143</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">estimated loss after Alarm:</span>
-              <span class="stat-value">234 m³</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">estimated water savings through shut off:</span>
-              <span class="stat-value">789 m³</span>
-            </div>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Consumption Panel -->
-      <mat-card class="stats-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>water_drop</mat-icon>
-            Consumption
-          </mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="stat-item">
-            <span class="stat-label">2025 to Sept:</span>
-            <span class="stat-value">343,234 m³</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">2024 to Sept:</span>
-            <span class="stat-value">332,789 m³</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">2024:</span>
-            <span class="stat-value">378,278 m³</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">2023:</span>
-            <span class="stat-value">378,278 m³</span>
-          </div>
-          <div class="stat-item">
-            <span class="stat-label">2022:</span>
-            <span class="stat-value">378,278 m³</span>
-          </div>
-        </mat-card-content>
-      </mat-card>
-
-      <!-- Chart Panel -->
-      <mat-card class="chart-card">
-        <mat-card-header>
-          <mat-card-title>
-            <mat-icon>bar_chart</mat-icon>
-            Total 2025
-          </mat-card-title>
-          <mat-card-subtitle>Monthly consumption trend</mat-card-subtitle>
-        </mat-card-header>
-        <mat-card-content>
-          <div class="chart-container">
-            <canvas id="monthlyChart" width="400" height="200"></canvas>
-          </div>
-        </mat-card-content>
-      </mat-card>
-    </div>
-  </main>
+    </main>
 </div>
