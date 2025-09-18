@@ -11,28 +11,28 @@
 .content {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px; /* Reduced from 12px to 8px */
 }
 
 /* Main Layout */
 .main-layout {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px; /* Reduced from 24px to 16px */
 }
 
 .main-content {
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 16px; /* Reduced from 24px to 16px */
 }
 
 /* Search and Chart Section */
 .search-chart-section {
     display: grid;
     grid-template-columns: 3fr 2fr; /* 60/40 split */
-    gap: 24px;
-    margin-bottom: 24px;
+    gap: 16px; /* Reduced from 24px to 16px */
+    margin-bottom: 16px; /* Reduced from 24px to 16px */
 }
 
 /* Search Section */
@@ -104,8 +104,8 @@
 .parallel-sections {
     display: grid;
     grid-template-columns: 3fr 2fr;
-    gap: 24px;
-    margin-bottom: 24px;
+    gap: 16px; /* Reduced from 24px to 16px */
+    margin-bottom: 16px; /* Reduced from 24px to 16px */
     align-items: stretch;
 }
 

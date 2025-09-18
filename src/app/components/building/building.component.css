@@ -11,12 +11,12 @@
 .content {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md); /* 12px - using standard spacing */
+    gap: var(--spacing-sm); /* Reduced from 12px to 8px */
 }
 
 /* Search Section */
 .search-section {
-    margin-bottom: var(--spacing-2xl); /* 24px - using standard spacing */
+    margin-bottom: var(--spacing-md); /* Reduced from 24px to 12px */
 }
 
 .search-section h2 {
@@ -84,8 +84,8 @@
 .middle-section {
     display: grid;
     grid-template-columns: 3fr 2fr; /* 60% and 40% split */
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 12px; /* Reduced from 16px to 12px */
+    margin-bottom: 16px; /* Reduced from 24px to 16px */
     align-items: start;
 }
 

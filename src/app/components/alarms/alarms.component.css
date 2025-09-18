@@ -11,15 +11,15 @@
 .content {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px; /* Reduced from 12px to 8px */
 }
 
 /* Alarm Summary Section */
 .alarm-summary {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
-    margin-bottom: 24px;
+    gap: 8px; /* Reduced from 16px to 8px */
+    margin-bottom: 16px; /* Reduced from 24px to 16px */
     align-items: stretch;
 }
 

@@ -11,15 +11,15 @@
 .content {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 8px; /* Reduced from 12px to 8px */
 }
 
 /* Search and Device Info Section */
 .search-device-section {
     display: grid;
     grid-template-columns: 3fr 2fr; /* 60% and 40% split */
-    gap: 24px;
-    margin-bottom: 24px;
+    gap: 16px; /* Reduced from 24px to 16px */
+    margin-bottom: 16px; /* Reduced from 24px to 16px */
     align-items: stretch; /* Make both boxes same height */
 }
 
@@ -146,7 +146,7 @@
 
 /* Building Groups Section */
 .building-groups-section {
-    margin-bottom: 24px;
+    margin-bottom: 16px; /* Reduced from 24px to 16px */
 }
 
 .building-groups-section h3 {
@@ -166,7 +166,7 @@
 
 /* Building Section */
 .building-section {
-    margin-bottom: 24px;
+    margin-bottom: 16px; /* Reduced from 24px to 16px */
 }
 
 .building-section h3 {
