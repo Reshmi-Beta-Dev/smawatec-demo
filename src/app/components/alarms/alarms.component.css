@@ -120,7 +120,7 @@
 
 .message-table thead th {
     font-size: 12px; /* Reduced from 13px to match overview page */
-    text-align: left;
+    text-align: right;
     color: #3e424c;
     padding: var(--spacing-sm) var(--spacing-sm); /* 8px - using standard spacing */
     border: 0;
