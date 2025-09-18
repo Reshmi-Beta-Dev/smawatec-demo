@@ -30,7 +30,7 @@
 /* Search and Chart Section */
 .search-chart-section {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 3fr 2fr; /* 60/40 split */
     gap: 24px;
     margin-bottom: 24px;
 }
