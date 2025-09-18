@@ -1,8 +1,6 @@
 /* Material Design Statistics Component */
 
 .statistics-container {
-  max-width: 1200px;
-  margin: 0 auto;
   padding: 24px;
   background: #fafafa;
   min-height: calc(100vh - 120px);
