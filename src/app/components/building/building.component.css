@@ -191,7 +191,7 @@
 .data-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 2px; /* Reduced from 4px to match overview page */
+    border-spacing: 0 1px; /* Further reduced spacing between rows */
     font-size: 12px; /* Reduced from 13px to match overview page */
     background: transparent;
     margin-bottom: 16px;
@@ -214,7 +214,7 @@
     background: transparent;
     border-radius: 8px; /* Reduced from 12px to match overview page */
     box-shadow: none;
-    height: 32px; /* Reduced from 34px to match overview page */
+    height: 28px; /* Further reduced height for more compact rows */
     cursor: pointer;
     transition: all 0.2s ease;
 }
