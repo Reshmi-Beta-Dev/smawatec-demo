@@ -63,24 +63,24 @@
 
 .stat-item {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Changed back to space-between for right alignment of values */
     align-items: center;
-    padding: 8px 12px;
-    background: #eeeeef;
-    border-radius: 8px;
-    font-size: 13px;
+    padding: 3px 6px; /* Reduced padding */
+    background: transparent; /* Removed background for consistency */
+    border-radius: 0; /* Removed border radius for consistency */
+    font-size: 13px; /* Keep consistent font size */
 }
 
 .stat-label {
     color: #555;
-    font-weight: 500;
-    flex: 1;
+    font-weight: 600; /* Made bold */
+    flex: 0 0 auto; /* Changed from flex: 1 to not take all space */
 }
 
 .stat-value {
     color: #333;
     font-weight: 600;
-    text-align: right;
+    text-align: right; /* Right align values */
 }
 
 .stat-value.highlight {

@@ -333,27 +333,26 @@
 
 .stat-item {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Changed back to space-between for right alignment of values */
     align-items: center;
-    padding: 3px 6px;
+    padding: 3px 6px; /* Reduced padding */
     background: transparent;
     border: none;
     border-radius: 0;
-    font-size: 12px;
-    gap: 8px;
+    font-size: 13px; /* Increased for better readability */
 }
 
 .stat-label {
     color: #555;
-    font-weight: 500;
-    flex: 1;
+    font-weight: 600; /* Made bold */
+    flex: 0 0 auto; /* Changed from flex: 1 to not take all space */
 }
 
 .stat-value {
     color: #7b61ff;
     font-weight: 600;
-    text-align: right;
-    font-size: 14px;
+    text-align: right; /* Right align values */
+    font-size: 13px; /* Consistent with stat-item font size */
 }
 
 /* Period Inputs in Statistics */

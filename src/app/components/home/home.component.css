@@ -192,52 +192,61 @@
     box-shadow: none;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: auto; /* Changed from 100% to auto to allow natural height */
     min-height: 0;
     flex: 1;
+    overflow: visible; /* Ensure content is not hidden */
 }
 
 .panel-content {
     display: flex;
     flex-direction: column;
     gap: var(--spacing-md); /* 12px - using standard spacing */
+    flex: 1; /* Ensure content takes available space */
+    overflow: visible; /* Ensure content is not hidden */
 }
 
 .current-section,
 .history-section {
-    margin-bottom: 16px;
+    margin-bottom: var(--spacing-md); /* 12px - reduced from 16px */
 }
+
+.history-section {
+    border-top: 2px solid #000000; /* Changed to black color */
+    padding-top: var(--spacing-sm); /* 8px - spacing above the line */
+}
+
 
 .current-section h4,
 .history-section h4 {
-    font-size: 14px;
-    font-weight: 600;
-    margin: 0 0 8px 0;
-    color: #555;
-    padding-left: 22px;
+    font-size: 14px; /* Increased from 12px for better readability */
+    font-weight: 700; /* Made bold */
+    margin: 0 0 var(--spacing-sm) 0; /* 8px - increased spacing */
+    color: #333; /* Darker color for better visibility */
+    padding-left: 0; /* Removed padding for cleaner look */
 }
 
 .stat-row {
     display: flex;
-    justify-content: space-between;
+    justify-content: space-between; /* Changed back to space-between for right alignment of values */
     align-items: center;
-    padding: 6px 12px;
-    background: #eeeeef;
-    border-radius: 8px;
-    font-size: 13px;
-    margin-bottom: 4px;
+    padding: 3px 6px; /* Reduced padding */
+    background: transparent; /* Removed background */
+    border-radius: 0; /* Removed border radius */
+    font-size: 13px; /* Increased from 12px for better readability */
+    margin-bottom: 2px; /* Reduced spacing between rows */
 }
 
 .stat-label {
     color: #555;
-    font-weight: 500;
-    flex: 1;
+    font-weight: 600; /* Made bold */
+    flex: 0 0 auto; /* Changed from flex: 1 to not take all space */
 }
 
 .stat-value {
     color: #333;
     font-weight: 600;
-    text-align: right;
+    text-align: right; /* Right align values */
 }
 
 /* Chart Panel */
