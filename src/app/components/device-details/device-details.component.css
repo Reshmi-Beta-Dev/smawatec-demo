@@ -14,51 +14,72 @@
     gap: 12px;
 }
 
+/* Search and Device Info Section */
+.search-device-section {
+    display: grid;
+    grid-template-columns: 3fr 2fr; /* 60% and 40% split */
+    gap: 24px;
+    margin-bottom: 24px;
+    align-items: stretch; /* Make both boxes same height */
+}
+
 /* Search Section */
 .search-section {
-    margin-bottom: 24px;
+    margin-bottom: 0;
 }
 
 .search-section h2 {
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 600;
-    margin: 0 0 16px 0;
+    margin: 0 0 12px 0;
     color: #333;
-    padding-left: 22px;
+    padding-left: 18px;
 }
 
-.search-panel {
-    background: #f1f1f3;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: none;
-}
-
-.search-grid {
+.search-form {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
+    background: #f8f9fa;
+    padding: 12px;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+    height: 100%; /* Keep same height as device details box */
+    align-content: start; /* Align content to top, remove bottom space */
+}
+
+.search-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .form-group {
     display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 12px;
+    grid-template-columns: 100px 1fr;
+    gap: 8px;
     align-items: center;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.form-group.focused {
+    transform: translateY(-1px);
 }
 
 .form-group label {
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px;
+    font-weight: 600;
     color: #555;
+    margin-bottom: 0;
     text-align: left;
 }
 
 .form-group input {
-    padding: 10px 12px;
+    padding: 6px 8px;
     border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
+    border-radius: 6px;
+    font-size: 13px;
     background: white;
     transition: all 0.2s ease;
     outline: none;
@@ -71,7 +92,15 @@
 
 /* Device Information Section */
 .device-info-section {
-    margin-bottom: 24px;
+    margin-bottom: 0;
+}
+
+.device-info-section h2 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 12px 0;
+    color: #333;
+    padding-left: 18px;
 }
 
 .device-info-panel {
@@ -80,8 +109,10 @@
     padding: 20px;
     box-shadow: none;
     display: flex;
-    justify-content: space-between;
-    align-items: center;
+    flex-direction: column;
+    gap: 16px;
+    height: 100%; /* Keep same height as search box */
+    justify-content: space-between; /* Distribute content evenly */
 }
 
 .device-details {
@@ -277,7 +308,12 @@
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-    .search-grid {
+    .search-device-section {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .search-form {
         grid-template-columns: 1fr;
     }
     

@@ -1,62 +1,68 @@
 <div class="app">
     <main class="content">
-        <!-- Search Section -->
-        <div class="search-section">
-            <h2>Search</h2>
-            <div class="search-panel">
-                <div class="search-grid">
-                    <div class="form-group">
-                        <label>Keyword</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.keyword">
+        <!-- Search and Device Info Section -->
+        <div class="search-device-section">
+            <!-- Search Section -->
+            <div class="search-section">
+                <h2>Search</h2>
+                <div class="search-form">
+                    <div class="search-column">
+                        <div class="form-group">
+                            <label>Keyword</label>
+                            <input type="text" placeholder="" [(ngModel)]="searchData.keyword">
+                        </div>
+                        <div class="form-group">
+                            <label>Building</label>
+                            <input type="text" placeholder="" [(ngModel)]="searchData.building">
+                        </div>
+                        <div class="form-group">
+                            <label>Building Group</label>
+                            <input type="text" placeholder="" [(ngModel)]="searchData.buildingGroup">
+                        </div>
+                        <div class="form-group">
+                            <label>Device Name</label>
+                            <input type="text" placeholder="" [(ngModel)]="searchData.deviceName">
+                        </div>
                     </div>
-                    <div class="form-group">
-                        <label>Building</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.building">
-                    </div>
-                    <div class="form-group">
-                        <label>Building Group</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.buildingGroup">
-                    </div>
-                    <div class="form-group">
-                        <label>Device Name</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.deviceName">
-                    </div>
-                    <div class="form-group">
-                        <label>City</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.city">
-                    </div>
-                    <div class="form-group">
-                        <label>Zip Code</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.zipCode">
-                    </div>
-                    <div class="form-group">
-                        <label>Tenant</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.tenant">
-                    </div>
-                    <div class="form-group">
-                        <label>Tenant ID</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.tenantId">
+                    <div class="search-column">
+                        <div class="form-group">
+                            <label>City</label>
+                            <input type="text" placeholder="" [(ngModel)]="searchData.city">
+                        </div>
+                        <div class="form-group">
+                            <label>Zip Code</label>
+                            <input type="text" placeholder="" [(ngModel)]="searchData.zipCode">
+                        </div>
+                        <div class="form-group">
+                            <label>Tenant</label>
+                            <input type="text" placeholder="" [(ngModel)]="searchData.tenant">
+                        </div>
+                        <div class="form-group">
+                            <label>Tenant ID</label>
+                            <input type="text" placeholder="" [(ngModel)]="searchData.tenantId">
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- Device Information Section -->
-        <div class="device-info-section">
-            <div class="device-info-panel">
-                <div class="device-details">
-                    <div class="device-field">
-                        <span class="device-label">Device Name:</span>
-                        <span class="device-value">New Device 019201290</span>
+            <!-- Device Information Section -->
+            <div class="device-info-section">
+                <h2>Device Details</h2>
+                <div class="device-info-panel">
+                    <div class="device-details">
+                        <div class="device-field">
+                            <span class="device-label">Device Name:</span>
+                            <span class="device-value">New Device 019201290</span>
+                        </div>
+                        <div class="device-field">
+                            <span class="device-label">Serial Number:</span>
+                            <span class="device-value">SM239012930</span>
+                        </div>
                     </div>
-                    <div class="device-field">
-                        <span class="device-label">Serial Number:</span>
-                        <span class="device-value">SM239012930</span>
+                    <div class="device-actions">
+                        <button class="pill" (click)="assignToNewLocation()">Assign to New Location</button>
+                        <button class="pill outline" (click)="unassignDevice()">Unassign</button>
                     </div>
-                </div>
-                <div class="device-actions">
-                    <button class="pill" (click)="assignToNewLocation()">Assign to New Location</button>
-                    <button class="pill outline" (click)="unassignDevice()">Unassign</button>
                 </div>
             </div>
         </div>
