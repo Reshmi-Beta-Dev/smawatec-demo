@@ -16,17 +16,17 @@
 
 /* Toggle Section */
 .toggle-section {
-    margin-bottom: 20px;
-    padding: 16px 0;
+    margin-bottom: var(--spacing-xl); /* 20px - using standard spacing */
+    padding: var(--spacing-lg) 0; /* 16px - using standard spacing */
 }
 
 .toggle-section .pill {
     background: #7b61ff;
     color: white;
     border: none;
-    border-radius: 20px;
-    padding: 8px 16px;
-    font-size: 14px;
+    border-radius: 16px; /* Reduced from 20px to match statistics */
+    padding: 4px 12px; /* Reduced to match statistics */
+    font-size: 12px; /* Reduced from 14px to match statistics */
     font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -39,39 +39,39 @@
 
 /* Message Board Section */
 .message-board-section {
-    margin-bottom: 24px;
+    margin-bottom: var(--spacing-2xl); /* 24px - using standard spacing */
 }
 
 .message-board-section h2 {
-    font-size: 18px;
+    font-size: 16px; /* Reduced from 18px to match statistics */
     font-weight: 600;
-    margin: 0 0 16px 0;
+    margin: 0 0 var(--spacing-lg) 0; /* 16px - using standard spacing */
     color: #333;
-    padding-left: 22px;
+    padding-left: 18px; /* Reduced from 22px to match statistics */
 }
 
 .table-container {
     background: #f1f1f3;
-    border-radius: 18px;
-    padding: 10px 12px;
+    border-radius: 12px; /* Reduced from 18px to match statistics */
+    padding: var(--spacing-md) var(--spacing-md); /* 12px - using standard spacing */
     box-shadow: none;
     overflow: auto;
-    margin-bottom: 16px;
+    margin-bottom: var(--spacing-lg); /* 16px - using standard spacing */
 }
 
 .message-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 4px;
-    font-size: 13px;
+    border-spacing: 0 var(--spacing-xs); /* 4px - using standard spacing */
+    font-size: 12px; /* Reduced from 13px to match statistics */
     background: transparent;
 }
 
 .message-table thead th {
-    font-size: 13px;
+    font-size: 12px; /* Reduced from 13px to match statistics */
     text-align: left;
     color: #3e424c;
-    padding: 8px 8px;
+    padding: var(--spacing-sm) var(--spacing-sm); /* 8px - using standard spacing */
     border: 0;
     white-space: nowrap;
     position: sticky;
@@ -82,9 +82,9 @@
 
 .message-table tbody tr {
     background: transparent;
-    border-radius: 12px;
+    border-radius: 8px; /* Reduced from 12px to match statistics */
     box-shadow: none;
-    height: 34px;
+    height: 28px; /* Reduced from 34px to match statistics */
     cursor: pointer;
 }
 
@@ -105,31 +105,31 @@
 }
 
 .message-table tbody td {
-    padding: 8px 8px;
+    padding: 3px 4px; /* Reduced to match statistics */
     border: 0;
     white-space: nowrap;
 }
 
 .message-table tbody tr td:first-child {
     border-left: 0;
-    border-top-left-radius: 12px;
-    border-bottom-left-radius: 12px;
-    width: 28px;
+    border-top-left-radius: 8px; /* Reduced to match statistics */
+    border-bottom-left-radius: 8px; /* Reduced to match statistics */
+    width: 24px; /* Reduced from 28px to match statistics */
     color: #666;
 }
 
 .message-table tbody tr td:last-child {
     border-right: 0;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
+    border-top-right-radius: 8px; /* Reduced to match statistics */
+    border-bottom-right-radius: 8px; /* Reduced to match statistics */
 }
 
 /* Alarm Badges */
 .alarm-badge {
     display: inline-block;
-    padding: 4px 8px;
-    border-radius: 12px;
-    font-size: 11px;
+    padding: 3px 6px; /* Reduced to match statistics */
+    border-radius: 6px; /* Reduced from 12px to match statistics */
+    font-size: 10px; /* Reduced from 11px to match statistics */
     font-weight: 600;
     text-transform: uppercase;
 }
@@ -166,7 +166,7 @@
 .bottom-panels {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    gap: 16px;
+    gap: var(--spacing-lg); /* 16px - using standard spacing */
     align-items: start;
 }
 
@@ -177,17 +177,17 @@
 }
 
 .panel-section h3 {
-    font-size: 16px;
+    font-size: 16px; /* Keep 16px to match statistics */
     font-weight: 600;
-    margin: 0 0 16px 0;
+    margin: 0 0 var(--spacing-lg) 0; /* 16px - using standard spacing */
     color: #333;
-    padding-left: 22px;
+    padding-left: 18px; /* Reduced from 22px to match statistics */
 }
 
 .panel {
     background: #f1f1f3;
-    border-radius: 18px;
-    padding: 20px;
+    border-radius: 12px; /* Reduced from 18px to match statistics */
+    padding: var(--spacing-lg); /* 16px - using standard spacing */
     border: 0;
     box-shadow: none;
     display: flex;
@@ -200,7 +200,7 @@
 .panel-content {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--spacing-md); /* 12px - using standard spacing */
 }
 
 .current-section,
@@ -267,14 +267,15 @@
 /* Actions in table */
 .actions {
     display: flex;
-    gap: 6px;
-    justify-content: flex-end;
+    gap: var(--spacing-xs); /* 4px - using standard spacing */
+    justify-content: flex-start; /* Changed from flex-end to flex-start for left alignment */
 }
 
 .actions .pill {
-    padding: 4px 8px;
-    font-size: 11px;
+    padding: 3px 6px; /* Reduced to match statistics */
+    font-size: 10px; /* Reduced to match statistics */
     min-width: auto;
+    border-radius: 6px; /* Reduced to match statistics */
 }
 
 /* Button Styles */
