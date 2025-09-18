@@ -15,6 +15,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedRow: number | null = null;
   showOverview: boolean = true; // Toggle between overview and home content
   private chart: any;
+  private chartCheckInterval: any;
 
   ngOnInit() {
     // Initialize any component logic here
@@ -24,7 +25,12 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     // Initialize chart after view is ready
     setTimeout(() => {
       this.initializeChart();
-    }, 500);
+    }, 1000); // Increased timeout to ensure Chart.js is fully loaded
+    
+    // Check chart visibility every 2 seconds
+    this.chartCheckInterval = setInterval(() => {
+      this.checkChartVisibility();
+    }, 2000);
   }
 
   ngOnDestroy() {
@@ -32,6 +38,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.chart) {
       this.chart.destroy();
       this.chart = null;
+    }
+    
+    // Clear interval
+    if (this.chartCheckInterval) {
+      clearInterval(this.chartCheckInterval);
     }
   }
 
@@ -41,18 +52,30 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   toggleView() {
     this.showOverview = !this.showOverview;
+    // Reinitialize chart after view toggle
+    if (this.showOverview) {
+      setTimeout(() => {
+        this.initializeChart();
+      }, 100);
+    }
   }
 
   private initializeChart() {
     // Check if Chart is available
     if (typeof Chart === 'undefined') {
-      console.error('Chart.js is not loaded');
+      console.error('Chart.js is not loaded, retrying in 500ms...');
+      setTimeout(() => {
+        this.initializeChart();
+      }, 500);
       return;
     }
 
     const canvas = document.getElementById('monthlyChart') as HTMLCanvasElement;
     if (!canvas) {
-      console.error('Canvas element not found');
+      console.error('Canvas element not found, retrying in 500ms...');
+      setTimeout(() => {
+        this.initializeChart();
+      }, 500);
       return;
     }
 
@@ -65,6 +88,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     // Destroy existing chart if it exists
     if (this.chart) {
       this.chart.destroy();
+      this.chart = null;
     }
 
     // Sample monthly data for 2025
@@ -90,6 +114,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
           maintainAspectRatio: false,
           animation: {
             duration: 0
+          },
+          interaction: {
+            intersect: false,
+            mode: 'index'
           },
           plugins: {
             legend: {
@@ -130,6 +158,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log('Monthly chart initialized successfully');
     } catch (error) {
       console.error('Error initializing monthly chart:', error);
+    }
+  }
+
+  private checkChartVisibility() {
+    const canvas = document.getElementById('monthlyChart') as HTMLCanvasElement;
+    if (canvas && this.showOverview) {
+      // Check if chart exists and canvas is visible
+      if (!this.chart || this.chart.canvas.width === 0 || this.chart.canvas.height === 0) {
+        console.log('Chart not visible, reinitializing...');
+        this.initializeChart();
+      }
     }
   }
 }
