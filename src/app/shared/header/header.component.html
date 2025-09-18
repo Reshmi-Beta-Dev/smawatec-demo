@@ -1,9 +1,20 @@
 <!-- Header Component HTML for Angular Integration -->
 <header class="topbar">
-    <div class="brand">
-        <img src="/assets/logo.png" alt="smawatec logo" class="logo-img" style="width: 36px; height: 36px; object-fit: contain;" onerror="console.log('Image error - trying fallback'); this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.style.width='36px'; this.nextElementSibling.style.height='36px'; this.nextElementSibling.style.background='#7b61ff'; this.nextElementSibling.style.borderRadius='8px'; this.nextElementSibling.style.alignItems='center'; this.nextElementSibling.style.justifyContent='center'; this.nextElementSibling.style.color='white'; this.nextElementSibling.style.fontWeight='bold'; this.nextElementSibling.style.fontSize='14px';">
-        <div style="display:none;">S</div>
-        <span class="brand-name">smawatec</span>
+    <div class="header-content">
+        <div class="brand">
+            <img src="/assets/logo.png" alt="smawatec logo" class="logo-img" style="width: 36px; height: 36px; object-fit: contain;" onerror="console.log('Image error - trying fallback'); this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.style.width='36px'; this.nextElementSibling.style.height='36px'; this.nextElementSibling.style.background='#7b61ff'; this.nextElementSibling.style.borderRadius='8px'; this.nextElementSibling.style.alignItems='center'; this.nextElementSibling.style.justifyContent='center'; this.nextElementSibling.style.color='white'; this.nextElementSibling.style.fontWeight='bold'; this.nextElementSibling.style.fontSize='14px';">
+            <div style="display:none;">S</div>
+            <span class="brand-name">smawatec</span>
+        </div>
+        
+        <nav class="pill-nav" [class.active]="isMenuOpen">
+            <a class="pill" routerLink="/overview" (click)="closeMenu()" routerLinkActive="active">Overview</a>
+            <a class="pill" routerLink="/alarms" (click)="closeMenu()" routerLinkActive="active">Alarms</a>
+            <a class="pill" routerLink="/statistics" (click)="closeMenu()" routerLinkActive="active">Statistics</a>
+            <a class="pill" routerLink="/buildings" (click)="closeMenu()" routerLinkActive="active">Buildings</a>
+            <a class="pill" routerLink="/device-organizer" (click)="closeMenu()" routerLinkActive="active">Device Organizer</a>
+            <a class="pill" routerLink="/settings" (click)="closeMenu()" routerLinkActive="active">Settings</a>
+        </nav>
     </div>
     
     <!-- Hamburger Menu Button -->
@@ -15,13 +26,4 @@
         <span class="hamburger-line"></span>
         <span class="hamburger-line"></span>
     </button>
-    
-    <nav class="pill-nav" [class.active]="isMenuOpen">
-        <a class="pill" routerLink="/overview" (click)="closeMenu()" routerLinkActive="active">Overview</a>
-        <a class="pill" routerLink="/alarms" (click)="closeMenu()" routerLinkActive="active">Alarms</a>
-        <a class="pill" routerLink="/statistics" (click)="closeMenu()" routerLinkActive="active">Statistics</a>
-        <a class="pill" routerLink="/buildings" (click)="closeMenu()" routerLinkActive="active">Buildings</a>
-        <a class="pill" routerLink="/device-organizer" (click)="closeMenu()" routerLinkActive="active">Device Organizer</a>
-        <a class="pill" routerLink="/settings" (click)="closeMenu()" routerLinkActive="active">Settings</a>
-    </nav>
 </header>

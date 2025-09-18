@@ -4,7 +4,7 @@
     max-width: 100%;
     width: 100%;
     font-size: 14px;
-    padding: 0 24px 12px;
+    padding: 20px 24px 12px;
     position: relative;
 }
 
@@ -360,8 +360,8 @@
 .stats-section .period-inputs {
     display: flex;
     flex-direction: column;
-    gap: 4px;
-    margin-bottom: 8px;
+    gap: var(--spacing-xs); /* 4px - using standard spacing */
+    margin-bottom: var(--form-section-gap); /* 16px - using standard form section gap */
 }
 
 .stats-section .period-inputs .form-group {
@@ -431,7 +431,7 @@
 .action-buttons {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--spacing-sm); /* 8px - using standard spacing */
 }
 
 /* Button Styles */

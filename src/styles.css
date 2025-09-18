@@ -16,3 +16,23 @@ body {
 body {
   padding-top: 80px;
 }
+
+/* Standard Spacing System */
+:root {
+  /* Spacing Scale */
+  --spacing-xs: 4px;    /* Extra small spacing */
+  --spacing-sm: 8px;    /* Small spacing */
+  --spacing-md: 12px;   /* Medium spacing */
+  --spacing-lg: 16px;   /* Large spacing */
+  --spacing-xl: 20px;   /* Extra large spacing */
+  --spacing-2xl: 24px;  /* 2x large spacing */
+  --spacing-3xl: 32px;  /* 3x large spacing */
+  --spacing-4xl: 40px;  /* 4x large spacing */
+  
+  /* Component Spacing Standards */
+  --form-group-gap: var(--spacing-sm);        /* 8px - Gap between form elements */
+  --form-section-gap: var(--spacing-lg);      /* 16px - Gap between form sections */
+  --button-group-gap: var(--spacing-sm);      /* 8px - Gap between buttons */
+  --card-padding: var(--spacing-lg);          /* 16px - Standard card padding */
+  --section-margin: var(--spacing-2xl);       /* 24px - Margin between sections */
+}
