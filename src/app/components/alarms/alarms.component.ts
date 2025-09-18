@@ -1,15 +1,138 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatTableModule } from '@angular/material/table';
+import { MatButtonModule } from '@angular/material/button';
+import { MatChipsModule } from '@angular/material/chips';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBarModule, MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-alarms',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    MatTableModule,
+    MatButtonModule,
+    MatChipsModule,
+    MatIconModule,
+    MatDividerModule,
+    MatSnackBarModule
+  ],
   templateUrl: './alarms.component.html',
   styleUrls: ['./alarms.component.css']
 })
 export class AlarmsComponent implements OnInit {
   selectedRow: number | null = null;
+
+  // Table data for Material Design table
+  displayedColumns: string[] = ['id', 'building', 'address', 'apartment', 'tenant', 'alarm', 'message', 'action', 'actions'];
+  alarmData = [
+    {
+      id: 1,
+      building: 'PAR - B12012',
+      address: 'Paris, Champs Elysees, Rue de la P',
+      apartment: 'Block 1,L23, Apt 12',
+      tenant: 'Duvall',
+      alarm: { type: 'Major Leak', severity: 'major' },
+      message: 'poss. Pipe break',
+      action: 'auto shut off'
+    },
+    {
+      id: 2,
+      building: 'PAR - B12012',
+      address: 'Paris, Champs Elysees, Rue de la P',
+      apartment: 'Block 1,L23, Apt 12',
+      tenant: 'Duvall',
+      alarm: { type: 'Low Temp.', severity: 'low-temp' },
+      message: 'Ice warming',
+      action: 'None'
+    },
+    {
+      id: 3,
+      building: 'PAR - B12012',
+      address: 'Paris, Champs Elysees, Rue de la P',
+      apartment: 'Block 1,L23, Apt 12',
+      tenant: 'Duvall',
+      alarm: { type: 'Medium Leak', severity: 'medium' },
+      message: 'poss. Tap / Toilet',
+      action: 'None'
+    },
+    {
+      id: 4,
+      building: 'PAR - B12012',
+      address: 'Paris, Champs Elysees, Rue de la P',
+      apartment: 'Block 1,L23, Apt 12',
+      tenant: 'Duvall',
+      alarm: { type: 'Micro Leak', severity: 'micro' },
+      message: 'poss. Toilet',
+      action: 'None'
+    },
+    {
+      id: 5,
+      building: 'PAR - B12012',
+      address: 'Paris, Champs Elysees, Rue de la P',
+      apartment: 'Block 1,L23, Apt 12',
+      tenant: 'Duvall',
+      alarm: { type: 'Micro Leak', severity: 'micro' },
+      message: 'poss. Toilet',
+      action: 'None'
+    },
+    {
+      id: 6,
+      building: 'PAR - B12012',
+      address: 'Paris, Champs Elysees, Rue de la P',
+      apartment: 'Block 1,L23, Apt 12',
+      tenant: 'Duvall',
+      alarm: { type: 'Micro Leak', severity: 'micro' },
+      message: 'poss. Tap',
+      action: 'None'
+    },
+    {
+      id: 7,
+      building: 'PAR - B12012',
+      address: 'Paris, Champs Elysees, Rue de la P',
+      apartment: 'Block 1,L23, Apt 12',
+      tenant: 'Duvall',
+      alarm: { type: 'Micro Leak', severity: 'micro' },
+      message: 'poss. Tap',
+      action: 'None'
+    },
+    {
+      id: 8,
+      building: 'PAR - B12012',
+      address: 'Paris, Champs Elysees, Rue de la P',
+      apartment: 'Block 1,L23, Apt 12',
+      tenant: 'Duvall',
+      alarm: { type: 'Micro Leak', severity: 'micro' },
+      message: 'poss. Tap',
+      action: 'None'
+    },
+    {
+      id: 9,
+      building: 'PAR - B12012',
+      address: 'Paris, Champs Elysees, Rue de la P',
+      apartment: 'Block 1,L23, Apt 12',
+      tenant: 'Duvall',
+      alarm: { type: 'Micro Lea.', severity: 'micro' },
+      message: 'poss. Toilet',
+      action: 'None'
+    },
+    {
+      id: 10,
+      building: 'PAR - B12012',
+      address: 'Paris, Champs Elysees, Rue de la P',
+      apartment: 'Block 1,L23, Apt 12',
+      tenant: 'Duvall',
+      alarm: { type: 'Micro Leak', severity: 'micro' },
+      message: 'poss. Tap',
+      action: 'None'
+    }
+  ];
+
+  constructor(private snackBar: MatSnackBar) {}
 
   ngOnInit() {
     // Initialize any component logic here
@@ -21,66 +144,27 @@ export class AlarmsComponent implements OnInit {
 
   showDetails(event: Event) {
     event.stopPropagation();
-    this.showNotification('Opening alarm details...');
+    this.snackBar.open('Opening alarm details...', 'Close', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
   }
 
   hideAlarm(event: Event) {
     event.stopPropagation();
-    this.showNotification('Alarm has been hidden');
-    
-    // Add visual feedback
-    const row = (event.target as HTMLElement).closest('tr');
-    if (row) {
-      (row as HTMLElement).style.opacity = '0.5';
-      (row as HTMLElement).style.textDecoration = 'line-through';
-    }
-  }
-
-  unhideAllAlarms() {
-    this.showNotification('Showing all hidden alarms');
-    
-    // Restore all hidden alarms
-    const hiddenRows = document.querySelectorAll('.message-table tbody tr');
-    hiddenRows.forEach(row => {
-      (row as HTMLElement).style.opacity = '1';
-      (row as HTMLElement).style.textDecoration = 'none';
+    this.snackBar.open('Alarm has been hidden', 'Undo', {
+      duration: 5000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
     });
   }
 
-  private showNotification(message: string) {
-    // Create a simple notification
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #7b61ff;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 6px;
-      font-size: 14px;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-    `;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-      notification.style.transform = 'translateX(0)';
-    }, 10);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-      notification.style.transform = 'translateX(100%)';
-      setTimeout(() => {
-        if (document.body.contains(notification)) {
-          document.body.removeChild(notification);
-        }
-      }, 300);
-    }, 3000);
+  unhideAllAlarms() {
+    this.snackBar.open('Showing all hidden alarms', 'Close', {
+      duration: 3000,
+      horizontalPosition: 'right',
+      verticalPosition: 'top'
+    });
   }
 }

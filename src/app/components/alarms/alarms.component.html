@@ -1,249 +1,183 @@
-<div class="app">
-    <main class="content">
-        <!-- Alarm Summary Section -->
-        <div class="alarm-summary">
-            <!-- Major Alarms -->
-            <div class="alarm-section major-alarms-section">
-                <h3>Major Alarms</h3>
-                <div class="summary-panel major-alarms">
-                    <div class="alarm-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Major Leaks</span>
-                            <span class="stat-value highlight">1</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">auto shut-off non resolved</span>
-                            <span class="stat-value highlight">1</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Low Temperature</span>
-                            <span class="stat-value highlight">1</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+<!-- Material Design Alarms Component -->
+<div class="alarms-container">
+  <main class="content">
+    <!-- Alarm Summary Cards -->
+    <div class="summary-cards">
+      <!-- Major Alarms Card -->
+      <mat-card class="summary-card major-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>warning</mat-icon>
+            Major Alarms
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="stat-item">
+            <span class="stat-label">Major Leaks</span>
+            <span class="stat-value highlight">1</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">auto shut-off non resolved</span>
+            <span class="stat-value highlight">1</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Low Temperature</span>
+            <span class="stat-value highlight">1</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
-            <!-- Minor Alarms -->
-            <div class="alarm-section minor-alarms-section">
-                <h3>Minor Alarms</h3>
-                <div class="summary-panel minor-alarms">
-                    <div class="alarm-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Medium Leaks</span>
-                            <span class="stat-value highlight">54</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Minor Leaks</span>
-                            <span class="stat-value highlight">3</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <!-- Minor Alarms Card -->
+      <mat-card class="summary-card minor-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>info</mat-icon>
+            Minor Alarms
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="stat-item">
+            <span class="stat-label">Medium Leaks</span>
+            <span class="stat-value highlight">54</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Minor Leaks</span>
+            <span class="stat-value highlight">3</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
 
-            <!-- System Messages -->
-            <div class="alarm-section system-messages-section">
-                <h3>System Messages</h3>
-                <div class="summary-panel system-messages">
-                    <div class="alarm-stats">
-                        <div class="stat-item">
-                            <span class="stat-label">Wifi Connection Lost</span>
-                            <span class="stat-value highlight">1</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Power Loss</span>
-                            <span class="stat-value">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Valve Failure</span>
-                            <span class="stat-value">0</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">poor Wifi</span>
-                            <span class="stat-value highlight">2</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
+      <!-- System Messages Card -->
+      <mat-card class="summary-card system-card">
+        <mat-card-header>
+          <mat-card-title>
+            <mat-icon>settings</mat-icon>
+            System Messages
+          </mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div class="stat-item">
+            <span class="stat-label">Wifi Connection Lost</span>
+            <span class="stat-value highlight">1</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Power Loss</span>
+            <span class="stat-value">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">Valve Failure</span>
+            <span class="stat-value">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">poor Wifi</span>
+            <span class="stat-value highlight">2</span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+    </div>
+
+    <!-- Alarms Table Card -->
+    <mat-card class="alarms-table-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>list</mat-icon>
+          Alarm Details
+        </mat-card-title>
+        <mat-card-subtitle>Current alarm status and management</mat-card-subtitle>
+      </mat-card-header>
+      
+      <mat-card-content>
+        <div class="table-container">
+          <table mat-table [dataSource]="alarmData" class="alarms-table">
+            <!-- ID Column -->
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>#</th>
+              <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+            </ng-container>
+
+            <!-- Building Column -->
+            <ng-container matColumnDef="building">
+              <th mat-header-cell *matHeaderCellDef>Building</th>
+              <td mat-cell *matCellDef="let element">{{ element.building }}</td>
+            </ng-container>
+
+            <!-- Address Column -->
+            <ng-container matColumnDef="address">
+              <th mat-header-cell *matHeaderCellDef>Address</th>
+              <td mat-cell *matCellDef="let element">{{ element.address }}</td>
+            </ng-container>
+
+            <!-- Apartment Column -->
+            <ng-container matColumnDef="apartment">
+              <th mat-header-cell *matHeaderCellDef>Apartment</th>
+              <td mat-cell *matCellDef="let element">{{ element.apartment }}</td>
+            </ng-container>
+
+            <!-- Tenant Column -->
+            <ng-container matColumnDef="tenant">
+              <th mat-header-cell *matHeaderCellDef>Tenant</th>
+              <td mat-cell *matCellDef="let element">{{ element.tenant }}</td>
+            </ng-container>
+
+            <!-- Alarm Column -->
+            <ng-container matColumnDef="alarm">
+              <th mat-header-cell *matHeaderCellDef>Alarm</th>
+              <td mat-cell *matCellDef="let element">
+                <mat-chip [class]="'alarm-chip-' + element.alarm.severity">
+                  {{ element.alarm.type }}
+                </mat-chip>
+              </td>
+            </ng-container>
+
+            <!-- Message Column -->
+            <ng-container matColumnDef="message">
+              <th mat-header-cell *matHeaderCellDef>Message</th>
+              <td mat-cell *matCellDef="let element">{{ element.message }}</td>
+            </ng-container>
+
+            <!-- Action Column -->
+            <ng-container matColumnDef="action">
+              <th mat-header-cell *matHeaderCellDef>Action</th>
+              <td mat-cell *matCellDef="let element">{{ element.action }}</td>
+            </ng-container>
+
+            <!-- Actions Column -->
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let element">
+                <button mat-button color="primary" class="action-button" (click)="showDetails($event)">
+                  <mat-icon>info</mat-icon>
+                  Details
+                </button>
+                <button mat-button color="accent" class="action-button" (click)="hideAlarm($event)">
+                  <mat-icon>visibility_off</mat-icon>
+                  Hide
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;" 
+                [class.selected-row]="selectedRow === row.id"
+                (click)="onRowClick(row.id)"></tr>
+          </table>
         </div>
+      </mat-card-content>
 
-        <!-- Message Board Section -->
-        <div class="message-board-section">
-            <h2>Message Board</h2>
-            <div class="table-container">
-                <table class="message-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Building</th>
-                            <th>Address</th>
-                            <th>Apartment</th>
-                            <th>Tenant</th>
-                            <th>Alarm</th>
-                            <th>Message</th>
-                            <th>Action</th>
-                            <th class="action-header">
-                                <button class="pill outline" (click)="unhideAllAlarms()">Unhide Alarm</button>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="alarm-row critical" (click)="onRowClick(0)" [class.selected]="selectedRow === 0">
-                            <td>1</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge major">Major Leak</span></td>
-                            <td>poss. Pipe break</td>
-                            <td>auto shut off</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                        <tr class="alarm-row critical" (click)="onRowClick(1)" [class.selected]="selectedRow === 1">
-                            <td>2</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge low-temp">Low Temp.</span></td>
-                            <td>Ice warming</td>
-                            <td>None</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                        <tr class="alarm-row" (click)="onRowClick(2)" [class.selected]="selectedRow === 2">
-                            <td>3</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge medium">Medium Leak</span></td>
-                            <td>poss. Tap / Toilet</td>
-                            <td>None</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                        <tr class="alarm-row" (click)="onRowClick(3)" [class.selected]="selectedRow === 3">
-                            <td>4</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge micro">Micro Leak</span></td>
-                            <td>poss. Toilet</td>
-                            <td>None</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                        <tr class="alarm-row" (click)="onRowClick(4)" [class.selected]="selectedRow === 4">
-                            <td>5</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge micro">Micro Leak</span></td>
-                            <td>poss. Toilet</td>
-                            <td>None</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                        <tr class="alarm-row" (click)="onRowClick(5)" [class.selected]="selectedRow === 5">
-                            <td>6</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge micro">Micro Leak</span></td>
-                            <td>poss. Tap</td>
-                            <td>None</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                        <tr class="alarm-row" (click)="onRowClick(6)" [class.selected]="selectedRow === 6">
-                            <td>7</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge micro">Micro Leak</span></td>
-                            <td>poss. Tap</td>
-                            <td>None</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                        <tr class="alarm-row" (click)="onRowClick(7)" [class.selected]="selectedRow === 7">
-                            <td>8</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge micro">Micro Leak</span></td>
-                            <td>poss. Tap</td>
-                            <td>None</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                        <tr class="alarm-row" (click)="onRowClick(8)" [class.selected]="selectedRow === 8">
-                            <td>9</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge micro">Micro Leak</span></td>
-                            <td>poss. Tap</td>
-                            <td>None</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                        <tr class="alarm-row" (click)="onRowClick(9)" [class.selected]="selectedRow === 9">
-                            <td>10</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge micro">Micro Lea.</span></td>
-                            <td>poss. Toilet</td>
-                            <td>None</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                        <tr class="alarm-row" (click)="onRowClick(10)" [class.selected]="selectedRow === 10">
-                            <td>11</td>
-                            <td>PAR - B12012</td>
-                            <td>Paris, Champs Elysees, Rue de la P</td>
-                            <td>Block 1,L23, Apt 12</td>
-                            <td>Duvall</td>
-                            <td><span class="alarm-badge micro">Micro Leak</span></td>
-                            <td>poss. Tap</td>
-                            <td>None</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" (click)="unhideAllAlarms()">
+          <mat-icon>visibility</mat-icon>
+          Unhide All Alarms
+        </button>
+        <button mat-stroked-button color="primary">
+          <mat-icon>filter_list</mat-icon>
+          Filter Alarms
+        </button>
+        <button mat-stroked-button color="primary">
+          <mat-icon>download</mat-icon>
+          Export Data
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </main>
 </div>

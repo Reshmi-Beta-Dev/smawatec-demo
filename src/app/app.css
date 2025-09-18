@@ -1,0 +1,18 @@
+/* Material Design App Layout with Two-Tier Navigation */
+.app-main {
+  min-height: calc(100vh - 120px);
+  background-color: #fafafa;
+  padding: 0;
+  margin: 0;
+}
+
+/* Ensure proper spacing for Material Design */
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}

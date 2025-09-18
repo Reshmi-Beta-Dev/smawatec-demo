@@ -1,27 +1,109 @@
-<!-- Header Component HTML for Angular Integration -->
-<header class="topbar">
-    <div class="brand">
-        <img src="/assets/logo.png" alt="smawatec logo" class="logo-img" style="width: 36px; height: 36px; object-fit: contain;" onerror="console.log('Image error - trying fallback'); this.style.display='none'; this.nextElementSibling.style.display='flex'; this.nextElementSibling.style.width='36px'; this.nextElementSibling.style.height='36px'; this.nextElementSibling.style.background='#7b61ff'; this.nextElementSibling.style.borderRadius='8px'; this.nextElementSibling.style.alignItems='center'; this.nextElementSibling.style.justifyContent='center'; this.nextElementSibling.style.color='white'; this.nextElementSibling.style.fontWeight='bold'; this.nextElementSibling.style.fontSize='14px';">
-        <div style="display:none;">S</div>
-        <span class="brand-name">smawatec</span>
+<!-- Two-Tier Material Design Navigation -->
+<!-- Main Top Bar -->
+<mat-toolbar color="primary" class="main-toolbar">
+  <div class="main-toolbar-content">
+    <!-- Brand Section -->
+    <div class="brand-section">
+      <img src="/assets/logo.png" alt="smawatec logo" class="logo-img" 
+           onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+      <div class="logo-fallback" style="display:none;">
+        <mat-icon>water_drop</mat-icon>
+      </div>
+      <span class="brand-name">smawatec</span>
     </div>
-    
-    <!-- Hamburger Menu Button -->
-    <button class="hamburger" 
-            [class.active]="isMenuOpen"
-            (click)="toggleMenu()" 
-            aria-label="Toggle menu">
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-        <span class="hamburger-line"></span>
-    </button>
-    
-    <nav class="pill-nav" [class.active]="isMenuOpen">
-        <a class="pill" routerLink="/overview" (click)="closeMenu()" routerLinkActive="active">Overview</a>
-        <a class="pill" routerLink="/alarms" (click)="closeMenu()" routerLinkActive="active">Alarms</a>
-        <a class="pill" routerLink="/statistics" (click)="closeMenu()" routerLinkActive="active">Statistics</a>
-        <a class="pill" routerLink="/buildings" (click)="closeMenu()" routerLinkActive="active">Buildings</a>
-        <a class="pill" routerLink="/device-organizer" (click)="closeMenu()" routerLinkActive="active">Device Organizer</a>
-        <a class="pill" routerLink="/settings" (click)="closeMenu()" routerLinkActive="active">Settings</a>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <!-- Notifications -->
+      <button mat-icon-button class="action-button">
+        <mat-icon>notifications</mat-icon>
+        <span class="notification-badge">3</span>
+      </button>
+      
+      <!-- User Menu -->
+      <button mat-icon-button [matMenuTriggerFor]="userMenu" class="action-button">
+        <mat-icon>account_circle</mat-icon>
+      </button>
+      
+      <mat-menu #userMenu="matMenu">
+        <button mat-menu-item>
+          <mat-icon>person</mat-icon>
+          <span>Profile</span>
+        </button>
+        <button mat-menu-item>
+          <mat-icon>settings</mat-icon>
+          <span>Settings</span>
+        </button>
+        <mat-divider></mat-divider>
+        <button mat-menu-item>
+          <mat-icon>logout</mat-icon>
+          <span>Logout</span>
+        </button>
+      </mat-menu>
+    </div>
+  </div>
+</mat-toolbar>
+
+<!-- Sub Navigation Bar -->
+<mat-toolbar class="sub-toolbar">
+  <div class="sub-toolbar-content">
+    <!-- Desktop Navigation -->
+    <nav class="desktop-nav">
+      <button mat-button routerLink="/overview" routerLinkActive="active" 
+              class="nav-button">
+        Overview
+      </button>
+      <button mat-button routerLink="/alarms" routerLinkActive="active" 
+              class="nav-button">
+        Alarms
+      </button>
+      <button mat-button routerLink="/statistics" routerLinkActive="active" 
+              class="nav-button">
+        Statistics
+      </button>
+      <button mat-button routerLink="/buildings" routerLinkActive="active" 
+              class="nav-button">
+        Buildings
+      </button>
+      <button mat-button routerLink="/devices" routerLinkActive="active" 
+              class="nav-button">
+        Devices
+      </button>
+      <button mat-button routerLink="/settings" routerLinkActive="active" 
+              class="nav-button">
+        Settings
+      </button>
     </nav>
-</header>
+
+    <!-- Mobile Menu Button -->
+    <button mat-icon-button (click)="toggleMenu()" class="mobile-menu-button">
+      <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+
+  <!-- Mobile Sidenav -->
+  <mat-sidenav-container class="mobile-nav-container" *ngIf="isMenuOpen">
+    <mat-sidenav #sidenav mode="over" position="end" class="mobile-sidenav">
+      <mat-nav-list>
+        <a mat-list-item routerLink="/overview" (click)="closeMenu()" routerLinkActive="active">
+          <span matListItemTitle>Overview</span>
+        </a>
+        <a mat-list-item routerLink="/alarms" (click)="closeMenu()" routerLinkActive="active">
+          <span matListItemTitle>Alarms</span>
+        </a>
+        <a mat-list-item routerLink="/statistics" (click)="closeMenu()" routerLinkActive="active">
+          <span matListItemTitle>Statistics</span>
+        </a>
+        <a mat-list-item routerLink="/buildings" (click)="closeMenu()" routerLinkActive="active">
+          <span matListItemTitle>Buildings</span>
+        </a>
+        <a mat-list-item routerLink="/device-organizer" (click)="closeMenu()" routerLinkActive="active">
+          <span matListItemTitle>Devices</span>
+        </a>
+        <a mat-list-item routerLink="/settings" (click)="closeMenu()" routerLinkActive="active">
+          <span matListItemTitle>Settings</span>
+        </a>
+      </mat-nav-list>
+    </mat-sidenav>
+  </mat-sidenav-container>
+</mat-toolbar>

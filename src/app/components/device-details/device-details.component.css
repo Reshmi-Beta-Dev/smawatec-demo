@@ -1,353 +1,163 @@
-/* Device Organizer Component Styles - Based on device-organizer folder */
+/* Material Design Device Organizer */
 
-.app {
-    max-width: 100%;
-    width: 100%;
-    font-size: 14px;
-    padding: 0 24px 12px;
-    position: relative;
+.devices-container {
+  padding: 24px;
+  background: #fafafa;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
 }
 
-.content {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+/* Cards */
+.search-card,
+.device-card,
+.table-card {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-/* Search Section */
-.search-section {
-    margin-bottom: 24px;
+mat-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
 }
 
-.search-section h2 {
-    font-size: 18px;
-    font-weight: 600;
-    margin: 0 0 16px 0;
-    color: #333;
-    padding-left: 22px;
+mat-card-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  font-weight: 500;
+  color: #7b61ff;
 }
 
-.search-panel {
-    background: #f1f1f3;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: none;
+mat-card-title mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
 }
 
+/* Search */
 .search-grid {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
-.form-group {
-    display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 12px;
-    align-items: center;
-}
+.search-field { width: 100%; }
 
-.form-group label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #555;
-    text-align: left;
-}
-
-.form-group input {
-    padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
-    background: white;
-    transition: all 0.2s ease;
-    outline: none;
-}
-
-.form-group input:focus {
-    border-color: #7b61ff;
-    box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.1);
-}
-
-/* Device Information Section */
-.device-info-section {
-    margin-bottom: 24px;
-}
-
-.device-info-panel {
-    background: #f1f1f3;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: none;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.device-details {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+/* Device Info */
+.device-info {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
 }
 
 .device-field {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
 }
 
-.device-label {
-    font-size: 13px;
-    font-weight: 500;
-    color: #555;
-    min-width: 120px;
+.device-label { color: #555; font-weight: 500; }
+.device-value { color: #333; font-weight: 600; }
+
+/* Tables */
+.table-container {
+  overflow-x: auto;
+  border-radius: 8px;
+  background: #f8f9fa;
 }
 
-.device-value {
-    font-size: 13px;
-    font-weight: 600;
-    color: #333;
+.groups-table,
+.building-table,
+.unassigned-table {
+  width: 100%;
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.device-actions {
-    display: flex;
-    gap: 8px;
+.groups-table th,
+.building-table th,
+.unassigned-table th {
+  font-weight: 600;
+  color: #7b61ff;
+  font-size: 14px;
+  padding: 16px 8px;
+  background: #f8f9fa;
 }
 
-/* Building Groups Section */
-.building-groups-section {
-    margin-bottom: 24px;
+.groups-table td,
+.building-table td,
+.unassigned-table td {
+  padding: 12px 8px;
+  font-size: 14px;
+  border-bottom: 1px solid #e0e0e0;
 }
 
-.building-groups-section h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0 0 16px 0;
-    color: #333;
-    padding-left: 22px;
+.groups-table tr:hover,
+.building-table tr:hover,
+.unassigned-table tr:hover {
+  background-color: rgba(123, 97, 255, 0.04);
+  cursor: pointer;
 }
 
-.groups-panel {
-    background: #f1f1f3;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: none;
+.groups-table tr.selected,
+.building-table tr.selected,
+.unassigned-table tr.selected {
+  background-color: rgba(123, 97, 255, 0.08);
 }
 
-/* Building Section */
-.building-section {
-    margin-bottom: 24px;
+/* Actions */
+.card-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
 }
 
-.building-section h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0 0 16px 0;
-    color: #333;
-    padding-left: 22px;
+.card-actions button.mat-mdc-raised-button[color="primary"] {
+  background: #7b61ff !important;
+  color: white !important;
 }
 
-.building-panel {
-    background: #f1f1f3;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: none;
+.card-actions button.mat-mdc-raised-button[color="primary"]:hover {
+  background: #6b51ef !important;
 }
 
-/* Unassigned Devices Section */
-.unassigned-devices-section {
-    margin-bottom: 0;
+.header-actions button[color="primary"] {
+  background: #7b61ff !important;
+  color: white !important;
 }
 
-.unassigned-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 16px;
+/* Focus */
+button:focus,
+.mat-mdc-form-field:focus-within {
+  outline: 2px solid #7b61ff;
+  outline-offset: 2px;
 }
 
-.unassigned-header h3 {
-    font-size: 16px;
-    font-weight: 600;
-    margin: 0;
-    color: #333;
-    padding-left: 22px;
-}
-
-.unassigned-panel {
-    background: #f1f1f3;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: none;
-}
-
-/* Data Tables */
-.data-table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0 4px;
-    font-size: 13px;
-    background: transparent;
-}
-
-.data-table thead th {
-    font-size: 13px;
-    text-align: left;
-    color: #3e424c;
-    padding: 8px 8px;
-    border: 0;
-    white-space: nowrap;
-    position: sticky;
-    top: 0;
-    background: #eeeeef;
-    z-index: 1;
-}
-
-.data-table tbody tr {
-    background: transparent;
-    border-radius: 12px;
-    box-shadow: none;
-    height: 34px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.data-table tbody tr:hover td {
-    background: #f4dfe3;
-}
-
-.data-table tbody tr.selected td {
-    background: #f4dfe3;
-}
-
-.data-table tbody td {
-    padding: 8px 8px;
-    border: 0;
-    white-space: nowrap;
-}
-
-.data-table tbody tr td:first-child {
-    border-left: 0;
-    border-top-left-radius: 12px;
-    border-bottom-left-radius: 12px;
-    width: 28px;
-    color: #666;
-}
-
-.data-table tbody tr td:last-child {
-    border-right: 0;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
-}
-
-/* Button Styles */
-.pill {
-    appearance: none;
-    border: 0;
-    border-radius: 999px;
-    background: #6c5ce7;
-    padding: 8px 14px;
-    font-weight: 600;
-    color: #fff;
-    cursor: pointer;
-    position: relative;
-    font-size: 12px;
-    transition: all 0.2s ease;
-}
-
-.pill:hover {
-    background: #5b4ce6;
-    transform: scale(1.05);
-}
-
-.pill:active {
-    transform: scale(0.95);
-}
-
-.pill.outline {
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    color: #4b4f58;
-}
-
-.pill.outline:hover {
-    background: #f9fafb;
-    border-color: #d1d5db;
-}
-
-/* Responsive Design */
+/* Responsive */
 @media (max-width: 1200px) {
-    .search-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .device-info-panel {
-        flex-direction: column;
-        gap: 16px;
-        align-items: flex-start;
-    }
-    
-    .device-actions {
-        width: 100%;
-        justify-content: center;
-    }
+  .search-grid { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 768px) {
-    .app {
-        padding: 0 16px 16px;
-    }
-    
-    .search-panel,
-    .device-info-panel,
-    .groups-panel,
-    .building-panel,
-    .unassigned-panel {
-        padding: 16px;
-    }
-    
-    .data-table {
-        font-size: 12px;
-    }
-    
-    .data-table thead th,
-    .data-table tbody td {
-        padding: 6px 4px;
-    }
-    
-    .form-group {
-        grid-template-columns: 100px 1fr;
-        gap: 8px;
-    }
-    
-    .device-field {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
-    }
-    
-    .device-label {
-        min-width: auto;
-    }
-    
-    .unassigned-header {
-        flex-direction: column;
-        gap: 12px;
-        align-items: flex-start;
-    }
+  .devices-container { padding: 16px; }
+  .card-actions { flex-direction: column; }
 }
 
 @media (max-width: 480px) {
-    .form-group {
-        grid-template-columns: 1fr;
-        gap: 4px;
-    }
-    
-    .form-group label {
-        text-align: left;
-    }
-    
-    .device-actions {
-        flex-direction: column;
-    }
+  .device-field {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
 }

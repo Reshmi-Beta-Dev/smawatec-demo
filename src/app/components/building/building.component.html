@@ -1,241 +1,206 @@
-<div class="app">
-    <main class="content">
-        <!-- Search Section -->
-        <div class="search-section">
-            <h2>Search</h2>
-            <div class="search-panel">
-                <div class="search-grid">
-                    <div class="form-group">
-                        <label>Keyword</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.keyword">
-                    </div>
-                    <div class="form-group">
-                        <label>Building</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.building">
-                    </div>
-                    <div class="form-group">
-                        <label>Building Group</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.buildingGroup">
-                    </div>
-                    <div class="form-group">
-                        <label>Device Name</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.deviceName">
-                    </div>
-                    <div class="form-group">
-                        <label>City</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.city">
-                    </div>
-                    <div class="form-group">
-                        <label>Zip Code</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.zipCode">
-                    </div>
-                    <div class="form-group">
-                        <label>Tenant</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.tenant">
-                    </div>
-                    <div class="form-group">
-                        <label>Tenant ID</label>
-                        <input type="text" placeholder="" [(ngModel)]="searchData.tenantId">
-                    </div>
-                </div>
-            </div>
-        </div>
+<!-- Material Design Buildings Page -->
+<div class="buildings-container">
+  <!-- Search Section -->
+  <mat-card class="search-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>search</mat-icon>
+        Search
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="search-grid">
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Keyword</mat-label>
+          <input matInput [(ngModel)]="searchData.keyword">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Building</mat-label>
+          <input matInput [(ngModel)]="searchData.building">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Building Group</mat-label>
+          <input matInput [(ngModel)]="searchData.buildingGroup">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Device Name</mat-label>
+          <input matInput [(ngModel)]="searchData.deviceName">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>City</mat-label>
+          <input matInput [(ngModel)]="searchData.city">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Zip Code</mat-label>
+          <input matInput [(ngModel)]="searchData.zipCode">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Tenant</mat-label>
+          <input matInput [(ngModel)]="searchData.tenant">
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="search-field">
+          <mat-label>Tenant ID</mat-label>
+          <input matInput [(ngModel)]="searchData.tenantId">
+        </mat-form-field>
+      </div>
+    </mat-card-content>
+  </mat-card>
 
-        <!-- Middle Section -->
-        <div class="middle-section">
-            <!-- Building Groups Section -->
-            <div class="building-groups-section">
-                <h3>Building Groups</h3>
-                <div class="groups-panel">
-                    <table class="data-table">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Group</th>
-                                <th>Building</th>
-                                <th>Zip Code</th>
-                                <th>Address</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr (click)="onGroupRowClick(0)" [class.selected]="selectedGroupRow === 0">
-                                <td>1</td>
-                                <td>PAR - GP1</td>
-                                <td>PAR-GP1-B12012</td>
-                                <td>23212</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(1)" [class.selected]="selectedGroupRow === 1">
-                                <td>2</td>
-                                <td>PAR - GP2</td>
-                                <td>PAR-GP2-B12013</td>
-                                <td>23213</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(2)" [class.selected]="selectedGroupRow === 2">
-                                <td>3</td>
-                                <td>PAR - GP3</td>
-                                <td>PAR-GP3-B12014</td>
-                                <td>23214</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(3)" [class.selected]="selectedGroupRow === 3">
-                                <td>4</td>
-                                <td>PAR - GP4</td>
-                                <td>PAR-GP4-B12015</td>
-                                <td>23215</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(4)" [class.selected]="selectedGroupRow === 4">
-                                <td>5</td>
-                                <td>PAR - GP5</td>
-                                <td>PAR-GP5-B12016</td>
-                                <td>23216</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(5)" [class.selected]="selectedGroupRow === 5">
-                                <td>6</td>
-                                <td>PAR - GP6</td>
-                                <td>PAR-GP6-B12017</td>
-                                <td>23217</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(6)" [class.selected]="selectedGroupRow === 6">
-                                <td>7</td>
-                                <td>PAR - GP7</td>
-                                <td>PAR-GP7-B12018</td>
-                                <td>23218</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(7)" [class.selected]="selectedGroupRow === 7">
-                                <td>8</td>
-                                <td>PAR - GP8</td>
-                                <td>PAR-GP8-B12019</td>
-                                <td>23219</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div class="action-buttons">
-                        <button class="pill" (click)="addGroup()">Add Group</button>
-                        <button class="pill outline" (click)="removeGroup()">Remove Group</button>
-                    </div>
-                </div>
-            </div>
+  <!-- Middle Section: Building Groups + Building/Apartment Details -->
+  <div class="middle-layout">
+    <!-- Building Groups -->
+    <mat-card class="table-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>group_work</mat-icon>
+          Building Groups
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="table-container">
+          <table mat-table [dataSource]="[
+              { id:1, group:'PAR - GP1', building:'PAR-GP1-B12012', zip:'23212', address:'Paris, Champs Elysees, Rue de la Place' },
+              { id:2, group:'PAR - GP2', building:'PAR-GP2-B12013', zip:'23213', address:'Paris, Champs Elysees, Rue de la Place' },
+              { id:3, group:'PAR - GP3', building:'PAR-GP3-B12014', zip:'23214', address:'Paris, Champs Elysees, Rue de la Place' },
+              { id:4, group:'PAR - GP4', building:'PAR-GP4-B12015', zip:'23215', address:'Paris, Champs Elysees, Rue de la Place' },
+              { id:5, group:'PAR - GP5', building:'PAR-GP5-B12016', zip:'23216', address:'Paris, Champs Elysees, Rue de la Place' },
+              { id:6, group:'PAR - GP6', building:'PAR-GP6-B12017', zip:'23217', address:'Paris, Champs Elysees, Rue de la Place' },
+              { id:7, group:'PAR - GP7', building:'PAR-GP7-B12018', zip:'23218', address:'Paris, Champs Elysees, Rue de la Place' },
+              { id:8, group:'PAR - GP8', building:'PAR-GP8-B12019', zip:'23219', address:'Paris, Champs Elysees, Rue de la Place' }
+            ]" class="groups-table">
+            <ng-container matColumnDef="id">
+              <th mat-header-cell *matHeaderCellDef>#</th>
+              <td mat-cell *matCellDef="let e">{{ e.id }}</td>
+            </ng-container>
+            <ng-container matColumnDef="group">
+              <th mat-header-cell *matHeaderCellDef>Group</th>
+              <td mat-cell *matCellDef="let e">{{ e.group }}</td>
+            </ng-container>
+            <ng-container matColumnDef="building">
+              <th mat-header-cell *matHeaderCellDef>Building</th>
+              <td mat-cell *matCellDef="let e">{{ e.building }}</td>
+            </ng-container>
+            <ng-container matColumnDef="zip">
+              <th mat-header-cell *matHeaderCellDef>Zip Code</th>
+              <td mat-cell *matCellDef="let e">{{ e.zip }}</td>
+            </ng-container>
+            <ng-container matColumnDef="address">
+              <th mat-header-cell *matHeaderCellDef>Address</th>
+              <td mat-cell *matCellDef="let e">{{ e.address }}</td>
+            </ng-container>
 
-            <!-- Building / Apartment Section -->
-            <div class="building-apartment-section">
-                <h3>Building / Apartment</h3>
-                <div class="apartment-panel">
-                    <div class="kv-grid">
-                        <div class="kv-row">
-                            <span class="kv-label">Building Group</span>
-                            <span class="kv-value">PAR-GP1</span>
-                        </div>
-                        <div class="kv-row">
-                            <span class="kv-label">Building</span>
-                            <span class="kv-value">B12012</span>
-                        </div>
-                        <div class="kv-row">
-                            <span class="kv-label">Apartment</span>
-                            <span class="kv-value">Block 1, L23, AP23</span>
-                        </div>
-                        <div class="kv-row">
-                            <span class="kv-label">Street</span>
-                            <span class="kv-value">Champs Elysees, Rue de la place 41</span>
-                        </div>
-                        <div class="kv-row">
-                            <span class="kv-label">Tenant</span>
-                            <span class="kv-value">Mr Francis Chevalier</span>
-                        </div>
-                        <div class="kv-row">
-                            <span class="kv-label">Telephone</span>
-                            <span class="kv-value">048932 2892</span>
-                        </div>
-                        <div class="kv-row">
-                            <span class="kv-label">Mobile Phone</span>
-                            <span class="kv-value">07 48932 2892</span>
-                        </div>
-                        <div class="kv-row">
-                            <span class="kv-label">Email</span>
-                            <span class="kv-value">F.Chevalier@chv-fr.fr</span>
-                        </div>
-                        <div class="kv-row">
-                            <span class="kv-label">Water Price</span>
-                            <span class="kv-value">2, 32 Euro /m3</span>
-                        </div>
-                        <div class="kv-row">
-                            <span class="kv-label">Zip Code</span>
-                            <span class="kv-value">14323</span>
-                        </div>
-                        <div class="kv-row">
-                            <span class="kv-label">City</span>
-                            <span class="kv-value">Paris</span>
-                        </div>
-                    </div>
-                    <div class="action-buttons">
-                        <button class="pill" (click)="addApartment()">Add Apartment</button>
-                        <button class="pill outline" (click)="saveDetails()">Save</button>
-                    </div>
-                </div>
-            </div>
+            <tr mat-header-row *matHeaderRowDef="['id','group','building','zip','address']"></tr>
+            <tr mat-row *matRowDef="let row; columns: ['id','group','building','zip','address'];"
+                (click)="onGroupRowClick(row.id - 1)"
+                [class.selected]="selectedGroupRow === (row.id - 1)"></tr>
+          </table>
         </div>
+        <div class="card-actions">
+          <button mat-raised-button color="primary" (click)="addGroup()">
+            <mat-icon>add</mat-icon>
+            Add Group
+          </button>
+          <button mat-stroked-button (click)="removeGroup()">
+            <mat-icon>remove_circle</mat-icon>
+            Remove Group
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
 
-        <!-- Building Section -->
-        <div class="building-section">
-            <h3>Building</h3>
-            <div class="building-panel">
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Building</th>
-                            <th>Zip Code</th>
-                            <th>Address</th>
-                            <th>Apartment</th>
-                            <th>Tenant</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr (click)="onBuildingRowClick(0)" [class.selected]="selectedBuildingRow === 0">
-                            <td>1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap12</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                        <tr (click)="onBuildingRowClick(1)" [class.selected]="selectedBuildingRow === 1">
-                            <td>2</td>
-                            <td>PAR-GP2-B12013</td>
-                            <td>23213</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap13</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                        <tr (click)="onBuildingRowClick(2)" [class.selected]="selectedBuildingRow === 2">
-                            <td>3</td>
-                            <td>PAR-GP3-B12014</td>
-                            <td>23214</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap14</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                        <tr (click)="onBuildingRowClick(3)" [class.selected]="selectedBuildingRow === 3">
-                            <td>4</td>
-                            <td>PAR-GP4-B12015</td>
-                            <td>23215</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap15</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                    </tbody>
-                </table>
-                <div class="action-buttons">
-                    <button class="pill" (click)="addBuilding()">Add Building</button>
-                    <button class="pill outline" (click)="removeBuilding()">Remove Building</button>
-                </div>
-            </div>
+    <!-- Building / Apartment Details -->
+    <mat-card class="details-card">
+      <mat-card-header>
+        <mat-card-title>
+          <mat-icon>apartment</mat-icon>
+          Building / Apartment
+        </mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div class="kv-grid">
+          <div class="kv-row"><span class="kv-label">Building Group</span><span class="kv-value">PAR-GP1</span></div>
+          <div class="kv-row"><span class="kv-label">Building</span><span class="kv-value">B12012</span></div>
+          <div class="kv-row"><span class="kv-label">Apartment</span><span class="kv-value">Block 1, L23, AP23</span></div>
+          <div class="kv-row"><span class="kv-label">Street</span><span class="kv-value">Champs Elysees, Rue de la place 41</span></div>
+          <div class="kv-row"><span class="kv-label">Tenant</span><span class="kv-value">Mr Francis Chevalier</span></div>
+          <div class="kv-row"><span class="kv-label">Telephone</span><span class="kv-value">048932 2892</span></div>
+          <div class="kv-row"><span class="kv-label">Mobile Phone</span><span class="kv-value">07 48932 2892</span></div>
+          <div class="kv-row"><span class="kv-label">Email</span><span class="kv-value">F.Chevalier@chv-fr.fr</span></div>
+          <div class="kv-row"><span class="kv-label">Water Price</span><span class="kv-value">2, 32 Euro /m3</span></div>
+          <div class="kv-row"><span class="kv-label">Zip Code</span><span class="kv-value">14323</span></div>
+          <div class="kv-row"><span class="kv-label">City</span><span class="kv-value">Paris</span></div>
         </div>
-    </main>
+        <div class="card-actions">
+          <button mat-raised-button color="primary" (click)="addApartment()">
+            <mat-icon>add_home</mat-icon>
+            Add Apartment
+          </button>
+          <button mat-stroked-button (click)="saveDetails()">
+            <mat-icon>save</mat-icon>
+            Save
+          </button>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Building Table -->
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon>business</mat-icon>
+        Building
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="table-container">
+        <table mat-table [dataSource]="[
+            { id:1, building:'PAR-GP1-B12012', zip:'23212', address:'Paris, Champs Elysees, Rue de la Place', apartment:'Block 1, L23, Ap12', tenant:'Bonaparte, Napoleon' },
+            { id:2, building:'PAR-GP2-B12013', zip:'23213', address:'Paris, Champs Elysees, Rue de la Place', apartment:'Block 1, L23, Ap13', tenant:'Bonaparte, Napoleon' },
+            { id:3, building:'PAR-GP3-B12014', zip:'23214', address:'Paris, Champs Elysees, Rue de la Place', apartment:'Block 1, L23, Ap14', tenant:'Bonaparte, Napoleon' },
+            { id:4, building:'PAR-GP4-B12015', zip:'23215', address:'Paris, Champs Elysees, Rue de la Place', apartment:'Block 1, L23, Ap15', tenant:'Bonaparte, Napoleon' }
+          ]" class="building-table">
+          <ng-container matColumnDef="id">
+            <th mat-header-cell *matHeaderCellDef>#</th>
+            <td mat-cell *matCellDef="let e">{{ e.id }}</td>
+          </ng-container>
+          <ng-container matColumnDef="building">
+            <th mat-header-cell *matHeaderCellDef>Building</th>
+            <td mat-cell *matCellDef="let e">{{ e.building }}</td>
+          </ng-container>
+          <ng-container matColumnDef="zip">
+            <th mat-header-cell *matHeaderCellDef>Zip Code</th>
+            <td mat-cell *matCellDef="let e">{{ e.zip }}</td>
+          </ng-container>
+          <ng-container matColumnDef="address">
+            <th mat-header-cell *matHeaderCellDef>Address</th>
+            <td mat-cell *matCellDef="let e">{{ e.address }}</td>
+          </ng-container>
+          <ng-container matColumnDef="apartment">
+            <th mat-header-cell *matHeaderCellDef>Apartment</th>
+            <td mat-cell *matCellDef="let e">{{ e.apartment }}</td>
+          </ng-container>
+          <ng-container matColumnDef="tenant">
+            <th mat-header-cell *matHeaderCellDef>Tenant</th>
+            <td mat-cell *matCellDef="let e">{{ e.tenant }}</td>
+          </ng-container>
+
+          <tr mat-header-row *matHeaderRowDef="['id','building','zip','address','apartment','tenant']"></tr>
+          <tr mat-row *matRowDef="let row; columns: ['id','building','zip','address','apartment','tenant'];"
+              (click)="onBuildingRowClick(row.id - 1)"
+              [class.selected]="selectedBuildingRow === (row.id - 1)"></tr>
+        </table>
+      </div>
+      <div class="card-actions">
+        <button mat-raised-button color="primary" (click)="addBuilding()">
+          <mat-icon>add_business</mat-icon>
+          Add Building
+        </button>
+        <button mat-stroked-button (click)="removeBuilding()">
+          <mat-icon>remove_circle</mat-icon>
+          Remove Building
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
 </div>
