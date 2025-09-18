@@ -58,17 +58,17 @@
 .alarm-stats {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: var(--spacing-xs); /* 4px - reduced from 8px for more compact spacing */
 }
 
 .stat-item {
     display: flex;
-    justify-content: space-between; /* Changed back to space-between for right alignment of values */
+    justify-content: space-between; /* Right alignment of values */
     align-items: center;
-    padding: 3px 6px; /* Reduced padding */
-    background: transparent; /* Removed background for consistency */
-    border-radius: 0; /* Removed border radius for consistency */
-    font-size: 13px; /* Keep consistent font size */
+    padding: 2px 4px; /* Further reduced padding for more compact design */
+    background: transparent; /* No background for consistency */
+    border-radius: 0; /* No border radius for consistency */
+    font-size: 13px; /* Consistent font size */
 }
 
 .stat-label {
@@ -78,13 +78,13 @@
 }
 
 .stat-value {
-    color: #333;
+    color: #000000; /* Black color for values */
     font-weight: 600;
     text-align: right; /* Right align values */
 }
 
 .stat-value.highlight {
-    color: #b91c1c;
+    color: #000000;
     font-weight: 700;
 }
 
