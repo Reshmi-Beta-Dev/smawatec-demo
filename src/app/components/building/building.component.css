@@ -1,64 +1,75 @@
-/* Building Component Styles - Based on buildings folder */
+/* Building Component Styles - Consistent with Statistics Component */
 
 .app {
     max-width: 100%;
     width: 100%;
     font-size: 14px;
-    padding: 0 24px 12px;
+    padding: 20px 24px 12px; /* 20px top padding for chart spacing */
     position: relative;
 }
 
 .content {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--spacing-md); /* 12px - using standard spacing */
 }
 
 /* Search Section */
 .search-section {
-    margin-bottom: 24px;
+    margin-bottom: var(--spacing-2xl); /* 24px - using standard spacing */
 }
 
 .search-section h2 {
-    font-size: 18px;
+    font-size: 16px; /* Reduced from 18px to match statistics */
     font-weight: 600;
-    margin: 0 0 16px 0;
+    margin: 0 0 var(--spacing-lg) 0; /* 16px - using standard spacing */
     color: #333;
-    padding-left: 22px;
+    padding-left: 18px; /* Reduced from 22px to match statistics */
 }
 
-.search-panel {
-    background: #f1f1f3;
-    border-radius: 18px;
-    padding: 20px;
-    box-shadow: none;
-}
-
-.search-grid {
+.search-form {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 16px;
+    background: #f8f9fa; /* Exact match with statistics */
+    padding: 12px; /* Exact match with statistics */
+    border-radius: 12px;
+    border: 1px solid #e9ecef; /* Exact match with statistics */
+    width: 60%; /* Set width to 60% */
+}
+
+.search-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Exact match with statistics */
 }
 
 .form-group {
     display: grid;
-    grid-template-columns: 120px 1fr;
-    gap: 12px;
+    grid-template-columns: 100px 1fr; /* Exact match with statistics */
+    gap: 8px; /* Exact match with statistics */
     align-items: center;
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+.form-group.focused {
+    transform: translateY(-1px);
 }
 
 .form-group label {
-    font-size: 13px;
-    font-weight: 500;
+    font-size: 12px; /* Exact match with statistics */
+    font-weight: 600;
     color: #555;
+    margin-bottom: 0;
     text-align: left;
 }
 
 .form-group input {
-    padding: 10px 12px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 14px;
+    padding: 6px 8px; /* Exact match with statistics */
+    border: 1px solid #d1d5db; /* Exact match with statistics */
+    border-radius: 6px;
+    font-size: 13px;
     background: white;
     transition: all 0.2s ease;
     outline: none;
@@ -66,7 +77,7 @@
 
 .form-group input:focus {
     border-color: #7b61ff;
-    box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.1);
+    box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.1); /* Exact match with statistics */
 }
 
 /* Middle Section */
@@ -180,17 +191,17 @@
 .data-table {
     width: 100%;
     border-collapse: separate;
-    border-spacing: 0 4px;
-    font-size: 13px;
+    border-spacing: 0 2px; /* Reduced from 4px to match overview page */
+    font-size: 12px; /* Reduced from 13px to match overview page */
     background: transparent;
     margin-bottom: 16px;
 }
 
 .data-table thead th {
-    font-size: 13px;
+    font-size: 12px; /* Reduced from 13px to match overview page */
     text-align: left;
     color: #3e424c;
-    padding: 8px 8px;
+    padding: var(--spacing-sm); /* 8px - using standard spacing */
     border: 0;
     white-space: nowrap;
     position: sticky;
@@ -201,9 +212,9 @@
 
 .data-table tbody tr {
     background: transparent;
-    border-radius: 12px;
+    border-radius: 8px; /* Reduced from 12px to match overview page */
     box-shadow: none;
-    height: 34px;
+    height: 32px; /* Reduced from 34px to match overview page */
     cursor: pointer;
     transition: all 0.2s ease;
 }
@@ -217,23 +228,23 @@
 }
 
 .data-table tbody td {
-    padding: 8px 8px;
+    padding: 3px 4px; /* Reduced to match overview page */
     border: 0;
     white-space: nowrap;
 }
 
 .data-table tbody tr td:first-child {
     border-left: 0;
-    border-top-left-radius: 12px;
-    border-bottom-left-radius: 12px;
-    width: 28px;
+    border-top-left-radius: 8px; /* Reduced to match overview page */
+    border-bottom-left-radius: 8px; /* Reduced to match overview page */
+    width: 24px; /* Reduced from 28px to match overview page */
     color: #666;
 }
 
 .data-table tbody tr td:last-child {
     border-right: 0;
-    border-top-right-radius: 12px;
-    border-bottom-right-radius: 12px;
+    border-top-right-radius: 8px; /* Reduced to match overview page */
+    border-bottom-right-radius: 8px; /* Reduced to match overview page */
 }
 
 /* Action Buttons */

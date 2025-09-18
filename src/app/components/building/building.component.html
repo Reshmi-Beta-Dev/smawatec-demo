@@ -3,8 +3,8 @@
         <!-- Search Section -->
         <div class="search-section">
             <h2>Search</h2>
-            <div class="search-panel">
-                <div class="search-grid">
+            <div class="search-form">
+                <div class="search-column">
                     <div class="form-group">
                         <label>Keyword</label>
                         <input type="text" placeholder="" [(ngModel)]="searchData.keyword">
@@ -21,6 +21,8 @@
                         <label>Device Name</label>
                         <input type="text" placeholder="" [(ngModel)]="searchData.deviceName">
                     </div>
+                </div>
+                <div class="search-column">
                     <div class="form-group">
                         <label>City</label>
                         <input type="text" placeholder="" [(ngModel)]="searchData.city">
