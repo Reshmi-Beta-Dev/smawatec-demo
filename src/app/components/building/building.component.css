@@ -83,7 +83,7 @@
 /* Middle Section */
 .middle-section {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 3fr 2fr; /* 60% and 40% split */
     gap: 16px;
     margin-bottom: 24px;
     align-items: start;
@@ -110,7 +110,7 @@
     box-shadow: none;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 400px; /* Fixed height to match apartment panel */
 }
 
 /* Building / Apartment Section */
@@ -134,13 +134,13 @@
     box-shadow: none;
     display: flex;
     flex-direction: column;
-    height: 100%;
+    height: 400px; /* Fixed height to match groups panel */
 }
 
 .kv-grid {
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 2px; /* Further reduced spacing for equal height boxes */
     margin-bottom: 16px;
 }
 
@@ -148,20 +148,20 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 8px 12px;
-    background: #eeeeef;
-    border-radius: 8px;
+    padding: 2px 4px; /* Further reduced padding for equal height boxes */
+    background: transparent; /* Removed background for consistency */
+    border-radius: 0; /* Removed border radius for consistency */
     font-size: 13px;
 }
 
 .kv-label {
     color: #555;
-    font-weight: 500;
-    flex: 1;
+    font-weight: 600; /* Made bold like other components */
+    flex: 0 0 auto; /* Don't take all space */
 }
 
 .kv-value {
-    color: #333;
+    color: #000000; /* Black color for values */
     font-weight: 600;
     text-align: right;
 }
