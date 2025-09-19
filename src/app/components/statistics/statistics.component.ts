@@ -133,21 +133,15 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
     console.log('Device consumption data:', Object.fromEntries(deviceData));
 
-    // Convert to array and limit to first 24 devices for chart display
+    // Convert to array and sort by consumption descending
     const sortedDevices = Array.from(deviceData.entries())
-      .sort(([,a], [,b]) => b - a) // Sort by consumption descending
-      .slice(0, 24); // Take first 24 devices
+      .sort(([,a], [,b]) => b - a); // Sort by consumption descending
 
     console.log('Sorted devices for chart:', sortedDevices);
 
-    // Create array with device consumption data
-    const chartData = new Array(24).fill(0);
-    const labels = new Array(24).fill('');
-    
-    sortedDevices.forEach(([device, consumption], index) => {
-      chartData[index] = consumption;
-      labels[index] = device.substring(device.length - 3); // Show last 3 digits of serial
-    });
+    // Create arrays with only the actual devices (no empty slots)
+    const chartData = sortedDevices.map(([, consumption]) => consumption);
+    const labels = sortedDevices.map(([device]) => device.substring(device.length - 3)); // Show last 3 digits of serial
 
     console.log('Chart data processed:', { data: chartData, labels: labels });
 
@@ -218,20 +212,20 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
               ticks: {
                 color: '#666',
                 font: {
-                  size: 11
+                  size: 12
                 }
               }
             },
-             y: {
-               beginAtZero: true,
-               max: maxValue,
-               ticks: {
-                 stepSize: Math.max(20, Math.ceil(maxValue / 8)),
-                 color: '#666',
-                 font: {
-                   size: 11
-                 }
-               },
+            y: {
+              beginAtZero: true,
+              max: maxValue,
+              ticks: {
+                stepSize: Math.max(20, Math.ceil(maxValue / 6)),
+                color: '#666',
+                font: {
+                  size: 11
+                }
+              },
               grid: {
                 color: '#e0e0e0',
                 lineWidth: 1
@@ -241,6 +235,14 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
           elements: {
             bar: {
               borderRadius: 4
+            }
+          },
+          layout: {
+            padding: {
+              left: 10,
+              right: 10,
+              top: 10,
+              bottom: 10
             }
           }
         }

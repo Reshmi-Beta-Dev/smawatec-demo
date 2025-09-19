@@ -540,13 +540,27 @@
     }
 }
 
+/* Chart Container */
+.chart-container {
+    width: 100%;
+    height: 250px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+    height: auto;
+}
+
 /* Loading and Error States */
 .chart-loading,
 .chart-error {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 200px;
+    height: 250px;
     background: #f8f9fa;
     border-radius: 8px;
     border: 1px solid #e9ecef;
