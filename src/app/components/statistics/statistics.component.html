@@ -52,10 +52,19 @@
                     <div class="chart-section">
                         <div class="chart-header">
                             <button class="nav-btn" (click)="previousPeriod()">←</button>
-                            <h3>Today</h3>
+                            <h3>Today's Device Consumption</h3>
                             <button class="nav-btn" (click)="nextPeriod()">→</button>
                         </div>
-                        <div class="chart-container">
+                        <!-- Loading and Error States -->
+                        <div class="chart-loading" *ngIf="loading">
+                            <div class="loading-text">Loading today's consumption data...</div>
+                        </div>
+                        
+                        <div class="chart-error" *ngIf="error">
+                            <div class="error-text">{{ error }}</div>
+                        </div>
+                        
+                        <div class="chart-container" *ngIf="!loading && !error">
                             <canvas id="waterChart" width="400" height="200"></canvas>
                         </div>
                     </div>

@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SupabaseService, DailyConsumption } from '../../services/supabase.service';
 
 declare var Chart: any;
 
@@ -28,11 +29,18 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   periodTo: string = '';
   private chart: any;
 
-  ngOnInit() {
-    // Initialize any component logic here
+  // Supabase data properties
+  consumptionData: DailyConsumption[] = [];
+  loading = false;
+  error: string | null = null;
+
+  constructor(private supabaseService: SupabaseService) {}
+
+  async ngOnInit() {
+    await this.loadTodaysData();
   }
 
-  ngAfterViewInit() {
+  async ngAfterViewInit() {
     // Initialize chart after view is ready
     setTimeout(() => {
       this.initializeChart();
@@ -55,16 +63,18 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedBuildingRow = this.selectedBuildingRow === index ? null : index;
   }
 
-  previousPeriod() {
+  async previousPeriod() {
     this.showNotification('Previous period navigation');
+    await this.loadTodaysData();
     // Reinitialize chart after navigation
     setTimeout(() => {
       this.initializeChart();
     }, 100);
   }
 
-  nextPeriod() {
+  async nextPeriod() {
     this.showNotification('Next period navigation');
+    await this.loadTodaysData();
     // Reinitialize chart after navigation
     setTimeout(() => {
       this.initializeChart();
@@ -83,6 +93,65 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   exportXLS() {
     this.showNotification('Excel export functionality would generate an Excel file');
+  }
+
+  private async loadTodaysData() {
+    try {
+      this.loading = true;
+      this.error = null;
+
+      const today = new Date().toISOString().split('T')[0];
+      console.log('Loading today\'s data for:', today);
+
+      this.consumptionData = await this.supabaseService.getDailyConsumption(
+        undefined, // All devices
+        today,
+        today
+      );
+
+      console.log('Received today\'s consumption data:', {
+        count: this.consumptionData.length,
+        sample: this.consumptionData.slice(0, 3)
+      });
+
+    } catch (error) {
+      console.error('Error loading today\'s data:', error);
+      this.error = 'Failed to load today\'s consumption data.';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  private processTodaysDataForChart() {
+    // Group by device for today's view (since we only have daily totals, not hourly)
+    const deviceData = new Map<string, number>();
+    
+    this.consumptionData.forEach(data => {
+      const deviceKey = data.serial_number;
+      deviceData.set(deviceKey, (deviceData.get(deviceKey) || 0) + (data.consumption_liters || 0));
+    });
+
+    console.log('Device consumption data:', Object.fromEntries(deviceData));
+
+    // Convert to array and limit to first 24 devices for chart display
+    const sortedDevices = Array.from(deviceData.entries())
+      .sort(([,a], [,b]) => b - a) // Sort by consumption descending
+      .slice(0, 24); // Take first 24 devices
+
+    console.log('Sorted devices for chart:', sortedDevices);
+
+    // Create array with device consumption data
+    const chartData = new Array(24).fill(0);
+    const labels = new Array(24).fill('');
+    
+    sortedDevices.forEach(([device, consumption], index) => {
+      chartData[index] = consumption;
+      labels[index] = device.substring(device.length - 3); // Show last 3 digits of serial
+    });
+
+    console.log('Chart data processed:', { data: chartData, labels: labels });
+
+    return { data: chartData, labels: labels };
   }
 
   private initializeChart() {
@@ -109,14 +178,15 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.chart.destroy();
     }
 
-    // Sample data based on the image (peaks around hour 7 and 20)
+    // Process today's data for device display
+    const processedData = this.processTodaysDataForChart();
+    const maxValue = Math.max(...processedData.data, 200); // Use 200 as minimum max for better visualization
+
     const chartData = {
-      labels: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', 
-              '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'],
+      labels: processedData.labels,
       datasets: [{
         label: 'Water Usage (Liters)',
-        data: [20, 15, 10, 25, 30, 45, 130, 110, 80, 60, 50, 45, 
-               40, 35, 30, 25, 40, 60, 80, 120, 100, 70, 50, 30],
+        data: processedData.data,
         backgroundColor: '#3b82f6',
         borderColor: '#3b82f6',
         borderWidth: 0,
@@ -152,16 +222,16 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
                 }
               }
             },
-            y: {
-              beginAtZero: true,
-              max: 160,
-              ticks: {
-                stepSize: 20,
-                color: '#666',
-                font: {
-                  size: 11
-                }
-              },
+             y: {
+               beginAtZero: true,
+               max: maxValue,
+               ticks: {
+                 stepSize: Math.max(20, Math.ceil(maxValue / 8)),
+                 color: '#666',
+                 font: {
+                   size: 11
+                 }
+               },
               grid: {
                 color: '#e0e0e0',
                 lineWidth: 1
