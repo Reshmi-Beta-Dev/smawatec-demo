@@ -119,7 +119,6 @@ export class OverviewComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       });
-      console.log('Consumption chart initialized successfully');
     } catch (error) {
       console.error('Error initializing consumption chart:', error);
     }
@@ -131,7 +130,6 @@ export class OverviewComponent implements OnInit, AfterViewInit, OnDestroy {
 
     try {
       this.monthlyStats = await this.supabaseService.getMonthlyStats();
-      console.log('Overview data loaded successfully:', this.monthlyStats.length);
     } catch (error) {
       console.error('Error loading overview data:', error);
       this.error = 'Failed to load data from server';

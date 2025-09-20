@@ -155,7 +155,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       });
-      console.log('Monthly chart initialized successfully');
     } catch (error) {
       console.error('Error initializing monthly chart:', error);
     }
@@ -166,7 +165,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (canvas && this.showOverview) {
       // Check if chart exists and canvas is visible
       if (!this.chart || this.chart.canvas.width === 0 || this.chart.canvas.height === 0) {
-        console.log('Chart not visible, reinitializing...');
         this.initializeChart();
       }
     }
@@ -189,13 +187,6 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.consumptionData = consumptionData;
       this.deviceStatus = deviceStatusData;
       this.monthlyStats = monthlyStatsData;
-
-      console.log('Data loaded successfully:', {
-        alarms: this.alarms.length,
-        consumption: this.consumptionData.length,
-        devices: this.deviceStatus.length,
-        monthlyStats: this.monthlyStats.length
-      });
     } catch (error) {
       console.error('Error loading data:', error);
       this.error = 'Failed to load data from server';

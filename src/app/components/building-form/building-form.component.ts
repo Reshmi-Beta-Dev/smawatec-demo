@@ -38,27 +38,16 @@ export class BuildingFormComponent implements OnInit, OnChanges {
   constructor(private supabaseService: SupabaseService) {}
 
   async ngOnInit() {
-    console.log('BuildingFormComponent ngOnInit:', {
-      isEditMode: this.isEditMode,
-      buildingData: this.buildingData,
-      selectedGroupId: this.selectedGroupId
-    });
-    
     await this.loadDropdownData();
     if (this.isEditMode && this.buildingData) {
-      console.log('Populating form for edit with data:', this.buildingData);
       this.populateFormForEdit();
     } else {
-      console.log('Resetting form for create mode');
       this.resetForm();
     }
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log('BuildingFormComponent ngOnChanges:', changes);
-    
     if (changes['buildingData'] && changes['buildingData'].currentValue && this.isEditMode) {
-      console.log('Building data changed, repopulating form');
       // Add a small delay to ensure dropdown data is loaded
       setTimeout(() => {
         this.populateFormForEdit();
@@ -66,7 +55,6 @@ export class BuildingFormComponent implements OnInit, OnChanges {
     }
     
     if (changes['isEditMode'] && changes['isEditMode'].currentValue && this.buildingData) {
-      console.log('Edit mode changed, repopulating form');
       // Add a small delay to ensure dropdown data is loaded
       setTimeout(() => {
         this.populateFormForEdit();
@@ -77,11 +65,8 @@ export class BuildingFormComponent implements OnInit, OnChanges {
   private async loadDropdownData() {
     this.loading = true;
     try {
-      console.log('Starting to load dropdown data...');
-      
       // First test the connection
       const connectionTest = await this.supabaseService.testConnection();
-      console.log('Connection test result:', connectionTest);
       
       if (!connectionTest.success) {
         throw new Error(`Connection failed: ${JSON.stringify(connectionTest.error)}`);
@@ -92,17 +77,8 @@ export class BuildingFormComponent implements OnInit, OnChanges {
         this.supabaseService.getCities()
       ]);
 
-      console.log('Raw building groups response:', buildingGroupsData);
-      console.log('Raw cities response:', citiesData);
-
       this.buildingGroups = buildingGroupsData || [];
       this.cities = citiesData || [];
-
-      // Debug: Log the loaded data
-      console.log('Processed building groups:', this.buildingGroups);
-      console.log('Processed cities:', this.cities);
-      console.log('Building groups count:', this.buildingGroups.length);
-      console.log('Cities count:', this.cities.length);
 
       // Set default building group if one is selected
       if (this.selectedGroupId) {
@@ -110,7 +86,6 @@ export class BuildingFormComponent implements OnInit, OnChanges {
       }
     } catch (error: any) {
       console.error('Error loading dropdown data:', error);
-      console.error('Error details:', JSON.stringify(error, null, 2));
       this.errors.general = `Failed to load form data: ${error?.message || 'Unknown error'}. Please refresh and try again.`;
     } finally {
       this.loading = false;
@@ -133,7 +108,6 @@ export class BuildingFormComponent implements OnInit, OnChanges {
 
   populateFormForEdit() {
     if (this.buildingData) {
-      console.log('Populating form with building data:', this.buildingData);
       this.formData = {
         building_name: this.buildingData.building_name || '',
         street_number: this.buildingData.street_number || '',
@@ -143,9 +117,6 @@ export class BuildingFormComponent implements OnInit, OnChanges {
         city_id: this.buildingData.city_id || '',
         building_group_id: this.buildingData.building_group_id || ''
       };
-      console.log('Form data after population:', this.formData);
-    } else {
-      console.log('No building data available for edit');
     }
     this.errors = {};
     this.isSubmitting = false;

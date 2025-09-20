@@ -367,7 +367,6 @@ export class SupabaseService {
   // Debug method to test connection
   async testConnection() {
     try {
-      console.log('Testing Supabase connection...');
       const { data, error } = await this.supabase
         .from('building_groups')
         .select('count')
@@ -378,7 +377,6 @@ export class SupabaseService {
         return { success: false, error };
       }
       
-      console.log('Supabase connection test successful');
       return { success: true, data };
     } catch (err) {
       console.error('Supabase connection test error:', err);

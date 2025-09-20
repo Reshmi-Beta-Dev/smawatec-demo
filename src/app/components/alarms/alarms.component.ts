@@ -61,7 +61,6 @@ export class AlarmsComponent implements OnInit {
 
     try {
       this.alarms = await this.supabaseService.getAlarms();
-      console.log('Alarms loaded successfully:', this.alarms.length);
     } catch (error) {
       console.error('Error loading alarms:', error);
       this.error = 'Failed to load alarms from server';

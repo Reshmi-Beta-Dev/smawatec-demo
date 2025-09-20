@@ -69,9 +69,7 @@ export class BuildingComponent implements OnInit {
   }
 
   onBuildingRowDoubleClick(building: Building, index: number) {
-    console.log('Double-clicked building:', building);
     this.selectedBuildingForEdit = { ...building };
-    console.log('Selected building for edit:', this.selectedBuildingForEdit);
     this.showUpdateBuildingModal = true;
   }
 
@@ -98,8 +96,6 @@ export class BuildingComponent implements OnInit {
       
       // Close modal
       this.showAddGroupModal = false;
-      
-      console.log('Building group added to UI:', newGroup);
     } catch (error) {
       console.error('Error updating UI after group creation:', error);
       this.showNotification('Group created but failed to update UI. Please refresh the page.');
@@ -153,8 +149,6 @@ export class BuildingComponent implements OnInit {
       
       // Close modal
       this.showAddBuildingModal = false;
-      
-      console.log('Building added to UI:', newBuilding);
     } catch (error) {
       console.error('Error updating UI after building creation:', error);
       this.showNotification('Building created but failed to update UI. Please refresh the page.');
@@ -170,7 +164,6 @@ export class BuildingComponent implements OnInit {
         this.showNotification('Building updated successfully!');
         this.showUpdateBuildingModal = false;
         this.selectedBuildingForEdit = null;
-        console.log('Building updated in UI:', updatedBuilding);
       }
     } catch (error) {
       console.error('Error updating UI after building update:', error);
@@ -216,12 +209,6 @@ export class BuildingComponent implements OnInit {
       this.updateGroupPagination();
       this.updateBuildingPagination();
 
-            console.log('Building data loaded successfully:', {
-              groups: this.buildingGroups.length,
-              buildings: this.buildings.length,
-              apartments: this.apartments.length,
-              tenants: this.tenants.length
-            });
     } catch (error) {
       console.error('Error loading building data:', error);
       this.error = 'Failed to load data from server';

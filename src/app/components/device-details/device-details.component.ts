@@ -89,13 +89,6 @@ export class DeviceDetailsComponent implements OnInit {
       
       // Filter unassigned devices (devices without apartment_id)
       this.unassignedDevices = this.devices.filter(device => !device.apartment_id);
-
-      console.log('Device details data loaded successfully:', {
-        devices: this.devices.length,
-        groups: this.buildingGroups.length,
-        buildings: this.buildings.length,
-        unassigned: this.unassignedDevices.length
-      });
     } catch (error) {
       console.error('Error loading device details data:', error);
       this.error = 'Failed to load data from server';

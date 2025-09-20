@@ -101,18 +101,12 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.error = null;
 
       const today = new Date().toISOString().split('T')[0];
-      console.log('Loading today\'s data for:', today);
 
       this.consumptionData = await this.supabaseService.getDailyConsumption(
         undefined, // All devices
         today,
         today
       );
-
-      console.log('Received today\'s consumption data:', {
-        count: this.consumptionData.length,
-        sample: this.consumptionData.slice(0, 3)
-      });
 
     } catch (error) {
       console.error('Error loading today\'s data:', error);
@@ -131,19 +125,16 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       deviceData.set(deviceKey, (deviceData.get(deviceKey) || 0) + (data.consumption_liters || 0));
     });
 
-    console.log('Device consumption data:', Object.fromEntries(deviceData));
 
     // Convert to array and sort by consumption descending
     const sortedDevices = Array.from(deviceData.entries())
       .sort(([,a], [,b]) => b - a); // Sort by consumption descending
 
-    console.log('Sorted devices for chart:', sortedDevices);
 
     // Create arrays with only the actual devices (no empty slots)
     const chartData = sortedDevices.map(([, consumption]) => consumption);
     const labels = sortedDevices.map(([device]) => device.substring(device.length - 3)); // Show last 3 digits of serial
 
-    console.log('Chart data processed:', { data: chartData, labels: labels });
 
     return { data: chartData, labels: labels };
   }
@@ -247,7 +238,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
           }
         }
       });
-      console.log('Chart initialized successfully');
     } catch (error) {
       console.error('Error initializing chart:', error);
     }
