@@ -249,6 +249,19 @@
     text-align: right; /* Right align values */
 }
 
+/* Loading State */
+.loading-state {
+    text-align: center;
+    padding: 20px;
+    color: #666;
+    font-style: italic;
+}
+
+.loading-state p {
+    margin: 0;
+    font-size: 0.9rem;
+}
+
 /* Chart Panel */
 .chart-panel .chart-container {
     background: #eeeeef;

@@ -98,30 +98,38 @@
                     <h3>Alarms</h3>
                     <div class="panel alarms-panel">
                         <div class="panel-content">
-                            <div class="current-section">
-                                <h4>Current:</h4>
-                                <div class="stat-row">
-                                    <span class="stat-label">Major Alarms:</span>
-                                    <span class="stat-value">2</span>
-                                </div>
-                                <div class="stat-row">
-                                    <span class="stat-label">System Alarms:</span>
-                                    <span class="stat-value">3</span>
-                                </div>
+                            <!-- Loading State -->
+                            <div *ngIf="!alarmStats && !loading" class="loading-state">
+                                <p>Loading alarm statistics...</p>
                             </div>
-                            <div class="history-section">
-                                <h4>Total History:</h4>
-                                <div class="stat-row">
-                                    <span class="stat-label">total leakage alarms:</span>
-                                    <span class="stat-value">143</span>
+                            
+                            <!-- Data Display -->
+                            <div *ngIf="alarmStats">
+                                <div class="current-section">
+                                    <h4>Current:</h4>
+                                    <div class="stat-row">
+                                        <span class="stat-label">Major Alarms:</span>
+                                        <span class="stat-value">{{ alarmStats.major_alarms_current || 0 }}</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">System Alarms:</span>
+                                        <span class="stat-value">{{ alarmStats.system_alarms_current || 0 }}</span>
+                                    </div>
                                 </div>
-                                <div class="stat-row">
-                                    <span class="stat-label">estimated loss after Alarm:</span>
-                                    <span class="stat-value">234 m3</span>
-                                </div>
-                                <div class="stat-row">
-                                    <span class="stat-label">estimated water savings through shut off:</span>
-                                    <span class="stat-value">789 m3</span>
+                                <div class="history-section">
+                                    <h4>Total History:</h4>
+                                    <div class="stat-row">
+                                        <span class="stat-label">total leakage alarms:</span>
+                                        <span class="stat-value">{{ alarmStats.total_leakage_alarms || 0 }}</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">estimated loss after Alarm:</span>
+                                        <span class="stat-value">{{ (alarmStats.total_estimated_loss_m3 || 0) | number:'1.0-0' }} m³</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">estimated water savings through shut off:</span>
+                                        <span class="stat-value">{{ (alarmStats.total_water_saved_m3 || 0) | number:'1.0-0' }} m³</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>

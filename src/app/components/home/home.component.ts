@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { SupabaseAlarmsService, AlarmMessageBoard } from '../../services/supabase-alarms.service';
+import { SupabaseAlarmsService, AlarmMessageBoard, AlarmStatistics } from '../../services/supabase-alarms.service';
 
 declare var Chart: any;
 
@@ -21,6 +21,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // Supabase data properties
   alarms: AlarmMessageBoard[] = [];
   filteredAlarms: AlarmMessageBoard[] = [];
+  alarmStats: AlarmStatistics | null = null;
   loading = false;
   error: string | null = null;
   
@@ -32,7 +33,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   constructor(private supabaseAlarmsService: SupabaseAlarmsService) {}
 
   async ngOnInit() {
-    await this.loadAlarms();
+    await Promise.all([
+      this.loadAlarms(),
+      this.loadAlarmStatistics()
+    ]);
   }
 
   async loadAlarms() {
@@ -91,6 +95,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   toggleSortByImportance() {
     this.sortByImportance = !this.sortByImportance;
     this.applySortingAndFiltering();
+  }
+
+  async loadAlarmStatistics() {
+    try {
+      console.log('🔄 Loading alarm statistics...');
+      this.alarmStats = await this.supabaseAlarmsService.getAlarmStatistics();
+      console.log('✅ Alarm statistics loaded successfully:', this.alarmStats);
+    } catch (error: any) {
+      console.error('❌ Error loading alarm statistics:', error);
+      // Don't set error state for statistics, just log it
+    }
   }
 
   ngAfterViewInit() {

@@ -22,6 +22,20 @@ export interface AlarmMessageBoard {
   alarm_color: string;
 }
 
+export interface AlarmStatistics {
+  major_alarms_current: number;
+  system_alarms_current: number;
+  total_leakage_alarms: number;
+  active_leakage_alarms: number;
+  total_estimated_loss_m3: number;
+  total_water_saved_m3: number;
+  alarms_last_24h: number;
+  resolved_alarms: number;
+  total_alarms: number;
+  latest_alarm_date: string;
+  earliest_alarm_date: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -125,6 +139,49 @@ export class SupabaseAlarmsService {
     } finally {
       // Restore original console.error
       console.error = originalConsoleError;
+    }
+  }
+
+  async getAlarmStatistics(): Promise<AlarmStatistics> {
+    try {
+      console.log('🔄 Calling get_alarm_statistics RPC function...');
+      
+      // Use RPC call to execute the function
+      const { data, error } = await this.supabase
+        .rpc('get_alarm_statistics');
+
+      console.log('📊 RPC Response:', { data, error });
+
+      if (error) {
+        console.error('❌ Error fetching alarm statistics:', error);
+        throw new Error(`Failed to fetch alarm statistics: ${error.message}`);
+      }
+
+      if (!data || data.length === 0) {
+        console.warn('⚠️ No data returned from get_alarm_statistics function');
+        // Return default values
+        return {
+          major_alarms_current: 0,
+          system_alarms_current: 0,
+          total_leakage_alarms: 0,
+          active_leakage_alarms: 0,
+          total_estimated_loss_m3: 0,
+          total_water_saved_m3: 0,
+          alarms_last_24h: 0,
+          resolved_alarms: 0,
+          total_alarms: 0,
+          latest_alarm_date: new Date().toISOString(),
+          earliest_alarm_date: new Date().toISOString()
+        };
+      }
+
+      // The function returns an array, so get the first (and only) result
+      const result = data[0] as AlarmStatistics;
+      console.log('✅ Alarm statistics loaded:', result);
+      return result;
+    } catch (error: any) {
+      console.error('❌ Critical error in getAlarmStatistics:', error);
+      throw new Error(`Failed to fetch alarm statistics: ${error.message}`);
     }
   }
 }
