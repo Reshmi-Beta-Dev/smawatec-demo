@@ -36,6 +36,19 @@ export interface AlarmStatistics {
   earliest_alarm_date: string;
 }
 
+export interface ConsumptionStatistics {
+  current_year_total_m3: number;
+  current_year_to_sept_m3: number;
+  previous_year_total_m3: number;
+  previous_year_to_sept_m3: number;
+  year_2024_total_m3: number;
+  year_2023_total_m3: number;
+  year_2022_total_m3: number;
+  current_month_m3: number;
+  previous_month_m3: number;
+  monthly_data: any[];
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -182,6 +195,48 @@ export class SupabaseAlarmsService {
     } catch (error: any) {
       console.error('❌ Critical error in getAlarmStatistics:', error);
       throw new Error(`Failed to fetch alarm statistics: ${error.message}`);
+    }
+  }
+
+  async getConsumptionStatistics(): Promise<ConsumptionStatistics> {
+    try {
+      console.log('🔄 Calling get_consumption_statistics RPC function...');
+      
+      // Use RPC call to execute the function
+      const { data, error } = await this.supabase
+        .rpc('get_consumption_statistics');
+
+      console.log('📊 Consumption RPC Response:', { data, error });
+
+      if (error) {
+        console.error('❌ Error fetching consumption statistics:', error);
+        throw new Error(`Failed to fetch consumption statistics: ${error.message}`);
+      }
+
+      if (!data || data.length === 0) {
+        console.warn('⚠️ No data returned from get_consumption_statistics function');
+        // Return default values
+        return {
+          current_year_total_m3: 0,
+          current_year_to_sept_m3: 0,
+          previous_year_total_m3: 0,
+          previous_year_to_sept_m3: 0,
+          year_2024_total_m3: 0,
+          year_2023_total_m3: 0,
+          year_2022_total_m3: 0,
+          current_month_m3: 0,
+          previous_month_m3: 0,
+          monthly_data: []
+        };
+      }
+
+      // The function returns an array, so get the first (and only) result
+      const result = data[0] as ConsumptionStatistics;
+      console.log('✅ Consumption statistics loaded:', result);
+      return result;
+    } catch (error: any) {
+      console.error('❌ Critical error in getConsumptionStatistics:', error);
+      throw new Error(`Failed to fetch consumption statistics: ${error.message}`);
     }
   }
 }

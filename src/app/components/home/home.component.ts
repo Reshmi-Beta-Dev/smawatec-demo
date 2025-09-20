@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { SupabaseAlarmsService, AlarmMessageBoard, AlarmStatistics } from '../../services/supabase-alarms.service';
+import { SupabaseAlarmsService, AlarmMessageBoard, AlarmStatistics, ConsumptionStatistics } from '../../services/supabase-alarms.service';
 
 declare var Chart: any;
 
@@ -22,6 +22,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   alarms: AlarmMessageBoard[] = [];
   filteredAlarms: AlarmMessageBoard[] = [];
   alarmStats: AlarmStatistics | null = null;
+  consumptionStats: ConsumptionStatistics | null = null;
   loading = false;
   error: string | null = null;
   
@@ -29,13 +30,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   showAllAlarms = false;
   defaultDisplayCount = 10;
   sortByImportance = false;
+  
+  // Year properties for template
+  currentYear = new Date().getFullYear();
+  previousYear = new Date().getFullYear() - 1;
 
   constructor(private supabaseAlarmsService: SupabaseAlarmsService) {}
 
   async ngOnInit() {
     await Promise.all([
       this.loadAlarms(),
-      this.loadAlarmStatistics()
+      this.loadAlarmStatistics(),
+      this.loadConsumptionStatistics()
     ]);
   }
 
@@ -104,6 +110,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log('✅ Alarm statistics loaded successfully:', this.alarmStats);
     } catch (error: any) {
       console.error('❌ Error loading alarm statistics:', error);
+      // Don't set error state for statistics, just log it
+    }
+  }
+
+  async loadConsumptionStatistics() {
+    try {
+      console.log('🔄 Loading consumption statistics...');
+      this.consumptionStats = await this.supabaseAlarmsService.getConsumptionStatistics();
+      console.log('✅ Consumption statistics loaded successfully:', this.consumptionStats);
+      
+      // Reinitialize chart with new data
+      setTimeout(() => {
+        this.initializeChart();
+      }, 100);
+    } catch (error: any) {
+      console.error('❌ Error loading consumption statistics:', error);
       // Don't set error state for statistics, just log it
     }
   }
@@ -178,12 +200,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.chart = null;
     }
 
-    // Sample monthly data for 2025
+    // Get monthly data from consumption statistics
+    const monthlyData = this.consumptionStats?.monthly_data || [];
     const chartData = {
       labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
       datasets: [{
         label: 'Water Consumption (m³)',
-        data: [32000, 28000, 35000, 42000, 38000, 45000, 48000, 52000, 46000, 40000, 36000, 33000],
+        data: this.getMonthlyChartData(monthlyData),
         backgroundColor: '#7b61ff',
         borderColor: '#7b61ff',
         borderWidth: 2,
@@ -257,5 +280,23 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         this.initializeChart();
       }
     }
+  }
+
+  private getMonthlyChartData(monthlyData: any[]): number[] {
+    // Initialize array with 12 months (Jan-Dec) with zero values
+    const monthlyValues = new Array(12).fill(0);
+    
+    if (monthlyData && monthlyData.length > 0) {
+      // Process the monthly data from Supabase
+      monthlyData.forEach((monthData: any) => {
+        const monthIndex = monthData.month - 1; // Convert to 0-based index
+        if (monthIndex >= 0 && monthIndex < 12) {
+          monthlyValues[monthIndex] = monthData.total_m3 || 0;
+        }
+      });
+    }
+    
+    // Return real data or zeros - no hardcoded sample data
+    return monthlyValues;
   }
 }
