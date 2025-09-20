@@ -1,4 +1,4 @@
-import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, SimpleChanges, Output, EventEmitter, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { SupabaseService, Building, BuildingGroup, City } from '../../services/supabase.service';
@@ -10,10 +10,12 @@ import { SupabaseService, Building, BuildingGroup, City } from '../../services/s
   templateUrl: './building-form.component.html',
   styleUrls: ['./building-form.component.css']
 })
-export class BuildingFormComponent implements OnInit {
+export class BuildingFormComponent implements OnInit, OnChanges {
   @Output() success = new EventEmitter<Building>();
   @Output() cancel = new EventEmitter<void>();
   @Input() selectedGroupId: string | null = null;
+  @Input() isEditMode: boolean = false;
+  @Input() buildingData: Building | null = null;
 
   formData = {
     building_name: '',
@@ -36,8 +38,40 @@ export class BuildingFormComponent implements OnInit {
   constructor(private supabaseService: SupabaseService) {}
 
   async ngOnInit() {
+    console.log('BuildingFormComponent ngOnInit:', {
+      isEditMode: this.isEditMode,
+      buildingData: this.buildingData,
+      selectedGroupId: this.selectedGroupId
+    });
+    
     await this.loadDropdownData();
-    this.resetForm();
+    if (this.isEditMode && this.buildingData) {
+      console.log('Populating form for edit with data:', this.buildingData);
+      this.populateFormForEdit();
+    } else {
+      console.log('Resetting form for create mode');
+      this.resetForm();
+    }
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    console.log('BuildingFormComponent ngOnChanges:', changes);
+    
+    if (changes['buildingData'] && changes['buildingData'].currentValue && this.isEditMode) {
+      console.log('Building data changed, repopulating form');
+      // Add a small delay to ensure dropdown data is loaded
+      setTimeout(() => {
+        this.populateFormForEdit();
+      }, 100);
+    }
+    
+    if (changes['isEditMode'] && changes['isEditMode'].currentValue && this.buildingData) {
+      console.log('Edit mode changed, repopulating form');
+      // Add a small delay to ensure dropdown data is loaded
+      setTimeout(() => {
+        this.populateFormForEdit();
+      }, 100);
+    }
   }
 
   private async loadDropdownData() {
@@ -93,6 +127,26 @@ export class BuildingFormComponent implements OnInit {
       city_id: '',
       building_group_id: this.selectedGroupId || ''
     };
+    this.errors = {};
+    this.isSubmitting = false;
+  }
+
+  populateFormForEdit() {
+    if (this.buildingData) {
+      console.log('Populating form with building data:', this.buildingData);
+      this.formData = {
+        building_name: this.buildingData.building_name || '',
+        street_number: this.buildingData.street_number || '',
+        additional_address: this.buildingData.additional_address || '',
+        zip_code: this.buildingData.zip_code || '',
+        city: this.buildingData.city || '',
+        city_id: this.buildingData.city_id || '',
+        building_group_id: this.buildingData.building_group_id || ''
+      };
+      console.log('Form data after population:', this.formData);
+    } else {
+      console.log('No building data available for edit');
+    }
     this.errors = {};
     this.isSubmitting = false;
   }
@@ -155,13 +209,18 @@ export class BuildingFormComponent implements OnInit {
         building_group_id: this.formData.building_group_id
       };
 
-      const data = await this.supabaseService.createBuilding(buildingData);
+      let data: Building;
+      if (this.isEditMode && this.buildingData) {
+        data = await this.supabaseService.updateBuilding(this.buildingData.id, buildingData);
+      } else {
+        data = await this.supabaseService.createBuilding(buildingData);
+      }
 
       // Emit success event
       this.onSuccess(data);
       
     } catch (error: any) {
-      console.error('Error creating building:', error);
+      console.error(`Error ${this.isEditMode ? 'updating' : 'creating'} building:`, error);
       
       // Handle specific error cases
       if (error.code === '23505') {
@@ -169,7 +228,7 @@ export class BuildingFormComponent implements OnInit {
       } else if (error.code === '23503') {
         this.errors.general = 'Invalid city or building group selected';
       } else {
-        this.errors.general = 'Failed to create building. Please try again.';
+        this.errors.general = `Failed to ${this.isEditMode ? 'update' : 'create'} building. Please try again.`;
       }
     } finally {
       this.isSubmitting = false;

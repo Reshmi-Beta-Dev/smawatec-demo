@@ -5,6 +5,14 @@
   </div>
 
   <div *ngIf="!loading">
+    <!-- Debug Info -->
+    <div *ngIf="isEditMode" style="background: #f0f0f0; padding: 10px; margin-bottom: 10px; border-radius: 4px;">
+      <strong>Debug Info:</strong><br>
+      Edit Mode: {{ isEditMode }}<br>
+      Building Data: {{ buildingData | json }}<br>
+      Form Data: {{ formData | json }}
+    </div>
+    
     <!-- Building Name and Building Group -->
     <div class="form-row">
       <div class="form-group">
@@ -172,7 +180,7 @@
         [disabled]="isSubmitting"
         [class.loading]="isSubmitting">
         <span *ngIf="isSubmitting" class="spinner"></span>
-        {{ isSubmitting ? 'Creating...' : 'Create Building' }}
+        {{ isSubmitting ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Building' : 'Create Building') }}
       </button>
     </div>
   </div>

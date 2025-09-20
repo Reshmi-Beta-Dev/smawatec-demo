@@ -181,6 +181,7 @@
                         <tbody>
                             <tr *ngFor="let building of paginatedBuildings; let i = index" 
                                 (click)="onBuildingRowClick((currentBuildingPage - 1) * itemsPerPage + i)" 
+                                (dblclick)="onBuildingRowDoubleClick(building, (currentBuildingPage - 1) * itemsPerPage + i)"
                                 [class.selected]="selectedBuildingRow === (currentBuildingPage - 1) * itemsPerPage + i">
                                 <td>{{ (currentBuildingPage - 1) * itemsPerPage + i + 1 }}</td>
                                 <td>{{ building.building_name || 'N/A' }}</td>
@@ -251,6 +252,23 @@
             [selectedGroupId]="selectedGroupRow !== null ? buildingGroups[selectedGroupRow].id || null : null"
             (success)="onBuildingSaved($event)"
             (cancel)="onBuildingModalClose()">
+        </app-building-form>
+        
+    </app-modal>
+
+    <!-- Update Building Modal -->
+    <app-modal 
+        [isOpen]="showUpdateBuildingModal" 
+        title="Update Building"
+        size="large"
+        (close)="onUpdateBuildingModalClose()">
+        
+        <app-building-form 
+            [isEditMode]="true"
+            [buildingData]="selectedBuildingForEdit"
+            [selectedGroupId]="selectedBuildingForEdit?.building_group_id || null"
+            (success)="onBuildingUpdated($event)"
+            (cancel)="onUpdateBuildingModalClose()">
         </app-building-form>
         
     </app-modal>

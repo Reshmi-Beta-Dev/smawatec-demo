@@ -40,9 +40,11 @@ export class BuildingComponent implements OnInit {
   // Modal properties
   showAddGroupModal = false;
   showAddBuildingModal = false;
+  showUpdateBuildingModal = false;
   showDeleteConfirmation = false;
   deleteConfirmationData: { type: 'building' | 'group', item: any, index: number } | null = null;
   isDeleting = false;
+  selectedBuildingForEdit: Building | null = null;
 
   // Pagination properties
   itemsPerPage = 10;
@@ -64,6 +66,13 @@ export class BuildingComponent implements OnInit {
 
   onBuildingRowClick(index: number) {
     this.selectedBuildingRow = this.selectedBuildingRow === index ? null : index;
+  }
+
+  onBuildingRowDoubleClick(building: Building, index: number) {
+    console.log('Double-clicked building:', building);
+    this.selectedBuildingForEdit = { ...building };
+    console.log('Selected building for edit:', this.selectedBuildingForEdit);
+    this.showUpdateBuildingModal = true;
   }
 
   updateBuildingDetails(selectedIndex: number) {
@@ -129,6 +138,11 @@ export class BuildingComponent implements OnInit {
     this.showAddBuildingModal = false;
   }
 
+  onUpdateBuildingModalClose() {
+    this.showUpdateBuildingModal = false;
+    this.selectedBuildingForEdit = null;
+  }
+
   async onBuildingSaved(newBuilding: Building) {
     try {
       // Add the new building to the beginning of the list
@@ -144,6 +158,23 @@ export class BuildingComponent implements OnInit {
     } catch (error) {
       console.error('Error updating UI after building creation:', error);
       this.showNotification('Building created but failed to update UI. Please refresh the page.');
+    }
+  }
+
+  async onBuildingUpdated(updatedBuilding: Building) {
+    try {
+      // Find and update the building in the list
+      const index = this.buildings.findIndex(b => b.id === updatedBuilding.id);
+      if (index !== -1) {
+        this.buildings[index] = updatedBuilding;
+        this.showNotification('Building updated successfully!');
+        this.showUpdateBuildingModal = false;
+        this.selectedBuildingForEdit = null;
+        console.log('Building updated in UI:', updatedBuilding);
+      }
+    } catch (error) {
+      console.error('Error updating UI after building update:', error);
+      this.showNotification('Building updated but failed to update UI. Please refresh the page.');
     }
   }
 

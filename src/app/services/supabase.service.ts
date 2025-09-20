@@ -339,6 +339,31 @@ export class SupabaseService {
     return data;
   }
 
+  async updateBuilding(buildingId: string, buildingData: {
+    building_name: string;
+    street_number?: string | null;
+    additional_address?: string | null;
+    zip_code?: string | null;
+    city?: string | null;
+    city_id?: string | null;
+    building_group_id: string;
+  }): Promise<Building> {
+    const { data, error } = await this.supabase
+      .from('buildings')
+      .update(buildingData)
+      .eq('id', buildingId)
+      .select(`
+        *,
+        building_groups:building_group_id (*),
+        cities:city_id (*),
+        apartments (*)
+      `)
+      .single();
+
+    if (error) throw error;
+    return data;
+  }
+
   // Debug method to test connection
   async testConnection() {
     try {
