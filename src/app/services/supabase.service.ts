@@ -67,8 +67,6 @@ export interface Building {
   city?: string | null;
   city_id?: string | null;
   building_group_id: string;
-  latitude?: number | null;
-  longitude?: number | null;
   created_at: string;
   updated_at: string;
   building_groups?: BuildingGroup;
@@ -325,8 +323,6 @@ export class SupabaseService {
     city?: string | null;
     city_id?: string | null;
     building_group_id: string;
-    latitude?: number | null;
-    longitude?: number | null;
   }): Promise<Building> {
     const { data, error } = await this.supabase
       .from('buildings')

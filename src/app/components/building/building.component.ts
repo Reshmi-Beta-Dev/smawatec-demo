@@ -44,6 +44,13 @@ export class BuildingComponent implements OnInit {
   deleteConfirmationData: { type: 'building' | 'group', item: any, index: number } | null = null;
   isDeleting = false;
 
+  // Pagination properties
+  itemsPerPage = 10;
+  currentGroupPage = 1;
+  currentBuildingPage = 1;
+  totalGroupPages = 1;
+  totalBuildingPages = 1;
+
   constructor(private supabaseService: SupabaseService) {}
 
   async ngOnInit() {
@@ -174,12 +181,16 @@ export class BuildingComponent implements OnInit {
       this.apartments = apartmentsData;
       this.tenants = tenantsData;
 
-      console.log('Building data loaded successfully:', {
-        groups: this.buildingGroups.length,
-        buildings: this.buildings.length,
-        apartments: this.apartments.length,
-        tenants: this.tenants.length
-      });
+      // Update pagination after loading data
+      this.updateGroupPagination();
+      this.updateBuildingPagination();
+
+            console.log('Building data loaded successfully:', {
+              groups: this.buildingGroups.length,
+              buildings: this.buildings.length,
+              apartments: this.apartments.length,
+              tenants: this.tenants.length
+            });
     } catch (error) {
       console.error('Error loading building data:', error);
       this.error = 'Failed to load data from server';
@@ -273,4 +284,60 @@ export class BuildingComponent implements OnInit {
     this.deleteConfirmationData = null;
     this.isDeleting = false;
   }
+
+  // Pagination methods
+  get paginatedBuildingGroups() {
+    const startIndex = (this.currentGroupPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.buildingGroups.slice(startIndex, endIndex);
+  }
+
+  get paginatedBuildings() {
+    const startIndex = (this.currentBuildingPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    return this.buildings.slice(startIndex, endIndex);
+  }
+
+  updateGroupPagination() {
+    this.totalGroupPages = Math.ceil(this.buildingGroups.length / this.itemsPerPage);
+    if (this.currentGroupPage > this.totalGroupPages) {
+      this.currentGroupPage = Math.max(1, this.totalGroupPages);
+    }
+  }
+
+  updateBuildingPagination() {
+    this.totalBuildingPages = Math.ceil(this.buildings.length / this.itemsPerPage);
+    if (this.currentBuildingPage > this.totalBuildingPages) {
+      this.currentBuildingPage = Math.max(1, this.totalBuildingPages);
+    }
+  }
+
+  onGroupPageChange(page: number) {
+    this.currentGroupPage = page;
+    this.selectedGroupRow = null; // Clear selection when changing pages
+  }
+
+  onBuildingPageChange(page: number) {
+    this.currentBuildingPage = page;
+    this.selectedBuildingRow = null; // Clear selection when changing pages
+  }
+
+  getGroupPageNumbers() {
+    const pages = [];
+    for (let i = 1; i <= this.totalGroupPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  getBuildingPageNumbers() {
+    const pages = [];
+    for (let i = 1; i <= this.totalBuildingPages; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  // Expose Math for template
+  Math = Math;
 }

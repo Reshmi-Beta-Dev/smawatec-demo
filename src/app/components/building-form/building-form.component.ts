@@ -22,9 +22,7 @@ export class BuildingFormComponent implements OnInit {
     zip_code: '',
     city: '',
     city_id: '',
-    building_group_id: '',
-    latitude: null as number | null,
-    longitude: null as number | null
+    building_group_id: ''
   };
 
   // Dropdown options
@@ -93,9 +91,7 @@ export class BuildingFormComponent implements OnInit {
       zip_code: '',
       city: '',
       city_id: '',
-      building_group_id: this.selectedGroupId || '',
-      latitude: null,
-      longitude: null
+      building_group_id: this.selectedGroupId || ''
     };
     this.errors = {};
     this.isSubmitting = false;
@@ -138,16 +134,6 @@ export class BuildingFormComponent implements OnInit {
       this.errors.city = 'City must be less than 100 characters';
     }
 
-    // Latitude validation (OPTIONAL)
-    if (this.formData.latitude !== null && (this.formData.latitude < -90 || this.formData.latitude > 90)) {
-      this.errors.latitude = 'Latitude must be between -90 and 90';
-    }
-
-    // Longitude validation (OPTIONAL)
-    if (this.formData.longitude !== null && (this.formData.longitude < -180 || this.formData.longitude > 180)) {
-      this.errors.longitude = 'Longitude must be between -180 and 180';
-    }
-
     return Object.keys(this.errors).length === 0;
   }
 
@@ -166,9 +152,7 @@ export class BuildingFormComponent implements OnInit {
         zip_code: this.formData.zip_code.trim() || null,
         city: this.formData.city.trim() || null,
         city_id: this.formData.city_id || null,
-        building_group_id: this.formData.building_group_id,
-        latitude: this.formData.latitude,
-        longitude: this.formData.longitude
+        building_group_id: this.formData.building_group_id
       };
 
       const data = await this.supabaseService.createBuilding(buildingData);
