@@ -14,11 +14,25 @@ export class AlarmsComponent implements OnInit {
   alarmCategories: AlarmCategories | null = null;
   loading = false;
   error: string | null = null;
+  
+  // Pagination properties
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalItems = 0;
+  totalPages = 0;
+  paginatedAlarms: any[] = [];
+  allAlarms: any[] = [];
+  
+  // Expose Math object to template
+  Math = Math;
 
   constructor(private supabaseAlarmsService: SupabaseAlarmsService) {}
 
   async ngOnInit() {
-    await this.loadAlarmCategories();
+    await Promise.all([
+      this.loadAlarmCategories(),
+      this.loadAlarms()
+    ]);
   }
 
   async loadAlarmCategories() {
@@ -34,6 +48,60 @@ export class AlarmsComponent implements OnInit {
     } finally {
       this.loading = false;
     }
+  }
+
+  async loadAlarms() {
+    try {
+      this.allAlarms = await this.supabaseAlarmsService.getAlarmsMessageBoard();
+      this.totalItems = this.allAlarms.length;
+      this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+      this.updatePaginatedAlarms();
+      console.log('✅ Alarms loaded:', this.allAlarms.length, 'total items');
+    } catch (error: any) {
+      console.error('❌ Error loading alarms:', error);
+      this.error = `Failed to load alarms: ${error.message}`;
+    }
+  }
+
+  updatePaginatedAlarms() {
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedAlarms = this.allAlarms.slice(startIndex, endIndex);
+  }
+
+  goToPage(page: number) {
+    if (page >= 1 && page <= this.totalPages) {
+      this.currentPage = page;
+      this.updatePaginatedAlarms();
+    }
+  }
+
+  nextPage() {
+    if (this.currentPage < this.totalPages) {
+      this.goToPage(this.currentPage + 1);
+    }
+  }
+
+  previousPage() {
+    if (this.currentPage > 1) {
+      this.goToPage(this.currentPage - 1);
+    }
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, this.currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(this.totalPages, startPage + maxVisiblePages - 1);
+    
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
   }
 
   onRowClick(index: number) {

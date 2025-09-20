@@ -330,6 +330,101 @@
     background: #b71c1c;
 }
 
+/* Table Loading and Error States */
+.loading-cell, .error-cell, .no-data-cell {
+    text-align: center;
+    padding: 40px 20px !important;
+}
+
+.table-loading-state, .table-error-state, .no-data-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.table-loading-state {
+    color: #7b61ff;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.table-error-state {
+    color: #d32f2f;
+    font-size: 14px;
+}
+
+.no-data-state {
+    color: #666;
+    font-size: 14px;
+    font-style: italic;
+}
+
+/* Pagination Styles */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 0;
+    padding: 16px 20px;
+    background: transparent;
+    border-radius: 0 0 18px 18px;
+    border: 0;
+    border-top: 1px solid #e9ecef;
+}
+
+.pagination-info {
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.pagination-btn {
+    background: #fff;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 40px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.pagination-btn.active {
+    background: #7b61ff;
+    border-color: #7b61ff;
+    color: #fff;
+}
+
+.pagination-btn:disabled {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.pagination-btn:disabled:hover {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .alarm-summary {
@@ -362,6 +457,23 @@
     .message-table thead th,
     .message-table tbody td {
         padding: 6px 4px;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    
+    .pagination-controls {
+        justify-content: center;
+    }
+    
+    .pagination-btn {
+        min-width: 36px;
+        height: 32px;
+        padding: 6px 10px;
+        font-size: 12px;
     }
 }
 
