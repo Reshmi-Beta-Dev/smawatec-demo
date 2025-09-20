@@ -203,9 +203,21 @@
     border-bottom-right-radius: 6px;
 }
 
+/* Parallel Tables Section */
+.parallel-tables-section {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+    align-items: start;
+}
+
 /* Building Section */
 .building-section {
     margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .building-section h3 {
@@ -214,6 +226,43 @@
     margin: 0 0 16px 0;
     color: #333;
     padding-left: 22px;
+}
+
+/* Apartment Section */
+.apartment-section {
+    margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.apartment-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.apartment-section .box {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    border: 0;
+    box-shadow: none;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.apartment-section .table-container {
+    background: transparent;
+    border-radius: 0;
+    padding: 0;
+    box-shadow: none;
+    overflow: auto;
+    margin-bottom: 0;
+    flex: 1;
 }
 
 /* Chart Section */
@@ -468,6 +517,71 @@
     border-color: #d1d5db;
 }
 
+/* Pagination Styles */
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 16px;
+    padding: 16px 20px;
+    background: transparent;
+    border-radius: 0 0 18px 18px;
+    border: 0;
+    border-top: 1px solid #e9ecef;
+}
+
+.pagination-info {
+    color: #666;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+}
+
+.pagination-btn {
+    background: #fff;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    padding: 8px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 40px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.pagination-btn.active {
+    background: #7b61ff;
+    border-color: #7b61ff;
+    color: #fff;
+}
+
+.pagination-btn:disabled {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+    color: #9ca3af;
+    cursor: not-allowed;
+}
+
+.pagination-btn:disabled:hover {
+    background: #f9fafb;
+    border-color: #e5e7eb;
+}
+
 /* Responsive Design */
 @media (max-width: 1200px) {
     .main-layout {
@@ -483,6 +597,10 @@
     }
     
     .period-inputs {
+        grid-template-columns: 1fr;
+    }
+    
+    .parallel-tables-section {
         grid-template-columns: 1fr;
     }
 }
@@ -521,6 +639,23 @@
     .period-inputs .form-group {
         grid-template-columns: 80px 1fr;
         gap: 8px;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        gap: 12px;
+        text-align: center;
+    }
+    
+    .pagination-controls {
+        justify-content: center;
+    }
+    
+    .pagination-btn {
+        min-width: 36px;
+        height: 32px;
+        padding: 6px 10px;
+        font-size: 12px;
     }
 }
 

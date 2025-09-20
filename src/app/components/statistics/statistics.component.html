@@ -79,64 +79,47 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr (click)="onBuildingGroupRowClick(0)" [class.selected]="selectedBuildingGroupRow === 0">
-                                            <td>1</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(1)" [class.selected]="selectedBuildingGroupRow === 1">
-                                            <td>2</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23234</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(2)" [class.selected]="selectedBuildingGroupRow === 2">
-                                            <td>3</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(3)" [class.selected]="selectedBuildingGroupRow === 3">
-                                            <td>4</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(4)" [class.selected]="selectedBuildingGroupRow === 4">
-                                            <td>5</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(5)" [class.selected]="selectedBuildingGroupRow === 5">
-                                            <td>6</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(6)" [class.selected]="selectedBuildingGroupRow === 6">
-                                            <td>7</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(7)" [class.selected]="selectedBuildingGroupRow === 7">
-                                            <td>8</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
+                                        <tr *ngFor="let group of paginatedBuildingGroups; let i = index" 
+                                            (click)="onBuildingGroupRowClick(i)" 
+                                            [class.selected]="selectedBuildingGroupRow === i">
+                                            <td>{{ (buildingGroupCurrentPage - 1) * buildingGroupItemsPerPage + i + 1 }}</td>
+                                            <td>{{ group.group }}</td>
+                                            <td>{{ group.building }}</td>
+                                            <td>{{ group.zipCode }}</td>
+                                            <td>{{ group.address }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
+                                
+                                <!-- Building Groups Pagination -->
+                                <div *ngIf="buildingGroupTotalPages > 1" class="pagination-container">
+                                    <div class="pagination-info">
+                                        <span>Showing {{ (buildingGroupCurrentPage - 1) * buildingGroupItemsPerPage + 1 }} to {{ Math.min(buildingGroupCurrentPage * buildingGroupItemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }} groups</span>
+                                    </div>
+                                    
+                                    <div class="pagination-controls">
+                                        <button class="pagination-btn" 
+                                                [disabled]="buildingGroupCurrentPage === 1" 
+                                                (click)="previousBuildingGroupPage()"
+                                                title="Previous Page">
+                                            ‹
+                                        </button>
+                                        
+                                        <button *ngFor="let page of getBuildingGroupPageNumbers()" 
+                                                class="pagination-btn" 
+                                                [class.active]="page === buildingGroupCurrentPage"
+                                                (click)="goToBuildingGroupPage(page)">
+                                            {{ page }}
+                                        </button>
+                                        
+                                        <button class="pagination-btn" 
+                                                [disabled]="buildingGroupCurrentPage === buildingGroupTotalPages" 
+                                                (click)="nextBuildingGroupPage()"
+                                                title="Next Page">
+                                            ›
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -204,57 +187,125 @@
                     </div>
                 </div>
 
-                <!-- Building Table -->
-                <div class="building-section">
-                    <h3>Building</h3>
-                    <div class="box">
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Building</th>
-                                        <th>Zip Code</th>
-                                        <th>Address</th>
-                                        <th>Apartment</th>
-                                        <th>Tenant</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr (click)="onBuildingRowClick(0)" [class.selected]="selectedBuildingRow === 0">
-                                        <td>1</td>
-                                        <td>PAR-GP1-B12012</td>
-                                        <td>23212</td>
-                                        <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        <td>Block 1, L23, Ap12</td>
-                                        <td>Bonaparte, Napoleon</td>
-                                    </tr>
-                                    <tr (click)="onBuildingRowClick(1)" [class.selected]="selectedBuildingRow === 1">
-                                        <td>1</td>
-                                        <td>PAR-GP1-B12012</td>
-                                        <td>23212</td>
-                                        <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        <td>Block 1, L23, Ap12</td>
-                                        <td>Bonaparte, Napoleon</td>
-                                    </tr>
-                                    <tr (click)="onBuildingRowClick(2)" [class.selected]="selectedBuildingRow === 2">
-                                        <td>1</td>
-                                        <td>PAR-GP1-B12012</td>
-                                        <td>23212</td>
-                                        <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        <td>Block 1, L23, Ap12</td>
-                                        <td>Bonaparte, Napoleon</td>
-                                    </tr>
-                                    <tr (click)="onBuildingRowClick(3)" [class.selected]="selectedBuildingRow === 3">
-                                        <td>1</td>
-                                        <td>PAR-GP1-B12012</td>
-                                        <td>23212</td>
-                                        <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        <td>Block 1, L23, Ap12</td>
-                                        <td>Bonaparte, Napoleon</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                <!-- Parallel Layout: Building and Apartment Tables -->
+                <div class="parallel-tables-section">
+                    <!-- Building Table -->
+                    <div class="building-section">
+                        <h3>Building</h3>
+                        <div class="box">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Building</th>
+                                            <th>Zip Code</th>
+                                            <th>Address</th>
+                                            <th>Apartment</th>
+                                            <th>Tenant</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let building of paginatedBuildings; let i = index" 
+                                            (click)="onBuildingRowClick(i)" 
+                                            [class.selected]="selectedBuildingRow === i">
+                                            <td>{{ (buildingCurrentPage - 1) * buildingItemsPerPage + i + 1 }}</td>
+                                            <td>{{ building.building }}</td>
+                                            <td>{{ building.zipCode }}</td>
+                                            <td>{{ building.address }}</td>
+                                            <td>{{ building.apartment }}</td>
+                                            <td>{{ building.tenant }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                <!-- Building Pagination -->
+                                <div *ngIf="buildingTotalPages > 1" class="pagination-container">
+                                    <div class="pagination-info">
+                                        <span>Showing {{ (buildingCurrentPage - 1) * buildingItemsPerPage + 1 }} to {{ Math.min(buildingCurrentPage * buildingItemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }} buildings</span>
+                                    </div>
+                                    
+                                    <div class="pagination-controls">
+                                        <button class="pagination-btn" 
+                                                [disabled]="buildingCurrentPage === 1" 
+                                                (click)="previousBuildingPage()"
+                                                title="Previous Page">
+                                            ‹
+                                        </button>
+                                        
+                                        <button *ngFor="let page of getBuildingPageNumbers()" 
+                                                class="pagination-btn" 
+                                                [class.active]="page === buildingCurrentPage"
+                                                (click)="goToBuildingPage(page)">
+                                            {{ page }}
+                                        </button>
+                                        
+                                        <button class="pagination-btn" 
+                                                [disabled]="buildingCurrentPage === buildingTotalPages" 
+                                                (click)="nextBuildingPage()"
+                                                title="Next Page">
+                                            ›
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apartment Table -->
+                    <div class="apartment-section">
+                        <h3>Apartment</h3>
+                        <div class="box">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Apartment</th>
+                                            <th>Tenant</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let apartment of paginatedApartments; let i = index" 
+                                            (click)="onApartmentRowClick(i)" 
+                                            [class.selected]="selectedApartmentRow === i">
+                                            <td>{{ (apartmentCurrentPage - 1) * apartmentItemsPerPage + i + 1 }}</td>
+                                            <td>{{ apartment.apartment }}</td>
+                                            <td>{{ apartment.tenant }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                <!-- Apartment Pagination -->
+                                <div *ngIf="apartmentTotalPages > 1" class="pagination-container">
+                                    <div class="pagination-info">
+                                        <span>Showing {{ (apartmentCurrentPage - 1) * apartmentItemsPerPage + 1 }} to {{ Math.min(apartmentCurrentPage * apartmentItemsPerPage, apartmentTotalItems) }} of {{ apartmentTotalItems }} apartments</span>
+                                    </div>
+                                    
+                                    <div class="pagination-controls">
+                                        <button class="pagination-btn" 
+                                                [disabled]="apartmentCurrentPage === 1" 
+                                                (click)="previousApartmentPage()"
+                                                title="Previous Page">
+                                            ‹
+                                        </button>
+                                        
+                                        <button *ngFor="let page of getApartmentPageNumbers()" 
+                                                class="pagination-btn" 
+                                                [class.active]="page === apartmentCurrentPage"
+                                                (click)="goToApartmentPage(page)">
+                                            {{ page }}
+                                        </button>
+                                        
+                                        <button class="pagination-btn" 
+                                                [disabled]="apartmentCurrentPage === apartmentTotalPages" 
+                                                (click)="nextApartmentPage()"
+                                                title="Next Page">
+                                            ›
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
