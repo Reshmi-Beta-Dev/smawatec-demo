@@ -22,113 +22,52 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="alarm-row major" (click)="onRowClick(0)" [class.selected]="selectedRow === 0">
-                                <td>1</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge major">Major Leak</span></td>
-                                <td>poss. Pipe break</td>
-                                <td>auto shut off</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
+                            <!-- Loading State -->
+                            <tr *ngIf="loading">
+                                <td colspan="9" style="text-align: center; padding: 40px 20px;">
+                                    <div style="color: #7b61ff; font-size: 16px; font-weight: 500;">Loading alarms from Supabase...</div>
                                 </td>
                             </tr>
-                            <tr class="alarm-row major" (click)="onRowClick(1)" [class.selected]="selectedRow === 1">
-                                <td>2</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge low-temp">Low Temp</span></td>
-                                <td>Ice warning</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
+                            
+                            <!-- Error State -->
+                            <tr *ngIf="error">
+                                <td colspan="9" style="text-align: center; padding: 40px 20px;">
+                                    <div style="color: #d32f2f; font-size: 16px;">
+                                        {{ error }}
+                                        <button (click)="loadAlarms()" style="background: #d32f2f; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; margin-left: 10px;">Retry</button>
+                                    </div>
                                 </td>
                             </tr>
-                            <tr class="alarm-row" (click)="onRowClick(2)" [class.selected]="selectedRow === 2">
-                                <td>3</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge medium">Medium Leak</span></td>
-                                <td>poss. Tap / Toilet</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
+                            
+                            <!-- No Data State -->
+                            <tr *ngIf="!loading && !error && alarms.length === 0">
+                                <td colspan="9" style="text-align: center; padding: 40px 20px;">
+                                    <div style="color: #666; font-size: 16px; font-style: italic;">No alarms found in the message board.</div>
                                 </td>
                             </tr>
-                            <tr class="alarm-row" (click)="onRowClick(3)" [class.selected]="selectedRow === 3">
-                                <td>4</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge micro">Micro Leak</span></td>
-                                <td>poss. Toilet</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
+                            
+                            <!-- Dynamic Alarm Rows from Supabase -->
+                            <tr *ngFor="let alarm of alarms; let i = index" 
+                                class="alarm-row" 
+                                [class.major]="alarm.alarm_severity === 'high'"
+                                [class.selected]="selectedRow === i"
+                                (click)="onRowClick(i)">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ alarm.building_name || 'N/A' }}</td>
+                                <td>{{ alarm.building_address || 'N/A' }}</td>
+                                <td>{{ alarm.device_name || 'N/A' }}</td>
+                                <td>{{ alarm.device_serial || 'N/A' }}</td>
+                                <td>
+                                    <span class="alarm-badge" 
+                                          [class.major]="alarm.alarm_severity === 'high'"
+                                          [class.medium]="alarm.alarm_severity === 'medium'"
+                                          [class.low-temp]="alarm.alarm_type_name && alarm.alarm_type_name.toLowerCase().includes('temp')"
+                                          [class.micro]="alarm.alarm_severity === 'low'">
+                                        {{ alarm.alarm_type_name || 'Unknown' }}
+                                    </span>
                                 </td>
-                            </tr>
-                            <tr class="alarm-row" (click)="onRowClick(4)" [class.selected]="selectedRow === 4">
-                                <td>5</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge micro">Micro Leak</span></td>
-                                <td>poss. Toilet</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
-                                </td>
-                            </tr>
-                            <tr class="alarm-row" (click)="onRowClick(5)" [class.selected]="selectedRow === 5">
-                                <td>6</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge micro">Micro Leak</span></td>
-                                <td>poss. Tap</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
-                                </td>
-                            </tr>
-                            <tr class="alarm-row" (click)="onRowClick(6)" [class.selected]="selectedRow === 6">
-                                <td>7</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge micro">Micro Leak</span></td>
-                                <td>poss. Tap</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
-                                </td>
-                            </tr>
-                            <tr class="alarm-row" (click)="onRowClick(7)" [class.selected]="selectedRow === 7">
-                                <td>8</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge micro">Micro Leak</span></td>
-                                <td>poss. Tap</td>
-                                <td>None</td>
+                                <td>{{ alarm.message || 'No message' }}</td>
+                                <td>{{ alarm.status || 'None' }}</td>
                                 <td class="actions">
                                     <button class="pill">Details</button>
                                     <button class="pill outline">Hide Alarm</button>

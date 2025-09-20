@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { SupabaseAlarmsService, AlarmMessageBoard } from '../../services/supabase-alarms.service';
 
 declare var Chart: any;
 
@@ -16,9 +17,30 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   showOverview: boolean = true; // Toggle between overview and home content
   private chart: any;
   private chartCheckInterval: any;
+  
+  // Supabase data properties
+  alarms: AlarmMessageBoard[] = [];
+  loading = false;
+  error: string | null = null;
 
-  ngOnInit() {
-    // Initialize any component logic here
+  constructor(private supabaseAlarmsService: SupabaseAlarmsService) {}
+
+  async ngOnInit() {
+    await this.loadAlarms();
+  }
+
+  async loadAlarms() {
+    this.loading = true;
+    this.error = null;
+    
+    try {
+      this.alarms = await this.supabaseAlarmsService.getAlarmsMessageBoard();
+    } catch (error: any) {
+      console.error('Error loading alarms:', error);
+      this.error = `Failed to load alarms: ${error.message}`;
+    } finally {
+      this.loading = false;
+    }
   }
 
   ngAfterViewInit() {
