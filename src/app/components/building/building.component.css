@@ -1,11 +1,18 @@
 /* Building Component Styles - Consistent with Statistics Component */
 
+/* Ensure all elements respect container boundaries */
+* {
+    box-sizing: border-box;
+}
+
 .app {
     max-width: 100%;
     width: 100%;
     font-size: 14px;
     padding: 20px 24px 12px; /* 20px top padding for chart spacing */
     position: relative;
+    overflow-x: hidden; /* Prevent horizontal overflow */
+    background: transparent; /* Ensure clean background */
 }
 
 .content {
@@ -169,6 +176,7 @@
 /* Building Section */
 .building-section {
     margin-bottom: 0;
+    width: 100%; /* Ensure full width */
 }
 
 .building-section h3 {
@@ -290,64 +298,413 @@
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
-    .middle-section {
-        grid-template-columns: 1fr;
+
+/* iPhone 13 and above (390px+) - Mobile First Approach */
+@media (max-width: 430px) {
+    .app {
+        padding: 12px 16px;
+        font-size: 13px;
     }
     
-    .search-grid {
+    .content {
+        gap: 12px;
+    }
+    
+    /* Search Section Mobile */
+    .search-section h2 {
+        font-size: 15px;
+        padding-left: 0;
+        margin-bottom: 12px;
+    }
+    
+    .search-form {
+        width: 100%;
         grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 16px;
+        overflow: hidden; /* Prevent overflow */
+    }
+    
+    .search-column {
+        gap: 8px;
+    }
+    
+    .form-group {
+        grid-template-columns: 80px 1fr;
+        gap: 6px;
+    }
+    
+    .form-group label {
+        font-size: 11px;
+    }
+    
+    .form-group input {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    
+    /* Middle Section Mobile - Stack vertically */
+    .middle-section {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+    
+    /* Building Groups Section Mobile */
+    .building-groups-section h3 {
+        font-size: 15px;
+        padding-left: 0;
+        margin-bottom: 12px;
+    }
+    
+    .groups-panel {
+        height: auto;
+        min-height: 300px;
+        padding: 16px;
+        overflow-x: auto; /* Allow horizontal scrolling for tables */
+        overflow-y: visible; /* Allow vertical content to be visible */
+        box-sizing: border-box; /* Include padding in width calculation */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+    
+    /* Building/Apartment Section Mobile */
+    .building-apartment-section h3 {
+        font-size: 15px;
+        padding-left: 0;
+        margin-bottom: 12px;
+    }
+    
+    .apartment-panel {
+        height: auto;
+        min-height: 300px;
+        padding: 16px;
+        overflow-x: auto; /* Allow horizontal scrolling for tables */
+        overflow-y: visible; /* Allow vertical content to be visible */
+        box-sizing: border-box; /* Include padding in width calculation */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+    
+    .kv-grid {
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+    
+    .kv-row {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+    
+    .kv-label {
+        font-size: 11px;
+    }
+    
+    .kv-value {
+        font-size: 12px;
+    }
+    
+    /* Building Section Mobile */
+    .building-section h3 {
+        font-size: 15px;
+        padding-left: 0;
+        margin-bottom: 12px;
+    }
+    
+    .building-panel {
+        padding: 16px;
+        overflow-x: auto; /* Allow horizontal scrolling for tables */
+        overflow-y: visible; /* Allow vertical content to be visible */
+        box-sizing: border-box; /* Include padding in width calculation */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        width: 100%; /* Ensure full width coverage */
+        background: #f1f1f3; /* Ensure background covers full area */
+        border-radius: 18px; /* Match other panels */
+    }
+    
+    /* Building section mobile background fix */
+    .building-section {
+        width: 100%;
+        background: transparent; /* Ensure no background conflicts */
+    }
+    
+    /* Data Tables Mobile */
+    .data-table {
+        font-size: 11px;
+        margin-bottom: 12px;
+    }
+    
+    .data-table thead th {
+        font-size: 11px;
+        padding: 8px 4px;
+    }
+    
+    .data-table tbody tr {
+        height: 32px;
+    }
+    
+    .data-table tbody td {
+        padding: 6px 4px;
+        font-size: 11px;
+    }
+    
+    .data-table tbody tr td:first-child {
+        width: 20px;
+    }
+    
+    /* Action Buttons Mobile */
+    .action-buttons {
+        flex-direction: row;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .pill {
+        padding: 8px 12px;
+        font-size: 11px;
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .pill.outline {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    /* Mobile Touch Improvements */
+    .data-table tbody tr {
+        min-height: 44px; /* Minimum touch target size */
+    }
+    
+    .pill {
+        min-height: 44px; /* Minimum touch target size */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+/* Mobile Table Horizontal Scroll - Handled at panel level above */
+
+.data-table {
+    min-width: 800px; /* Make table much wider to ensure horizontal scroll */
+    width: 100%;
+    table-layout: fixed; /* Fixed layout for consistent column widths */
+}
+    
+    /* Set specific column widths to ensure horizontal scroll */
+    .data-table th:nth-child(1),
+    .data-table td:nth-child(1) {
+        width: 40px; /* # column */
+    }
+    
+    .data-table th:nth-child(2),
+    .data-table td:nth-child(2) {
+        width: 120px; /* Group column */
+    }
+    
+    .data-table th:nth-child(3),
+    .data-table td:nth-child(3) {
+        width: 150px; /* Building column */
+    }
+    
+    .data-table th:nth-child(4),
+    .data-table td:nth-child(4) {
+        width: 100px; /* Zip Code column */
+    }
+    
+    .data-table th:nth-child(5),
+    .data-table td:nth-child(5) {
+        width: 300px; /* Address column - wide to trigger scroll */
+    }
+    
+    /* Ensure table cells display properly */
+    .data-table tbody td {
+        word-wrap: break-word;
+        white-space: nowrap; /* Prevent text wrapping to maintain column widths */
+        overflow: visible; /* Allow content to be visible for scrolling */
+        text-overflow: ellipsis;
+    }
+    
+    /* Mobile Form Improvements */
+    .form-group input {
+        min-height: 44px; /* Better touch target */
+        border-radius: 8px;
+    }
+    
+    .form-group input:focus {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.15);
     }
 }
 
-@media (max-width: 768px) {
+/* iPhone 14 Pro Max specific optimization */
+@media only screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) {
     .app {
-        padding: 0 16px 16px;
+        padding: 16px 20px;
+        font-size: 14px;
     }
     
-    .search-panel,
+    .search-form {
+        width: 100%;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px;
+        overflow: hidden; /* Prevent overflow */
+    }
+    
+    .middle-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
     .groups-panel,
-    .apartment-panel,
-    .building-panel {
-        padding: 16px;
+    .apartment-panel {
+        height: auto;
+        min-height: 380px;
+        padding: 20px;
+        overflow-x: auto; /* Allow horizontal scrolling for tables */
+        overflow-y: hidden; /* Prevent vertical overflow */
+        box-sizing: border-box; /* Include padding in width calculation */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
     }
     
     .data-table {
         font-size: 12px;
     }
     
-    .data-table thead th,
-    .data-table tbody td {
-        padding: 6px 4px;
-    }
-    
-    .form-group {
-        grid-template-columns: 100px 1fr;
-        gap: 8px;
+    .data-table tbody tr {
+        height: 36px;
     }
     
     .action-buttons {
-        flex-direction: column;
+        flex-direction: row;
+        gap: 12px;
     }
-}
-
-@media (max-width: 480px) {
+    
+    .pill {
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+    
+    /* iPhone 14 Pro Max specific table optimizations */
+    .data-table {
+        min-width: 650px; /* Slightly wider for better readability */
+    }
+    
+    .data-table thead th {
+        padding: 10px 6px;
+        font-size: 12px;
+    }
+    
+    .data-table tbody td {
+        padding: 8px 6px;
+        font-size: 12px;
+    }
+    
+    /* Better spacing for iPhone 14 Pro Max */
+    .kv-grid {
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    
     .kv-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 4px;
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+    
+    .kv-label {
+        font-size: 12px;
     }
     
     .kv-value {
-        text-align: left;
+        font-size: 13px;
+    }
+}
+
+/* iPhone 14 Pro Max and larger (431px+) */
+@media (min-width: 431px) and (max-width: 768px) {
+    .app {
+        padding: 16px 20px;
     }
     
-    .form-group {
+    .search-form {
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .middle-section {
         grid-template-columns: 1fr;
-        gap: 4px;
+        gap: 16px;
     }
     
-    .form-group label {
-        text-align: left;
+    .groups-panel,
+    .apartment-panel {
+        height: auto;
+        min-height: 350px;
+    }
+    
+    .data-table {
+        font-size: 12px;
+    }
+    
+    .action-buttons {
+        flex-direction: row;
+        gap: 10px;
+    }
+}
+
+/* iPad and Tablet (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .search-form {
+        width: 100%; /* Full width on iPad */
+        grid-template-columns: 1fr 1fr; /* Two columns on iPad */
+        padding: 20px; /* More padding for iPad */
+    }
+    
+    .middle-section {
+        grid-template-columns: 1fr; /* Stack on iPad */
+        gap: 20px;
+    }
+    
+    .groups-panel,
+    .apartment-panel {
+        height: auto;
+        min-height: 400px; /* Taller on iPad */
+        padding: 24px; /* More padding for iPad */
+    }
+    
+    .building-panel {
+        padding: 24px; /* More padding for iPad */
+    }
+}
+
+/* Surface Duo */
+@media (min-width: 540px) and (max-width: 720px) and (min-height: 720px) {
+    .search-form { grid-template-columns: 1fr; }
+    .middle-section { grid-template-columns: 1fr; }
+    .groups-panel, .apartment-panel, .building-panel { overflow-x: auto; }
+}
+@media (min-width: 1080px) and (max-width: 1440px) and (min-height: 720px) {
+    .search-form { grid-template-columns: 1fr 1fr; }
+    .middle-section { grid-template-columns: 1fr 1fr; }
+}
+
+/* Desktop - Keep existing layout */
+@media (min-width: 1025px) {
+    .middle-section {
+        grid-template-columns: 3fr 2fr;
+    }
+    
+    .search-form {
+        width: 60%;
+    }
+}
+
+/* Large Desktop - Keep existing layout */
+@media (min-width: 1200px) {
+    .middle-section {
+        grid-template-columns: 3fr 2fr;
+    }
+    
+    .search-form {
+        width: 60%;
     }
 }
