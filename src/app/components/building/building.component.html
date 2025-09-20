@@ -194,7 +194,7 @@
         (close)="onBuildingModalClose()">
         
         <app-building-form 
-            [selectedGroupId]="selectedGroupRow !== null ? buildingGroups[selectedGroupRow]?.id || null : null"
+            [selectedGroupId]="selectedGroupRow !== null ? buildingGroups[selectedGroupRow].id || null : null"
             (success)="onBuildingSaved($event)"
             (cancel)="onBuildingModalClose()">
         </app-building-form>
