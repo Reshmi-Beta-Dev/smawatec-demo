@@ -297,6 +297,16 @@
     border-color: #d1d5db;
 }
 
+.pill.outline.danger {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+.pill.outline.danger:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #dc2626;
+}
+
 /* Responsive Design */
 
 /* iPhone 13 and above (390px+) - Mobile First Approach */

@@ -6,11 +6,12 @@ import { SupabaseService, BuildingGroup, Building, Apartment, Tenant } from '../
 import { ModalComponent } from '../../shared/modal/modal.component';
 import { BuildingGroupFormComponent } from '../building-group-form/building-group-form.component';
 import { BuildingFormComponent } from '../building-form/building-form.component';
+import { ConfirmationModalComponent } from '../../shared/confirmation-modal/confirmation-modal.component';
 
 @Component({
   selector: 'app-building',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule, ModalComponent, BuildingGroupFormComponent, BuildingFormComponent],
+  imports: [CommonModule, RouterModule, FormsModule, ModalComponent, BuildingGroupFormComponent, BuildingFormComponent, ConfirmationModalComponent],
   templateUrl: './building.component.html',
   styleUrls: ['./building.component.css']
 })
@@ -39,6 +40,9 @@ export class BuildingComponent implements OnInit {
   // Modal properties
   showAddGroupModal = false;
   showAddBuildingModal = false;
+  showDeleteConfirmation = false;
+  deleteConfirmationData: { type: 'building' | 'group', item: any, index: number } | null = null;
+  isDeleting = false;
 
   constructor(private supabaseService: SupabaseService) {}
 
@@ -88,10 +92,17 @@ export class BuildingComponent implements OnInit {
 
   removeGroup() {
     if (this.selectedGroupRow !== null) {
-      this.showNotification('Group removed successfully');
-      this.selectedGroupRow = null;
+      const group = this.buildingGroups[this.selectedGroupRow];
+      if (group) {
+        this.deleteConfirmationData = {
+          type: 'group',
+          item: group,
+          index: this.selectedGroupRow
+        };
+        this.showDeleteConfirmation = true;
+      }
     } else {
-      this.showNotification('Please select a group to remove');
+      this.showNotification('Please select a group to delete');
     }
   }
 
@@ -131,10 +142,17 @@ export class BuildingComponent implements OnInit {
 
   removeBuilding() {
     if (this.selectedBuildingRow !== null) {
-      this.showNotification('Building removed successfully');
-      this.selectedBuildingRow = null;
+      const building = this.buildings[this.selectedBuildingRow];
+      if (building) {
+        this.deleteConfirmationData = {
+          type: 'building',
+          item: building,
+          index: this.selectedBuildingRow
+        };
+        this.showDeleteConfirmation = true;
+      }
     } else {
-      this.showNotification('Please select a building to remove');
+      this.showNotification('Please select a building to delete');
     }
   }
 
@@ -220,5 +238,39 @@ export class BuildingComponent implements OnInit {
         }
       }, 300);
     }, 3000);
+  }
+
+  // Confirmation modal handlers
+  async onDeleteConfirm() {
+    if (!this.deleteConfirmationData) return;
+
+    this.isDeleting = true;
+
+    try {
+      if (this.deleteConfirmationData.type === 'building') {
+        await this.supabaseService.deleteBuilding(this.deleteConfirmationData.item.id);
+        this.buildings.splice(this.deleteConfirmationData.index, 1);
+        this.selectedBuildingRow = null;
+        this.showNotification('Building deleted successfully');
+      } else if (this.deleteConfirmationData.type === 'group') {
+        await this.supabaseService.deleteBuildingGroup(this.deleteConfirmationData.item.id);
+        this.buildingGroups.splice(this.deleteConfirmationData.index, 1);
+        this.selectedGroupRow = null;
+        this.showNotification('Building group deleted successfully');
+      }
+    } catch (error) {
+      console.error('Error deleting item:', error);
+      this.showNotification('Failed to delete item. Please try again.');
+    } finally {
+      this.isDeleting = false;
+      this.showDeleteConfirmation = false;
+      this.deleteConfirmationData = null;
+    }
+  }
+
+  onDeleteCancel() {
+    this.showDeleteConfirmation = false;
+    this.deleteConfirmationData = null;
+    this.isDeleting = false;
   }
 }

@@ -365,6 +365,25 @@ export class SupabaseService {
     }
   }
 
+  // Delete Methods
+  async deleteBuilding(buildingId: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('buildings')
+      .delete()
+      .eq('id', buildingId);
+
+    if (error) throw error;
+  }
+
+  async deleteBuildingGroup(groupId: string): Promise<void> {
+    const { error } = await this.supabase
+      .from('building_groups')
+      .delete()
+      .eq('id', groupId);
+
+    if (error) throw error;
+  }
+
   // Expose supabase client for direct access
   get supabaseClient() {
     return this.supabase;

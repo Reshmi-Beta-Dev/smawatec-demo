@@ -73,7 +73,7 @@
                     </table>
                     <div class="action-buttons">
                         <button class="pill" (click)="addGroup()">Add Group</button>
-                        <button class="pill outline" (click)="removeGroup()">Remove Group</button>
+                        <button class="pill outline danger" (click)="removeGroup()">Delete Group</button>
                     </div>
                 </div>
             </div>
@@ -166,7 +166,7 @@
                 </table>
                 <div class="action-buttons">
                     <button class="pill" (click)="addBuilding()">Add Building</button>
-                    <button class="pill outline" (click)="removeBuilding()">Remove Building</button>
+                    <button class="pill outline danger" (click)="removeBuilding()">Delete Building</button>
                 </div>
             </div>
         </div>
@@ -200,4 +200,19 @@
         </app-building-form>
         
     </app-modal>
+
+    <!-- Delete Confirmation Modal -->
+    <app-confirmation-modal
+        [isOpen]="showDeleteConfirmation"
+        [title]="deleteConfirmationData?.type === 'building' ? 'Delete Building' : 'Delete Building Group'"
+        [message]="deleteConfirmationData?.type === 'building' 
+            ? 'Are you sure you want to delete &quot;' + (deleteConfirmationData?.item?.building_name || '') + '&quot;? This action cannot be undone.'
+            : 'Are you sure you want to delete &quot;' + (deleteConfirmationData?.item?.group_name || '') + '&quot;? This will also delete all buildings in this group. This action cannot be undone.'"
+        [confirmText]="isDeleting ? 'Deleting...' : 'Delete'"
+        [cancelText]="'Cancel'"
+        [type]="'danger'"
+        [isLoading]="isDeleting"
+        (confirm)="onDeleteConfirm()"
+        (cancel)="onDeleteCancel()">
+    </app-confirmation-modal>
 </div>
