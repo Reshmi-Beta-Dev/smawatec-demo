@@ -2,64 +2,75 @@
     <main class="content">
         <!-- Alarm Summary Section -->
         <div class="alarm-summary">
+            <!-- Loading State -->
+            <div *ngIf="loading" class="loading-state">
+                <p>Loading alarm categories...</p>
+            </div>
+
+            <!-- Error State -->
+            <div *ngIf="error" class="error-state">
+                <p>{{ error }}</p>
+                <button (click)="loadAlarmCategories()" class="retry-button">Retry</button>
+            </div>
+
             <!-- Major Alarms -->
-            <div class="alarm-section major-alarms-section">
+            <div *ngIf="alarmCategories" class="alarm-section major-alarms-section">
                 <h3>Major Alarms</h3>
                 <div class="summary-panel major-alarms">
                     <div class="alarm-stats">
                         <div class="stat-item">
                             <span class="stat-label">Major Leaks</span>
-                            <span class="stat-value highlight">1</span>
+                            <span class="stat-value highlight">{{ alarmCategories.major.major_leaks }}</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">auto shut-off non resolved</span>
-                            <span class="stat-value highlight">1</span>
+                            <span class="stat-value highlight">{{ alarmCategories.major.auto_shutoff_non_resolved }}</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Low Temperature</span>
-                            <span class="stat-value highlight">1</span>
+                            <span class="stat-value highlight">{{ alarmCategories.major.low_temperature }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- Minor Alarms -->
-            <div class="alarm-section minor-alarms-section">
+            <div *ngIf="alarmCategories" class="alarm-section minor-alarms-section">
                 <h3>Minor Alarms</h3>
                 <div class="summary-panel minor-alarms">
                     <div class="alarm-stats">
                         <div class="stat-item">
                             <span class="stat-label">Medium Leaks</span>
-                            <span class="stat-value highlight">54</span>
+                            <span class="stat-value highlight">{{ alarmCategories.minor.medium_leaks }}</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Minor Leaks</span>
-                            <span class="stat-value highlight">3</span>
+                            <span class="stat-value highlight">{{ alarmCategories.minor.minor_leaks }}</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <!-- System Messages -->
-            <div class="alarm-section system-messages-section">
+            <div *ngIf="alarmCategories" class="alarm-section system-messages-section">
                 <h3>System Messages</h3>
                 <div class="summary-panel system-messages">
                     <div class="alarm-stats">
                         <div class="stat-item">
                             <span class="stat-label">Wifi Connection Lost</span>
-                            <span class="stat-value highlight">1</span>
+                            <span class="stat-value" [class.highlight]="alarmCategories.system.wifi_connection_lost > 0">{{ alarmCategories.system.wifi_connection_lost }}</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Power Loss</span>
-                            <span class="stat-value">0</span>
+                            <span class="stat-value" [class.highlight]="alarmCategories.system.power_loss > 0">{{ alarmCategories.system.power_loss }}</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">Valve Failure</span>
-                            <span class="stat-value">0</span>
+                            <span class="stat-value" [class.highlight]="alarmCategories.system.valve_failure > 0">{{ alarmCategories.system.valve_failure }}</span>
                         </div>
                         <div class="stat-item">
                             <span class="stat-label">poor Wifi</span>
-                            <span class="stat-value highlight">2</span>
+                            <span class="stat-value" [class.highlight]="alarmCategories.system.poor_wifi > 0">{{ alarmCategories.system.poor_wifi }}</span>
                         </div>
                     </div>
                 </div>

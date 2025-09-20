@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SupabaseAlarmsService, AlarmCategories } from '../../services/supabase-alarms.service';
 
 @Component({
   selector: 'app-alarms',
@@ -10,9 +11,29 @@ import { CommonModule } from '@angular/common';
 })
 export class AlarmsComponent implements OnInit {
   selectedRow: number | null = null;
+  alarmCategories: AlarmCategories | null = null;
+  loading = false;
+  error: string | null = null;
 
-  ngOnInit() {
-    // Initialize any component logic here
+  constructor(private supabaseAlarmsService: SupabaseAlarmsService) {}
+
+  async ngOnInit() {
+    await this.loadAlarmCategories();
+  }
+
+  async loadAlarmCategories() {
+    this.loading = true;
+    this.error = null;
+    
+    try {
+      this.alarmCategories = await this.supabaseAlarmsService.getAlarmCategories();
+      console.log('✅ Alarm categories loaded:', this.alarmCategories);
+    } catch (error: any) {
+      console.error('❌ Error loading alarm categories:', error);
+      this.error = `Failed to load alarm categories: ${error.message}`;
+    } finally {
+      this.loading = false;
+    }
   }
 
   onRowClick(index: number) {

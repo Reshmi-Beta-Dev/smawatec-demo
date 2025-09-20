@@ -49,6 +49,37 @@ export interface ConsumptionStatistics {
   monthly_data: any[];
 }
 
+export interface AlarmCategory {
+  category_type: 'major' | 'minor' | 'system';
+  major_leaks: number;
+  auto_shutoff_non_resolved: number;
+  low_temperature: number;
+  medium_leaks: number;
+  minor_leaks: number;
+  wifi_connection_lost: number;
+  power_loss: number;
+  valve_failure: number;
+  poor_wifi: number;
+}
+
+export interface AlarmCategories {
+  major: {
+    major_leaks: number;
+    auto_shutoff_non_resolved: number;
+    low_temperature: number;
+  };
+  minor: {
+    medium_leaks: number;
+    minor_leaks: number;
+  };
+  system: {
+    wifi_connection_lost: number;
+    power_loss: number;
+    valve_failure: number;
+    poor_wifi: number;
+  };
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -237,6 +268,93 @@ export class SupabaseAlarmsService {
     } catch (error: any) {
       console.error('❌ Critical error in getConsumptionStatistics:', error);
       throw new Error(`Failed to fetch consumption statistics: ${error.message}`);
+    }
+  }
+
+  async getAlarmCategories(): Promise<AlarmCategories> {
+    try {
+      console.log('🔄 Calling get_alarm_categories RPC function...');
+      
+      // Use RPC call to execute the function
+      const { data, error } = await this.supabase
+        .rpc('get_alarm_categories');
+
+      console.log('📊 Alarm Categories RPC Response:', { data, error });
+
+      if (error) {
+        console.error('❌ Error fetching alarm categories:', error);
+        throw new Error(`Failed to fetch alarm categories: ${error.message}`);
+      }
+
+      if (!data || data.length === 0) {
+        console.warn('⚠️ No data returned from get_alarm_categories function');
+        // Return default values
+        return {
+          major: {
+            major_leaks: 0,
+            auto_shutoff_non_resolved: 0,
+            low_temperature: 0
+          },
+          minor: {
+            medium_leaks: 0,
+            minor_leaks: 0
+          },
+          system: {
+            wifi_connection_lost: 0,
+            power_loss: 0,
+            valve_failure: 0,
+            poor_wifi: 0
+          }
+        };
+      }
+
+      // Transform the array data into the structured format
+      const categories: AlarmCategories = {
+        major: {
+          major_leaks: 0,
+          auto_shutoff_non_resolved: 0,
+          low_temperature: 0
+        },
+        minor: {
+          medium_leaks: 0,
+          minor_leaks: 0
+        },
+        system: {
+          wifi_connection_lost: 0,
+          power_loss: 0,
+          valve_failure: 0,
+          poor_wifi: 0
+        }
+      };
+
+      // Process each category
+      data.forEach((category: AlarmCategory) => {
+        if (category.category_type === 'major') {
+          categories.major = {
+            major_leaks: category.major_leaks,
+            auto_shutoff_non_resolved: category.auto_shutoff_non_resolved,
+            low_temperature: category.low_temperature
+          };
+        } else if (category.category_type === 'minor') {
+          categories.minor = {
+            medium_leaks: category.medium_leaks,
+            minor_leaks: category.minor_leaks
+          };
+        } else if (category.category_type === 'system') {
+          categories.system = {
+            wifi_connection_lost: category.wifi_connection_lost,
+            power_loss: category.power_loss,
+            valve_failure: category.valve_failure,
+            poor_wifi: category.poor_wifi
+          };
+        }
+      });
+
+      console.log('✅ Alarm categories loaded:', categories);
+      return categories;
+    } catch (error: any) {
+      console.error('❌ Critical error in getAlarmCategories:', error);
+      throw new Error(`Failed to fetch alarm categories: ${error.message}`);
     }
   }
 }
