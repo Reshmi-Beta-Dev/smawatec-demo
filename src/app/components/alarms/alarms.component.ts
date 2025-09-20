@@ -21,7 +21,6 @@ export class AlarmsComponent implements OnInit {
   totalItems = 0;
   totalPages = 0;
   paginatedAlarms: any[] = [];
-  allAlarms: any[] = [];
   
   // Expose Math object to template
   Math = Math;
@@ -52,39 +51,39 @@ export class AlarmsComponent implements OnInit {
 
   async loadAlarms() {
     try {
-      this.allAlarms = await this.supabaseAlarmsService.getAlarmsMessageBoard();
-      this.totalItems = this.allAlarms.length;
-      this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
-      this.updatePaginatedAlarms();
-      console.log('✅ Alarms loaded:', this.allAlarms.length, 'total items');
+      // Use the paginated function for better performance
+      const result = await this.supabaseAlarmsService.getAlarmsMessageBoardPaginated(
+        this.currentPage, 
+        this.itemsPerPage
+      );
+      
+      this.paginatedAlarms = result.alarms;
+      this.totalItems = result.totalCount;
+      this.totalPages = result.totalPages;
+      
+      console.log('✅ Alarms loaded:', result.alarms.length, 'items on page', this.currentPage, 'of', result.totalPages);
     } catch (error: any) {
       console.error('❌ Error loading alarms:', error);
       this.error = `Failed to load alarms: ${error.message}`;
     }
   }
 
-  updatePaginatedAlarms() {
-    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
-    const endIndex = startIndex + this.itemsPerPage;
-    this.paginatedAlarms = this.allAlarms.slice(startIndex, endIndex);
-  }
-
-  goToPage(page: number) {
+  async goToPage(page: number) {
     if (page >= 1 && page <= this.totalPages) {
       this.currentPage = page;
-      this.updatePaginatedAlarms();
+      await this.loadAlarms();
     }
   }
 
-  nextPage() {
+  async nextPage() {
     if (this.currentPage < this.totalPages) {
-      this.goToPage(this.currentPage + 1);
+      await this.goToPage(this.currentPage + 1);
     }
   }
 
-  previousPage() {
+  async previousPage() {
     if (this.currentPage > 1) {
-      this.goToPage(this.currentPage - 1);
+      await this.goToPage(this.currentPage - 1);
     }
   }
 

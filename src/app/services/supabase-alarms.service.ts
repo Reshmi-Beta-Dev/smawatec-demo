@@ -121,18 +121,9 @@ export class SupabaseAlarmsService {
     };
 
     try {
-      // First, let's try to fetch from the alarms table directly to test connection
-      const { data: testData, error: testError } = await this.supabase
-        .from('alarms')
-        .select('id, message, created_at')
-        .limit(1);
-
-      if (testError) {
-        console.error('❌ Test connection failed:', testError);
-        throw new Error(`Connection test failed: ${testError.message}`);
-      }
-
-      // Now try the view
+      console.log('🔄 Fetching alarms from message board view...');
+      
+      // Try to fetch from the view first
       const { data: alarmsData, error: alarmsError } = await this.supabase
         .from('alarms_message_board')
         .select('*')
@@ -140,41 +131,21 @@ export class SupabaseAlarmsService {
 
       if (alarmsError) {
         console.error('❌ Error fetching from view:', alarmsError);
-        // If view doesn't exist, fall back to basic alarms data
-        const { data: fallbackData, error: fallbackError } = await this.supabase
-          .from('alarms')
-          .select('*')
-          .order('created_at', { ascending: false })
-          .limit(10);
+        
+        // Fallback to the simple function
+        const { data: functionData, error: functionError } = await this.supabase
+          .rpc('get_alarms_message_board_simple');
 
-        if (fallbackError) {
-          throw new Error(`Fallback failed: ${fallbackError.message}`);
+        if (functionError) {
+          console.error('❌ Error fetching from function:', functionError);
+          throw new Error(`Failed to fetch alarms: ${functionError.message}`);
         }
 
-        // Transform fallback data to match our interface
-        const transformedData = fallbackData?.map(alarm => ({
-          id: alarm.id,
-          device_id: alarm.device_id || '',
-          building_id: alarm.building_id || '',
-          alarm_type_id: alarm.alarm_type_id || '',
-          message: alarm.message || 'No message',
-          status: alarm.status || 'unknown',
-          created_at: alarm.created_at,
-          resolved_at: alarm.resolved_at,
-          device_serial: 'N/A',
-          device_name: 'N/A',
-          device_status: 'unknown',
-          building_name: 'N/A',
-          building_address: 'N/A',
-          building_group_name: 'N/A',
-          alarm_type_name: alarm.alarm_type || 'Unknown',
-          alarm_severity: 'medium',
-          alarm_color: '#666'
-        })) || [];
-
-        return transformedData;
+        console.log('✅ Alarms loaded from function:', functionData?.length || 0, 'items');
+        return functionData || [];
       }
       
+      console.log('✅ Alarms loaded from view:', alarmsData?.length || 0, 'items');
       return alarmsData || [];
 
     } catch (error: any) {
@@ -183,6 +154,52 @@ export class SupabaseAlarmsService {
     } finally {
       // Restore original console.error
       console.error = originalConsoleError;
+    }
+  }
+
+  async getAlarmsMessageBoardPaginated(
+    page: number = 1, 
+    pageSize: number = 10, 
+    sortBy: string = 'created_at', 
+    sortDirection: string = 'DESC'
+  ): Promise<{alarms: AlarmMessageBoard[], totalCount: number, totalPages: number, currentPage: number}> {
+    try {
+      console.log(`🔄 Fetching paginated alarms: page ${page}, size ${pageSize}`);
+      
+      const { data, error } = await this.supabase
+        .rpc('get_alarms_message_board', {
+          page_number: page,
+          page_size: pageSize,
+          sort_by: sortBy,
+          sort_direction: sortDirection
+        });
+
+      if (error) {
+        console.error('❌ Error fetching paginated alarms:', error);
+        throw new Error(`Failed to fetch paginated alarms: ${error.message}`);
+      }
+
+      if (!data || data.length === 0) {
+        return {
+          alarms: [],
+          totalCount: 0,
+          totalPages: 0,
+          currentPage: page
+        };
+      }
+
+      const result = data[0];
+      console.log('✅ Paginated alarms loaded:', result);
+      
+      return {
+        alarms: result.alarms || [],
+        totalCount: result.total_count || 0,
+        totalPages: result.total_pages || 0,
+        currentPage: result.current_page || page
+      };
+    } catch (error: any) {
+      console.error('❌ Critical error in getAlarmsMessageBoardPaginated:', error);
+      throw new Error(`Failed to fetch paginated alarms: ${error.message}`);
     }
   }
 
