@@ -141,42 +141,50 @@
                     <h3>Consumption</h3>
                     <div class="panel consumption-panel">
                         <div class="panel-content">
-                            <div class="current-section">
-                                <h4>Current Period:</h4>
-                                <div class="stat-row">
-                                    <span class="stat-label">2025 to Sept:</span>
-                                    <span class="stat-value">343 234 m3</span>
-                                </div>
-                                <div class="stat-row">
-                                    <span class="stat-label">2024 to Sept:</span>
-                                    <span class="stat-value">332 789 m3</span>
-                                </div>
+                            <!-- Loading State -->
+                            <div *ngIf="!consumptionStats && !loading" class="loading-state">
+                                <p>Loading consumption statistics...</p>
                             </div>
-                            <div class="history-section">
-                                <h4>Historical Data:</h4>
-                                <div class="stat-row">
-                                    <span class="stat-label">2024:</span>
-                                    <span class="stat-value">378 278 m3</span>
+                            
+                            <!-- Data Display -->
+                            <div *ngIf="consumptionStats">
+                                <div class="current-section">
+                                    <h4>Current Period:</h4>
+                                    <div class="stat-row">
+                                        <span class="stat-label">{{ currentYear }} to Sept:</span>
+                                        <span class="stat-value">{{ (consumptionStats.current_year_to_sept_m3 || 0) | number:'1.0-0' }} m³</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">{{ previousYear }} to Sept:</span>
+                                        <span class="stat-value">{{ (consumptionStats.previous_year_to_sept_m3 || 0) | number:'1.0-0' }} m³</span>
+                                    </div>
                                 </div>
-                                <div class="stat-row">
-                                    <span class="stat-label">2023:</span>
-                                    <span class="stat-value">378 278 m3</span>
-                                </div>
-                                <div class="stat-row">
-                                    <span class="stat-label">2022:</span>
-                                    <span class="stat-value">378 278 m3</span>
+                                <div class="history-section">
+                                    <h4>Historical Data:</h4>
+                                    <div class="stat-row">
+                                        <span class="stat-label">2024:</span>
+                                        <span class="stat-value">{{ (consumptionStats.year_2024_total_m3 || 0) | number:'1.0-0' }} m³</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">2023:</span>
+                                        <span class="stat-value">{{ (consumptionStats.year_2023_total_m3 || 0) | number:'1.0-0' }} m³</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span class="stat-label">2022:</span>
+                                        <span class="stat-value">{{ (consumptionStats.year_2022_total_m3 || 0) | number:'1.0-0' }} m³</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
 
-                <!-- Total 2025 Panel with Chart -->
+                <!-- Total Current Year Panel with Chart -->
                 <div class="panel-section">
-                    <h3>Total 2025</h3>
+                    <h3>Total {{ currentYear }}</h3>
                     <div class="panel chart-panel">
                         <div class="chart-container">
-                            <h4>Monthly</h4>
+                            <h4>Monthly Consumption</h4>
                             <canvas id="monthlyChart" width="400" height="200"></canvas>
                         </div>
                     </div>
