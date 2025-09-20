@@ -235,18 +235,48 @@
                                             <th>Tenant</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr *ngFor="let building of paginatedBuildings; let i = index" 
-                                            (click)="onBuildingRowClick(i)" 
-                                            [class.selected]="selectedBuildingRow === i">
-                                            <td>{{ (buildingCurrentPage - 1) * buildingItemsPerPage + i + 1 }}</td>
-                                            <td>{{ building.building }}</td>
-                                            <td>{{ building.zipCode }}</td>
-                                            <td>{{ building.address }}</td>
-                                            <td>{{ building.apartment }}</td>
-                                            <td>{{ building.tenant }}</td>
-                                        </tr>
-                                    </tbody>
+                        <tbody>
+                            <!-- Loading State -->
+                            <tr *ngIf="loading">
+                                <td colspan="6" class="loading-cell">
+                                    <div class="table-loading-state">
+                                        <div class="loading-spinner"></div>
+                                        <span>Loading buildings...</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Error State -->
+                            <tr *ngIf="error">
+                                <td colspan="6" class="error-cell">
+                                    <div class="table-error-state">
+                                        <span>{{ error }}</span>
+                                        <button (click)="loadData()" class="retry-button">Retry</button>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- No Data State -->
+                            <tr *ngIf="!loading && !error && paginatedBuildings.length === 0">
+                                <td colspan="6" class="no-data-cell">
+                                    <div class="no-data-state">
+                                        <span>No buildings found</span>
+                                    </div>
+                                </td>
+                            </tr>
+                            
+                            <!-- Data Rows -->
+                            <tr *ngFor="let building of paginatedBuildings; let i = index" 
+                                (click)="onBuildingRowClick(i)" 
+                                [class.selected]="selectedBuildingRow === i">
+                                <td>{{ (buildingCurrentPage - 1) * buildingItemsPerPage + i + 1 }}</td>
+                                <td>{{ building.building }}</td>
+                                <td>{{ building.zipCode }}</td>
+                                <td>{{ building.address }}</td>
+                                <td>{{ building.apartment }}</td>
+                                <td>{{ building.tenant }}</td>
+                            </tr>
+                        </tbody>
                                 </table>
                                 
                                 <!-- Building Pagination -->

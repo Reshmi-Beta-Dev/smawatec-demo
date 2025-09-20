@@ -109,9 +109,16 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadBuildings() {
     try {
-      this.allBuildings = await this.supabaseStatisticsService.getBuildings();
-      this.updateBuildingPagination();
-      console.log('✅ Buildings loaded:', this.allBuildings.length, 'items');
+      const response = await this.supabaseStatisticsService.getBuildings(
+        this.buildingCurrentPage,
+        this.buildingItemsPerPage
+      );
+      
+      this.paginatedBuildings = response.buildings;
+      this.buildingTotalItems = response.total_count;
+      this.buildingTotalPages = response.total_pages;
+      
+      console.log('✅ Buildings loaded:', response.buildings.length, 'items');
     } catch (error: any) {
       console.error('❌ Error loading buildings:', error);
       throw error;
@@ -192,31 +199,23 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     return pages;
   }
 
-  // Building Pagination Methods
-  updateBuildingPagination() {
-    this.buildingTotalItems = this.allBuildings.length;
-    this.buildingTotalPages = Math.ceil(this.buildingTotalItems / this.buildingItemsPerPage);
-    const startIndex = (this.buildingCurrentPage - 1) * this.buildingItemsPerPage;
-    const endIndex = startIndex + this.buildingItemsPerPage;
-    this.paginatedBuildings = this.allBuildings.slice(startIndex, endIndex);
-  }
-
-  goToBuildingPage(page: number) {
+  // Building Pagination Methods (now using server-side pagination)
+  async goToBuildingPage(page: number) {
     if (page >= 1 && page <= this.buildingTotalPages) {
       this.buildingCurrentPage = page;
-      this.updateBuildingPagination();
+      await this.loadBuildings();
     }
   }
 
-  nextBuildingPage() {
+  async nextBuildingPage() {
     if (this.buildingCurrentPage < this.buildingTotalPages) {
-      this.goToBuildingPage(this.buildingCurrentPage + 1);
+      await this.goToBuildingPage(this.buildingCurrentPage + 1);
     }
   }
 
-  previousBuildingPage() {
+  async previousBuildingPage() {
     if (this.buildingCurrentPage > 1) {
-      this.goToBuildingPage(this.buildingCurrentPage - 1);
+      await this.goToBuildingPage(this.buildingCurrentPage - 1);
     }
   }
 
