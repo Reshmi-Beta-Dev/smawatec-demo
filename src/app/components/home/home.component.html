@@ -6,7 +6,7 @@
             <!-- Message Board Section -->
             <div class="message-board-section">
                 <h2>Message Board</h2>
-                <div class="table-container">
+                <div class="table-container" [class.scrollable]="showAllAlarms">
                     <table class="message-table">
                         <thead>
                             <tr>
@@ -40,14 +40,14 @@
                             </tr>
                             
                             <!-- No Data State -->
-                            <tr *ngIf="!loading && !error && alarms.length === 0">
+                            <tr *ngIf="!loading && !error && filteredAlarms.length === 0">
                                 <td colspan="9" style="text-align: center; padding: 40px 20px;">
                                     <div style="color: #666; font-size: 16px; font-style: italic;">No alarms found in the message board.</div>
                                 </td>
                             </tr>
                             
                             <!-- Dynamic Alarm Rows from Supabase -->
-                            <tr *ngFor="let alarm of alarms; let i = index" 
+                            <tr *ngFor="let alarm of filteredAlarms; let i = index" 
                                 class="alarm-row" 
                                 [class.major]="alarm.alarm_severity === 'high'"
                                 [class.selected]="selectedRow === i"
@@ -77,8 +77,17 @@
                     </table>
                 </div>
                 <div class="table-actions">
-                    <button class="pill">Sort by Importance</button>
-                    <button class="pill outline">View all alarms</button>
+                    <button class="pill" 
+                            [class.active]="sortByImportance"
+                            (click)="toggleSortByImportance()">
+                        {{ sortByImportance ? '✓ Sort by Importance' : 'Sort by Importance' }}
+                    </button>
+                    <button class="pill outline" (click)="toggleViewAll()">
+                        {{ showAllAlarms ? 'Show Top 10' : 'View All Alarms' }}
+                    </button>
+                    <span class="alarm-count" *ngIf="!showAllAlarms && alarms.length > defaultDisplayCount">
+                        Showing {{ filteredAlarms.length }} of {{ alarms.length }} alarms
+                    </span>
                 </div>
             </div>
 

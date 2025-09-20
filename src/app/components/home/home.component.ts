@@ -20,8 +20,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   
   // Supabase data properties
   alarms: AlarmMessageBoard[] = [];
+  filteredAlarms: AlarmMessageBoard[] = [];
   loading = false;
   error: string | null = null;
+  
+  // Pagination and display properties
+  showAllAlarms = false;
+  defaultDisplayCount = 10;
+  sortByImportance = false;
 
   constructor(private supabaseAlarmsService: SupabaseAlarmsService) {}
 
@@ -35,12 +41,56 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     
     try {
       this.alarms = await this.supabaseAlarmsService.getAlarmsMessageBoard();
+      this.applySortingAndFiltering();
     } catch (error: any) {
       console.error('Error loading alarms:', error);
       this.error = `Failed to load alarms: ${error.message}`;
     } finally {
       this.loading = false;
     }
+  }
+
+  applySortingAndFiltering() {
+    // Sort by importance (high severity first, then by created_at)
+    let sortedAlarms = [...this.alarms];
+    
+    if (this.sortByImportance) {
+      sortedAlarms.sort((a, b) => {
+        // Define severity order: high > medium > low
+        const severityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+        const aSeverity = severityOrder[a.alarm_severity as keyof typeof severityOrder] || 0;
+        const bSeverity = severityOrder[b.alarm_severity as keyof typeof severityOrder] || 0;
+        
+        if (aSeverity !== bSeverity) {
+          return bSeverity - aSeverity; // Higher severity first
+        }
+        
+        // If same severity, sort by created_at (newest first)
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+    } else {
+      // Sort by created_at only (newest first)
+      sortedAlarms.sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    }
+    
+    // Apply pagination
+    if (this.showAllAlarms) {
+      this.filteredAlarms = sortedAlarms;
+    } else {
+      this.filteredAlarms = sortedAlarms.slice(0, this.defaultDisplayCount);
+    }
+  }
+
+  toggleViewAll() {
+    this.showAllAlarms = !this.showAllAlarms;
+    this.applySortingAndFiltering();
+  }
+
+  toggleSortByImportance() {
+    this.sortByImportance = !this.sortByImportance;
+    this.applySortingAndFiltering();
   }
 
   ngAfterViewInit() {
