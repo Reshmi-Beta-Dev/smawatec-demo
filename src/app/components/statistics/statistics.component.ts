@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { SupabaseStatisticsService, BuildingGroup, Building, Apartment } from '../../services/supabase-statistics.service';
 
 declare var Chart: any;
 
@@ -29,91 +30,103 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   periodTo: string = '';
   private chart: any;
 
+  // Loading and error states
+  loading = false;
+  error: string | null = null;
+
   // Pagination properties for Building Groups
   buildingGroupCurrentPage = 1;
   buildingGroupItemsPerPage = 8;
   buildingGroupTotalItems = 0;
   buildingGroupTotalPages = 0;
-  paginatedBuildingGroups: any[] = [];
-  allBuildingGroups: any[] = [];
+  paginatedBuildingGroups: BuildingGroup[] = [];
+  allBuildingGroups: BuildingGroup[] = [];
 
   // Pagination properties for Building
   buildingCurrentPage = 1;
   buildingItemsPerPage = 8;
   buildingTotalItems = 0;
   buildingTotalPages = 0;
-  paginatedBuildings: any[] = [];
-  allBuildings: any[] = [];
+  paginatedBuildings: Building[] = [];
+  allBuildings: Building[] = [];
 
   // Pagination properties for Apartment
   apartmentCurrentPage = 1;
   apartmentItemsPerPage = 8;
   apartmentTotalItems = 0;
   apartmentTotalPages = 0;
-  paginatedApartments: any[] = [];
-  allApartments: any[] = [];
+  paginatedApartments: Apartment[] = [];
+  allApartments: Apartment[] = [];
 
   // Expose Math object to template
   Math = Math;
 
+  constructor(private supabaseStatisticsService: SupabaseStatisticsService) {}
+
   ngOnInit() {
-    // Initialize data and pagination
-    this.initializeData();
+    // Load data from Supabase
+    this.loadData();
   }
 
-  initializeData() {
-    // Initialize Building Groups data
-    this.allBuildingGroups = [
-      { id: 1, group: 'PAR - GP1', building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 2, group: 'PAR - GP1', building: 'PAR-GP1-B12013', zipCode: '23234', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 3, group: 'PAR - GP1', building: 'PAR-GP1-B12014', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 4, group: 'PAR - GP1', building: 'PAR-GP1-B12015', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 5, group: 'PAR - GP1', building: 'PAR-GP1-B12016', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 6, group: 'PAR - GP1', building: 'PAR-GP1-B12017', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 7, group: 'PAR - GP1', building: 'PAR-GP1-B12018', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 8, group: 'PAR - GP1', building: 'PAR-GP1-B12019', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 9, group: 'PAR - GP1', building: 'PAR-GP1-B12020', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 10, group: 'PAR - GP1', building: 'PAR-GP1-B12021', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 11, group: 'PAR - GP1', building: 'PAR-GP1-B12022', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' },
-      { id: 12, group: 'PAR - GP1', building: 'PAR-GP1-B12023', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place' }
-    ];
+  async loadData() {
+    this.loading = true;
+    this.error = null;
 
-    // Initialize Building data
-    this.allBuildings = [
-      { id: 1, building: 'PAR-GP1-B12012', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 1, L23, Ap12', tenant: 'Bonaparte, Napoleon' },
-      { id: 2, building: 'PAR-GP1-B12013', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 1, L24, Ap13', tenant: 'Duc de la Roche, Francois' },
-      { id: 3, building: 'PAR-GP1-B12014', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 2, L25, Ap14', tenant: 'Depardieu, Gerard' },
-      { id: 4, building: 'PAR-GP1-B12015', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 3, L26, Ap15', tenant: 'Vuitton, Luis' },
-      { id: 5, building: 'PAR-GP1-B12016', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 4, L27, Ap16', tenant: 'Dupont, Marie' },
-      { id: 6, building: 'PAR-GP1-B12017', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 5, L28, Ap17', tenant: 'Martin, Pierre' },
-      { id: 7, building: 'PAR-GP1-B12018', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 6, L29, Ap18', tenant: 'Bernard, Sophie' },
-      { id: 8, building: 'PAR-GP1-B12019', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 7, L30, Ap19', tenant: 'Thomas, Jean' },
-      { id: 9, building: 'PAR-GP1-B12020', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 8, L31, Ap20', tenant: 'Petit, Anne' },
-      { id: 10, building: 'PAR-GP1-B12021', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 9, L32, Ap21', tenant: 'Robert, Michel' },
-      { id: 11, building: 'PAR-GP1-B12022', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 10, L33, Ap22', tenant: 'Richard, Claire' },
-      { id: 12, building: 'PAR-GP1-B12023', zipCode: '23212', address: 'Paris, Champs Elysees, Rue de la Place', apartment: 'Block 11, L34, Ap23', tenant: 'Durand, Paul' }
-    ];
+    try {
+      // Load building groups from Supabase
+      await this.loadBuildingGroups();
+      
+      // Load buildings and apartments (still using hardcoded data for now)
+      await this.loadBuildings();
+      await this.loadApartments();
+      
+      console.log('✅ All data loaded successfully');
+    } catch (error: any) {
+      console.error('❌ Error loading data:', error);
+      this.error = `Failed to load data: ${error.message}`;
+    } finally {
+      this.loading = false;
+    }
+  }
 
-    // Initialize Apartment data
-    this.allApartments = [
-      { id: 1, apartment: 'Block 1, L2, APT 12', tenant: 'Mr. Francois Duc de la Roche Focault' },
-      { id: 2, apartment: 'L23, APT 3', tenant: 'Mr. Napoleon Bonaparte' },
-      { id: 3, apartment: 'Block 3, L45, APT 23', tenant: 'Mr. Gerard Depardieu' },
-      { id: 4, apartment: 'Block, 32 L1, APT1', tenant: 'Mr. Luis Vuitton' },
-      { id: 5, apartment: 'Block 4, L12, APT 5', tenant: 'Mr. Jean Dupont' },
-      { id: 6, apartment: 'L34, APT 7', tenant: 'Ms. Marie Martin' },
-      { id: 7, apartment: 'Block 5, L56, APT 9', tenant: 'Mr. Pierre Bernard' },
-      { id: 8, apartment: 'Block 6, L78, APT 11', tenant: 'Ms. Sophie Thomas' },
-      { id: 9, apartment: 'L90, APT 13', tenant: 'Mr. Jean Petit' },
-      { id: 10, apartment: 'Block 7, L23, APT 15', tenant: 'Ms. Anne Robert' },
-      { id: 11, apartment: 'Block 8, L45, APT 17', tenant: 'Mr. Michel Richard' },
-      { id: 12, apartment: 'L67, APT 19', tenant: 'Ms. Claire Durand' }
-    ];
+  async loadBuildingGroups() {
+    try {
+      const response = await this.supabaseStatisticsService.getBuildingGroups(
+        this.buildingGroupCurrentPage,
+        this.buildingGroupItemsPerPage
+      );
+      
+      this.paginatedBuildingGroups = response.building_groups;
+      this.buildingGroupTotalItems = response.total_count;
+      this.buildingGroupTotalPages = response.total_pages;
+      
+      console.log('✅ Building groups loaded:', response.building_groups.length, 'items');
+    } catch (error: any) {
+      console.error('❌ Error loading building groups:', error);
+      throw error;
+    }
+  }
 
-    // Initialize pagination for all grids
-    this.updateBuildingGroupPagination();
-    this.updateBuildingPagination();
-    this.updateApartmentPagination();
+  async loadBuildings() {
+    try {
+      this.allBuildings = await this.supabaseStatisticsService.getBuildings();
+      this.updateBuildingPagination();
+      console.log('✅ Buildings loaded:', this.allBuildings.length, 'items');
+    } catch (error: any) {
+      console.error('❌ Error loading buildings:', error);
+      throw error;
+    }
+  }
+
+  async loadApartments() {
+    try {
+      this.allApartments = await this.supabaseStatisticsService.getApartments();
+      this.updateApartmentPagination();
+      console.log('✅ Apartments loaded:', this.allApartments.length, 'items');
+    } catch (error: any) {
+      console.error('❌ Error loading apartments:', error);
+      throw error;
+    }
   }
 
   ngAfterViewInit() {
@@ -143,31 +156,23 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedApartmentRow = this.selectedApartmentRow === index ? null : index;
   }
 
-  // Building Group Pagination Methods
-  updateBuildingGroupPagination() {
-    this.buildingGroupTotalItems = this.allBuildingGroups.length;
-    this.buildingGroupTotalPages = Math.ceil(this.buildingGroupTotalItems / this.buildingGroupItemsPerPage);
-    const startIndex = (this.buildingGroupCurrentPage - 1) * this.buildingGroupItemsPerPage;
-    const endIndex = startIndex + this.buildingGroupItemsPerPage;
-    this.paginatedBuildingGroups = this.allBuildingGroups.slice(startIndex, endIndex);
-  }
-
-  goToBuildingGroupPage(page: number) {
+  // Building Group Pagination Methods (now using server-side pagination)
+  async goToBuildingGroupPage(page: number) {
     if (page >= 1 && page <= this.buildingGroupTotalPages) {
       this.buildingGroupCurrentPage = page;
-      this.updateBuildingGroupPagination();
+      await this.loadBuildingGroups();
     }
   }
 
-  nextBuildingGroupPage() {
+  async nextBuildingGroupPage() {
     if (this.buildingGroupCurrentPage < this.buildingGroupTotalPages) {
-      this.goToBuildingGroupPage(this.buildingGroupCurrentPage + 1);
+      await this.goToBuildingGroupPage(this.buildingGroupCurrentPage + 1);
     }
   }
 
-  previousBuildingGroupPage() {
+  async previousBuildingGroupPage() {
     if (this.buildingGroupCurrentPage > 1) {
-      this.goToBuildingGroupPage(this.buildingGroupCurrentPage - 1);
+      await this.goToBuildingGroupPage(this.buildingGroupCurrentPage - 1);
     }
   }
 

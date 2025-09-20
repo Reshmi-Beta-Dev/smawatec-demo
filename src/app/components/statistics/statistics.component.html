@@ -79,6 +79,36 @@
                                         </tr>
                                     </thead>
                                     <tbody>
+                                        <!-- Loading State -->
+                                        <tr *ngIf="loading">
+                                            <td colspan="5" class="loading-cell">
+                                                <div class="table-loading-state">
+                                                    <div class="loading-spinner"></div>
+                                                    <span>Loading building groups...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        <!-- Error State -->
+                                        <tr *ngIf="error">
+                                            <td colspan="5" class="error-cell">
+                                                <div class="table-error-state">
+                                                    <span>{{ error }}</span>
+                                                    <button (click)="loadData()" class="retry-button">Retry</button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        <!-- No Data State -->
+                                        <tr *ngIf="!loading && !error && paginatedBuildingGroups.length === 0">
+                                            <td colspan="5" class="no-data-cell">
+                                                <div class="no-data-state">
+                                                    <span>No building groups found</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        
+                                        <!-- Data Rows -->
                                         <tr *ngFor="let group of paginatedBuildingGroups; let i = index" 
                                             (click)="onBuildingGroupRowClick(i)" 
                                             [class.selected]="selectedBuildingGroupRow === i">

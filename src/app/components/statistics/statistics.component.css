@@ -674,3 +674,46 @@
         text-align: left;
     }
 }
+
+/* Loading and Error States */
+.loading-cell, .error-cell, .no-data-cell {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.table-loading-state, .table-error-state, .no-data-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+}
+
+.loading-spinner {
+    width: 24px;
+    height: 24px;
+    border: 2px solid #e5e7eb;
+    border-top: 2px solid #7b61ff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.retry-button {
+    background: #7b61ff;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    transition: background-color 0.2s ease;
+}
+
+.retry-button:hover {
+    background: #6b4fd1;
+}
