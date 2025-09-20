@@ -1,0 +1,222 @@
+<form (ngSubmit)="onSubmit()" #buildingForm="ngForm">
+  <div *ngIf="loading" class="loading-container">
+    <div class="spinner"></div>
+    <span>Loading form data...</span>
+  </div>
+
+  <div *ngIf="!loading">
+    <!-- Building Name and Building Group -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="building_name" class="form-label">
+          Building Name <span class="required">*</span>
+        </label>
+        <input
+          type="text"
+          id="building_name"
+          name="building_name"
+          [(ngModel)]="formData.building_name"
+          class="form-input"
+          [class.error]="errors.building_name"
+          placeholder="Enter building name"
+          maxlength="100"
+          required
+        />
+        <div class="form-error" *ngIf="errors.building_name">
+          {{ errors.building_name }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="building_group_id" class="form-label">
+          Building Group <span class="required">*</span>
+        </label>
+        <select
+          id="building_group_id"
+          name="building_group_id"
+          [(ngModel)]="formData.building_group_id"
+          class="form-input"
+          [class.error]="errors.building_group_id"
+          required
+        >
+          <option value="">Select Building Group ({{ buildingGroups.length }} available)</option>
+          <option *ngFor="let group of buildingGroups" [value]="group.id">
+            {{ group.group_name }} - {{ group.description }}
+          </option>
+        </select>
+        <div class="form-error" *ngIf="errors.building_group_id">
+          {{ errors.building_group_id }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Street Number and Additional Address -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="street_number" class="form-label">
+          Street Number
+        </label>
+        <input
+          type="text"
+          id="street_number"
+          name="street_number"
+          [(ngModel)]="formData.street_number"
+          class="form-input"
+          [class.error]="errors.street_number"
+          placeholder="Enter street number"
+          maxlength="100"
+        />
+        <div class="form-error" *ngIf="errors.street_number">
+          {{ errors.street_number }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="additional_address" class="form-label">
+          Additional Address
+        </label>
+        <input
+          type="text"
+          id="additional_address"
+          name="additional_address"
+          [(ngModel)]="formData.additional_address"
+          class="form-input"
+          [class.error]="errors.additional_address"
+          placeholder="Enter additional address details"
+          maxlength="200"
+        />
+        <div class="form-error" *ngIf="errors.additional_address">
+          {{ errors.additional_address }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Zip Code and City -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="zip_code" class="form-label">
+          Zip Code
+        </label>
+        <input
+          type="text"
+          id="zip_code"
+          name="zip_code"
+          [(ngModel)]="formData.zip_code"
+          class="form-input"
+          [class.error]="errors.zip_code"
+          placeholder="12345 or 12345-6789"
+          pattern="^\d{5}(-\d{4})?$"
+        />
+        <div class="form-error" *ngIf="errors.zip_code">
+          {{ errors.zip_code }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="city" class="form-label">
+          City
+        </label>
+        <input
+          type="text"
+          id="city"
+          name="city"
+          [(ngModel)]="formData.city"
+          class="form-input"
+          [class.error]="errors.city"
+          placeholder="Enter city name"
+          maxlength="100"
+        />
+        <div class="form-error" *ngIf="errors.city">
+          {{ errors.city }}
+        </div>
+      </div>
+    </div>
+
+    <!-- City Dropdown (Alternative to manual city entry) -->
+    <div class="form-group">
+      <label for="city_id" class="form-label">
+        Or Select from Database Cities
+      </label>
+      <select
+        id="city_id"
+        name="city_id"
+        [(ngModel)]="formData.city_id"
+        class="form-input"
+        [class.error]="errors.city_id"
+      >
+        <option value="">Select City ({{ cities.length }} available)</option>
+        <option *ngFor="let city of cities" [value]="city.id">
+          {{ city.name }}, {{ city.country_code }}
+        </option>
+      </select>
+      <div class="form-error" *ngIf="errors.city_id">
+        {{ errors.city_id }}
+      </div>
+    </div>
+
+    <!-- Latitude and Longitude -->
+    <div class="form-row">
+      <div class="form-group">
+        <label for="latitude" class="form-label">
+          Latitude
+        </label>
+        <input
+          type="number"
+          id="latitude"
+          name="latitude"
+          [(ngModel)]="formData.latitude"
+          class="form-input"
+          [class.error]="errors.latitude"
+          placeholder="Enter latitude (-90 to 90)"
+          step="0.00000001"
+          min="-90"
+          max="90"
+        />
+        <div class="form-error" *ngIf="errors.latitude">
+          {{ errors.latitude }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="longitude" class="form-label">
+          Longitude
+        </label>
+        <input
+          type="number"
+          id="longitude"
+          name="longitude"
+          [(ngModel)]="formData.longitude"
+          class="form-input"
+          [class.error]="errors.longitude"
+          placeholder="Enter longitude (-180 to 180)"
+          step="0.00000001"
+          min="-180"
+          max="180"
+        />
+        <div class="form-error" *ngIf="errors.longitude">
+          {{ errors.longitude }}
+        </div>
+      </div>
+    </div>
+
+    <!-- General Error -->
+    <div class="form-error" *ngIf="errors.general">
+      {{ errors.general }}
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" (click)="onCancel()" [disabled]="isSubmitting">
+        Cancel
+      </button>
+      <button 
+        type="submit" 
+        class="btn btn-primary" 
+        [disabled]="isSubmitting"
+        [class.loading]="isSubmitting">
+        <span *ngIf="isSubmitting" class="spinner"></span>
+        {{ isSubmitting ? 'Creating...' : 'Create Building' }}
+      </button>
+    </div>
+  </div>
+</form>

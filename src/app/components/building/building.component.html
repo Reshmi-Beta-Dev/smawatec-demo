@@ -60,61 +60,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr (click)="onGroupRowClick(0)" [class.selected]="selectedGroupRow === 0">
-                                <td>1</td>
-                                <td>PAR - GP1</td>
-                                <td>PAR-GP1-B12012</td>
-                                <td>23212</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(1)" [class.selected]="selectedGroupRow === 1">
-                                <td>2</td>
-                                <td>PAR - GP2</td>
-                                <td>PAR-GP2-B12013</td>
-                                <td>23213</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(2)" [class.selected]="selectedGroupRow === 2">
-                                <td>3</td>
-                                <td>PAR - GP3</td>
-                                <td>PAR-GP3-B12014</td>
-                                <td>23214</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(3)" [class.selected]="selectedGroupRow === 3">
-                                <td>4</td>
-                                <td>PAR - GP4</td>
-                                <td>PAR-GP4-B12015</td>
-                                <td>23215</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(4)" [class.selected]="selectedGroupRow === 4">
-                                <td>5</td>
-                                <td>PAR - GP5</td>
-                                <td>PAR-GP5-B12016</td>
-                                <td>23216</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(5)" [class.selected]="selectedGroupRow === 5">
-                                <td>6</td>
-                                <td>PAR - GP6</td>
-                                <td>PAR-GP6-B12017</td>
-                                <td>23217</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(6)" [class.selected]="selectedGroupRow === 6">
-                                <td>7</td>
-                                <td>PAR - GP7</td>
-                                <td>PAR-GP7-B12018</td>
-                                <td>23218</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
-                            </tr>
-                            <tr (click)="onGroupRowClick(7)" [class.selected]="selectedGroupRow === 7">
-                                <td>8</td>
-                                <td>PAR - GP8</td>
-                                <td>PAR-GP8-B12019</td>
-                                <td>23219</td>
-                                <td>Paris, Champs Elysees, Rue de la Place</td>
+                            <tr *ngFor="let group of buildingGroups; let i = index" 
+                                (click)="onGroupRowClick(i)" 
+                                [class.selected]="selectedGroupRow === i">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ group.group_name || 'N/A' }}</td>
+                                <td>{{ group.buildings?.[0]?.building_name || 'N/A' }}</td>
+                                <td>{{ group.buildings?.[0]?.zip_code || 'N/A' }}</td>
+                                <td>{{ (group.buildings?.[0]?.street_number || '') + ' ' + (group.buildings?.[0]?.additional_address || '') || 'N/A' }}</td>
                             </tr>
                         </tbody>
                     </table>
@@ -132,47 +85,47 @@
                     <div class="kv-grid">
                         <div class="kv-row">
                             <span class="kv-label">Building Group</span>
-                            <span class="kv-value">PAR-GP1</span>
+                            <span class="kv-value">{{ getSelectedApartment()?.buildings?.building_groups?.group_name || 'N/A' }}</span>
                         </div>
                         <div class="kv-row">
                             <span class="kv-label">Building</span>
-                            <span class="kv-value">B12012</span>
+                            <span class="kv-value">{{ getSelectedApartment()?.buildings?.building_name || 'N/A' }}</span>
                         </div>
                         <div class="kv-row">
                             <span class="kv-label">Apartment</span>
-                            <span class="kv-value">Block 1, L23, AP23</span>
+                            <span class="kv-value">{{ getSelectedApartment()?.apartment_number || 'N/A' }}</span>
                         </div>
                         <div class="kv-row">
                             <span class="kv-label">Street</span>
-                            <span class="kv-value">Champs Elysees, Rue de la place 41</span>
+                            <span class="kv-value">{{ (getSelectedApartment()?.buildings?.street_number || '') + ' ' + (getSelectedApartment()?.buildings?.additional_address || '') || 'N/A' }}</span>
                         </div>
                         <div class="kv-row">
                             <span class="kv-label">Tenant</span>
-                            <span class="kv-value">Mr Francis Chevalier</span>
+                            <span class="kv-value">{{ getSelectedTenant()?.first_name + ' ' + getSelectedTenant()?.last_name || 'N/A' }}</span>
                         </div>
                         <div class="kv-row">
                             <span class="kv-label">Telephone</span>
-                            <span class="kv-value">048932 2892</span>
+                            <span class="kv-value">{{ getSelectedTenant()?.phone || 'N/A' }}</span>
                         </div>
                         <div class="kv-row">
                             <span class="kv-label">Mobile Phone</span>
-                            <span class="kv-value">07 48932 2892</span>
+                            <span class="kv-value">{{ getSelectedTenant()?.mobile_phone || 'N/A' }}</span>
                         </div>
                         <div class="kv-row">
                             <span class="kv-label">Email</span>
-                            <span class="kv-value">F.Chevalier@chv-fr.fr</span>
+                            <span class="kv-value">{{ getSelectedTenant()?.email || 'N/A' }}</span>
                         </div>
                         <div class="kv-row">
                             <span class="kv-label">Water Price</span>
-                            <span class="kv-value">2, 32 Euro /m3</span>
+                            <span class="kv-value">{{ getSelectedApartment()?.water_price_per_m3 || 'N/A' }} Euro /m3</span>
                         </div>
                         <div class="kv-row">
                             <span class="kv-label">Zip Code</span>
-                            <span class="kv-value">14323</span>
+                            <span class="kv-value">{{ getSelectedApartment()?.buildings?.zip_code || 'N/A' }}</span>
                         </div>
                         <div class="kv-row">
                             <span class="kv-label">City</span>
-                            <span class="kv-value">Paris</span>
+                            <span class="kv-value">{{ getSelectedApartment()?.buildings?.cities?.name || 'N/A' }}</span>
                         </div>
                     </div>
                     <div class="action-buttons">
@@ -198,40 +151,18 @@
                             <th>Tenant</th>
                         </tr>
                     </thead>
-                    <tbody>
-                        <tr (click)="onBuildingRowClick(0)" [class.selected]="selectedBuildingRow === 0">
-                            <td>1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap12</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                        <tr (click)="onBuildingRowClick(1)" [class.selected]="selectedBuildingRow === 1">
-                            <td>2</td>
-                            <td>PAR-GP2-B12013</td>
-                            <td>23213</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap13</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                        <tr (click)="onBuildingRowClick(2)" [class.selected]="selectedBuildingRow === 2">
-                            <td>3</td>
-                            <td>PAR-GP3-B12014</td>
-                            <td>23214</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap14</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                        <tr (click)="onBuildingRowClick(3)" [class.selected]="selectedBuildingRow === 3">
-                            <td>4</td>
-                            <td>PAR-GP4-B12015</td>
-                            <td>23215</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap15</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                    </tbody>
+                        <tbody>
+                            <tr *ngFor="let building of buildings; let i = index" 
+                                (click)="onBuildingRowClick(i)" 
+                                [class.selected]="selectedBuildingRow === i">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ building.building_name || 'N/A' }}</td>
+                                <td>{{ building.zip_code || 'N/A' }}</td>
+                                <td>{{ (building.street_number || '') + ' ' + (building.additional_address || '') || 'N/A' }}</td>
+                                <td>{{ building.apartments?.[0]?.apartment_number || 'N/A' }}</td>
+                                <td>{{ building.apartments?.[0]?.tenants?.first_name + ' ' + building.apartments?.[0]?.tenants?.last_name || 'N/A' }}</td>
+                            </tr>
+                        </tbody>
                 </table>
                 <div class="action-buttons">
                     <button class="pill" (click)="addBuilding()">Add Building</button>
@@ -240,4 +171,33 @@
             </div>
         </div>
     </main>
+
+    <!-- Add Building Group Modal -->
+    <app-modal 
+        [isOpen]="showAddGroupModal" 
+        title="Add Building Group"
+        size="medium"
+        (close)="onModalClose()">
+        
+        <app-building-group-form 
+            (success)="onGroupSaved($event)"
+            (cancel)="onModalClose()">
+        </app-building-group-form>
+        
+    </app-modal>
+
+    <!-- Add Building Modal -->
+    <app-modal 
+        [isOpen]="showAddBuildingModal" 
+        title="Add Building"
+        size="large"
+        (close)="onBuildingModalClose()">
+        
+        <app-building-form 
+            [selectedGroupId]="selectedGroupRow !== null ? buildingGroups[selectedGroupRow]?.id || null : null"
+            (success)="onBuildingSaved($event)"
+            (cancel)="onBuildingModalClose()">
+        </app-building-form>
+        
+    </app-modal>
 </div>

@@ -1,0 +1,208 @@
+import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { SupabaseService, Building, BuildingGroup, City } from '../../services/supabase.service';
+
+@Component({
+  selector: 'app-building-form',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
+  templateUrl: './building-form.component.html',
+  styleUrls: ['./building-form.component.css']
+})
+export class BuildingFormComponent implements OnInit {
+  @Output() success = new EventEmitter<Building>();
+  @Output() cancel = new EventEmitter<void>();
+  @Input() selectedGroupId: string | null = null;
+
+  formData = {
+    building_name: '',
+    street_number: '',
+    additional_address: '',
+    zip_code: '',
+    city: '',
+    city_id: '',
+    building_group_id: '',
+    latitude: null as number | null,
+    longitude: null as number | null
+  };
+
+  // Dropdown options
+  buildingGroups: BuildingGroup[] = [];
+  cities: City[] = [];
+
+  errors: any = {};
+  isSubmitting = false;
+  loading = false;
+
+  constructor(private supabaseService: SupabaseService) {}
+
+  async ngOnInit() {
+    await this.loadDropdownData();
+    this.resetForm();
+  }
+
+  private async loadDropdownData() {
+    this.loading = true;
+    try {
+      console.log('Starting to load dropdown data...');
+      
+      // First test the connection
+      const connectionTest = await this.supabaseService.testConnection();
+      console.log('Connection test result:', connectionTest);
+      
+      if (!connectionTest.success) {
+        throw new Error(`Connection failed: ${JSON.stringify(connectionTest.error)}`);
+      }
+      
+      const [buildingGroupsData, citiesData] = await Promise.all([
+        this.supabaseService.getBuildingGroups(),
+        this.supabaseService.getCities()
+      ]);
+
+      console.log('Raw building groups response:', buildingGroupsData);
+      console.log('Raw cities response:', citiesData);
+
+      this.buildingGroups = buildingGroupsData || [];
+      this.cities = citiesData || [];
+
+      // Debug: Log the loaded data
+      console.log('Processed building groups:', this.buildingGroups);
+      console.log('Processed cities:', this.cities);
+      console.log('Building groups count:', this.buildingGroups.length);
+      console.log('Cities count:', this.cities.length);
+
+      // Set default building group if one is selected
+      if (this.selectedGroupId) {
+        this.formData.building_group_id = this.selectedGroupId;
+      }
+    } catch (error: any) {
+      console.error('Error loading dropdown data:', error);
+      console.error('Error details:', JSON.stringify(error, null, 2));
+      this.errors.general = `Failed to load form data: ${error?.message || 'Unknown error'}. Please refresh and try again.`;
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  resetForm() {
+    this.formData = {
+      building_name: '',
+      street_number: '',
+      additional_address: '',
+      zip_code: '',
+      city: '',
+      city_id: '',
+      building_group_id: this.selectedGroupId || '',
+      latitude: null,
+      longitude: null
+    };
+    this.errors = {};
+    this.isSubmitting = false;
+  }
+
+  validateForm(): boolean {
+    this.errors = {};
+
+    // Building name validation (REQUIRED - NOT NULL in database)
+    if (!this.formData.building_name || this.formData.building_name.trim() === '') {
+      this.errors.building_name = 'Building name is required';
+    } else if (this.formData.building_name.trim().length < 2) {
+      this.errors.building_name = 'Building name must be at least 2 characters';
+    } else if (this.formData.building_name.trim().length > 100) {
+      this.errors.building_name = 'Building name must be less than 100 characters';
+    }
+
+    // Building group validation (REQUIRED - NOT NULL in database)
+    if (!this.formData.building_group_id) {
+      this.errors.building_group_id = 'Building group is required';
+    }
+
+    // Street number validation (OPTIONAL)
+    if (this.formData.street_number && this.formData.street_number.trim().length > 100) {
+      this.errors.street_number = 'Street number must be less than 100 characters';
+    }
+
+    // Additional address validation (OPTIONAL)
+    if (this.formData.additional_address && this.formData.additional_address.trim().length > 200) {
+      this.errors.additional_address = 'Additional address must be less than 200 characters';
+    }
+
+    // Zip code validation (OPTIONAL)
+    if (this.formData.zip_code && !/^\d{5}(-\d{4})?$/.test(this.formData.zip_code.trim())) {
+      this.errors.zip_code = 'Please enter a valid zip code (e.g., 12345 or 12345-6789)';
+    }
+
+    // City validation (OPTIONAL)
+    if (this.formData.city && this.formData.city.trim().length > 100) {
+      this.errors.city = 'City must be less than 100 characters';
+    }
+
+    // Latitude validation (OPTIONAL)
+    if (this.formData.latitude !== null && (this.formData.latitude < -90 || this.formData.latitude > 90)) {
+      this.errors.latitude = 'Latitude must be between -90 and 90';
+    }
+
+    // Longitude validation (OPTIONAL)
+    if (this.formData.longitude !== null && (this.formData.longitude < -180 || this.formData.longitude > 180)) {
+      this.errors.longitude = 'Longitude must be between -180 and 180';
+    }
+
+    return Object.keys(this.errors).length === 0;
+  }
+
+  async onSubmit() {
+    if (!this.validateForm()) {
+      return;
+    }
+
+    this.isSubmitting = true;
+
+    try {
+      const buildingData = {
+        building_name: this.formData.building_name.trim(),
+        street_number: this.formData.street_number.trim() || null,
+        additional_address: this.formData.additional_address.trim() || null,
+        zip_code: this.formData.zip_code.trim() || null,
+        city: this.formData.city.trim() || null,
+        city_id: this.formData.city_id || null,
+        building_group_id: this.formData.building_group_id,
+        latitude: this.formData.latitude,
+        longitude: this.formData.longitude
+      };
+
+      const data = await this.supabaseService.createBuilding(buildingData);
+
+      // Emit success event
+      this.onSuccess(data);
+      
+    } catch (error: any) {
+      console.error('Error creating building:', error);
+      
+      // Handle specific error cases
+      if (error.code === '23505') {
+        this.errors.building_name = 'A building with this name already exists in the selected group';
+      } else if (error.code === '23503') {
+        this.errors.general = 'Invalid city or building group selected';
+      } else {
+        this.errors.general = 'Failed to create building. Please try again.';
+      }
+    } finally {
+      this.isSubmitting = false;
+    }
+  }
+
+  onSuccess(data: Building) {
+    this.success.emit(data);
+    this.resetForm();
+  }
+
+  onCancel() {
+    this.cancel.emit();
+    this.resetForm();
+  }
+
+  getCurrentYear(): number {
+    return new Date().getFullYear();
+  }
+}

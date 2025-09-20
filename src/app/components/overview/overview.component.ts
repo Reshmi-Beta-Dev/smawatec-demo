@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
+import { SupabaseService, MonthlyStats } from '../../services/supabase.service';
 
 declare var Chart: any;
 
@@ -15,8 +16,15 @@ export class OverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedRow: number | null = null;
   private chart: any;
 
-  ngOnInit() {
-    // Initialize any component logic here
+  // Supabase data properties
+  monthlyStats: MonthlyStats[] = [];
+  loading = false;
+  error: string | null = null;
+
+  constructor(private supabaseService: SupabaseService) {}
+
+  async ngOnInit() {
+    await this.loadData();
   }
 
   ngAfterViewInit() {
@@ -62,19 +70,8 @@ export class OverviewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.chart.destroy();
     }
 
-    // Sample consumption data
-    const chartData = {
-      labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
-      datasets: [{
-        label: 'Water Consumption (m³)',
-        data: [25000, 22000, 28000, 32000, 30000, 35000, 38000, 42000, 38000, 34000, 30000, 27000],
-        backgroundColor: '#3b82f6',
-        borderColor: '#3b82f6',
-        borderWidth: 2,
-        fill: false,
-        tension: 0.4
-      }]
-    };
+    // Process monthly data from Supabase
+    const chartData = this.processMonthlyDataForChart();
 
     try {
       this.chart = new Chart(ctx, {
@@ -126,5 +123,48 @@ export class OverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch (error) {
       console.error('Error initializing consumption chart:', error);
     }
+  }
+
+  private async loadData() {
+    this.loading = true;
+    this.error = null;
+
+    try {
+      this.monthlyStats = await this.supabaseService.getMonthlyStats();
+      console.log('Overview data loaded successfully:', this.monthlyStats.length);
+    } catch (error) {
+      console.error('Error loading overview data:', error);
+      this.error = 'Failed to load data from server';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  private processMonthlyDataForChart() {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const currentYear = new Date().getFullYear();
+    const monthlyData = new Array(12).fill(0);
+
+    // Process monthly stats data
+    this.monthlyStats.forEach(stat => {
+      const statDate = new Date(stat.month);
+      if (statDate.getFullYear() === currentYear) {
+        const monthIndex = statDate.getMonth();
+        monthlyData[monthIndex] = stat.total_consumption_m3 || 0;
+      }
+    });
+
+    return {
+      labels: months,
+      datasets: [{
+        label: 'Water Consumption (m³)',
+        data: monthlyData,
+        backgroundColor: '#3b82f6',
+        borderColor: '#3b82f6',
+        borderWidth: 2,
+        fill: false,
+        tension: 0.4
+      }]
+    };
   }
 }

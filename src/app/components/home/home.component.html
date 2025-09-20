@@ -22,116 +22,33 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr class="alarm-row major" (click)="onRowClick(0)" [class.selected]="selectedRow === 0">
-                                <td>1</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge major">Major Leak</span></td>
-                                <td>poss. Pipe break</td>
-                                <td>auto shut off</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
+                            <tr *ngFor="let alarm of alarms; let i = index" 
+                                class="alarm-row" 
+                                [class.major]="alarm.alarm_type === 'major_leak'"
+                                [class.medium]="alarm.alarm_type === 'medium_leak'"
+                                [class.micro]="alarm.alarm_type === 'micro_leak'"
+                                [class.low-temp]="alarm.alarm_type === 'low_temperature'"
+                                (click)="onRowClick(i)" 
+                                [class.selected]="selectedRow === i">
+                                <td>{{ i + 1 }}</td>
+                                <td>{{ alarm.devices?.apartments?.buildings?.building_name || 'N/A' }}</td>
+                                <td>{{ (alarm.devices?.apartments?.buildings?.street_number || '') + ' ' + (alarm.devices?.apartments?.buildings?.additional_address || '') || 'N/A' }}</td>
+                                <td>{{ alarm.devices?.apartments?.apartment_number || 'N/A' }}</td>
+                                <td>{{ getTenantName(alarm) }}</td>
+                                <td>
+                                    <span class="alarm-badge" 
+                                          [class.major]="alarm.alarm_type === 'major_leak'"
+                                          [class.medium]="alarm.alarm_type === 'medium_leak'"
+                                          [class.micro]="alarm.alarm_type === 'micro_leak'"
+                                          [class.low-temp]="alarm.alarm_type === 'low_temperature'">
+                                        {{ alarm.alarm_types?.type_name || 'Unknown' }}
+                                    </span>
                                 </td>
-                            </tr>
-                            <tr class="alarm-row major" (click)="onRowClick(1)" [class.selected]="selectedRow === 1">
-                                <td>2</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge low-temp">Low Temp</span></td>
-                                <td>Ice warning</td>
-                                <td>None</td>
+                                <td>{{ alarm.message || 'N/A' }}</td>
+                                <td>{{ alarm.action_taken || 'None' }}</td>
                                 <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
-                                </td>
-                            </tr>
-                            <tr class="alarm-row" (click)="onRowClick(2)" [class.selected]="selectedRow === 2">
-                                <td>3</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge medium">Medium Leak</span></td>
-                                <td>poss. Tap / Toilet</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
-                                </td>
-                            </tr>
-                            <tr class="alarm-row" (click)="onRowClick(3)" [class.selected]="selectedRow === 3">
-                                <td>4</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge micro">Micro Leak</span></td>
-                                <td>poss. Toilet</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
-                                </td>
-                            </tr>
-                            <tr class="alarm-row" (click)="onRowClick(4)" [class.selected]="selectedRow === 4">
-                                <td>5</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge micro">Micro Leak</span></td>
-                                <td>poss. Toilet</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
-                                </td>
-                            </tr>
-                            <tr class="alarm-row" (click)="onRowClick(5)" [class.selected]="selectedRow === 5">
-                                <td>6</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge micro">Micro Leak</span></td>
-                                <td>poss. Tap</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
-                                </td>
-                            </tr>
-                            <tr class="alarm-row" (click)="onRowClick(6)" [class.selected]="selectedRow === 6">
-                                <td>7</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge micro">Micro Leak</span></td>
-                                <td>poss. Tap</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
-                                </td>
-                            </tr>
-                            <tr class="alarm-row" (click)="onRowClick(7)" [class.selected]="selectedRow === 7">
-                                <td>8</td>
-                                <td>PAR - B12012</td>
-                                <td>Paris, Champs Elysees, Rue de la P</td>
-                                <td>Block 1,L23, Apt 12</td>
-                                <td>Duvall</td>
-                                <td><span class="alarm-badge micro">Micro Leak</span></td>
-                                <td>poss. Tap</td>
-                                <td>None</td>
-                                <td class="actions">
-                                    <button class="pill">Details</button>
-                                    <button class="pill outline">Hide Alarm</button>
+                                    <button class="pill" (click)="showDetails($event)">Details</button>
+                                    <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -154,26 +71,26 @@
                                 <h4>Current:</h4>
                                 <div class="stat-row">
                                     <span class="stat-label">Major Alarms:</span>
-                                    <span class="stat-value">2</span>
+                                    <span class="stat-value">{{ getAlarmCount('major_leak') }}</span>
                                 </div>
                                 <div class="stat-row">
                                     <span class="stat-label">System Alarms:</span>
-                                    <span class="stat-value">3</span>
+                                    <span class="stat-value">{{ getAlarmCount('system') }}</span>
                                 </div>
                             </div>
                             <div class="history-section">
                                 <h4>Total History:</h4>
                                 <div class="stat-row">
                                     <span class="stat-label">total leakage alarms:</span>
-                                    <span class="stat-value">143</span>
+                                    <span class="stat-value">{{ getTotalLeakageAlarms() }}</span>
                                 </div>
                                 <div class="stat-row">
                                     <span class="stat-label">estimated loss after Alarm:</span>
-                                    <span class="stat-value">234 m3</span>
+                                    <span class="stat-value">{{ getEstimatedLoss() }} m3</span>
                                 </div>
                                 <div class="stat-row">
                                     <span class="stat-label">estimated water savings through shut off:</span>
-                                    <span class="stat-value">789 m3</span>
+                                    <span class="stat-value">{{ getWaterSavings() }} m3</span>
                                 </div>
                             </div>
                         </div>
@@ -188,27 +105,27 @@
                             <div class="current-section">
                                 <h4>Current Period:</h4>
                                 <div class="stat-row">
-                                    <span class="stat-label">2025 to Sept:</span>
-                                    <span class="stat-value">343 234 m3</span>
+                                    <span class="stat-label">{{ getCurrentYear() }} to {{ getCurrentMonth() }}:</span>
+                                    <span class="stat-value">{{ getCurrentYearConsumption() }} m3</span>
                                 </div>
                                 <div class="stat-row">
-                                    <span class="stat-label">2024 to Sept:</span>
-                                    <span class="stat-value">332 789 m3</span>
+                                    <span class="stat-label">{{ getCurrentYear() - 1 }} to {{ getCurrentMonth() }}:</span>
+                                    <span class="stat-value">{{ getPreviousYearConsumption() }} m3</span>
                                 </div>
                             </div>
                             <div class="history-section">
                                 <h4>Historical Data:</h4>
                                 <div class="stat-row">
-                                    <span class="stat-label">2024:</span>
-                                    <span class="stat-value">378 278 m3</span>
+                                    <span class="stat-label">{{ getCurrentYear() - 1 }}:</span>
+                                    <span class="stat-value">{{ getYearlyConsumption(getCurrentYear() - 1) }} m3</span>
                                 </div>
                                 <div class="stat-row">
-                                    <span class="stat-label">2023:</span>
-                                    <span class="stat-value">378 278 m3</span>
+                                    <span class="stat-label">{{ getCurrentYear() - 2 }}:</span>
+                                    <span class="stat-value">{{ getYearlyConsumption(getCurrentYear() - 2) }} m3</span>
                                 </div>
                                 <div class="stat-row">
-                                    <span class="stat-label">2022:</span>
-                                    <span class="stat-value">378 278 m3</span>
+                                    <span class="stat-label">{{ getCurrentYear() - 3 }}:</span>
+                                    <span class="stat-value">{{ getYearlyConsumption(getCurrentYear() - 3) }} m3</span>
                                 </div>
                             </div>
                         </div>

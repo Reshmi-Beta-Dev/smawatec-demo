@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { SupabaseService, Device, BuildingGroup, Building } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-device-details',
@@ -25,8 +26,18 @@ export class DeviceDetailsComponent implements OnInit {
     tenantId: ''
   };
 
-  ngOnInit() {
-    // Initialize any component logic here
+  // Supabase data properties
+  devices: Device[] = [];
+  buildingGroups: BuildingGroup[] = [];
+  buildings: Building[] = [];
+  unassignedDevices: Device[] = [];
+  loading = false;
+  error: string | null = null;
+
+  constructor(private supabaseService: SupabaseService) {}
+
+  async ngOnInit() {
+    await this.loadData();
   }
 
   onGroupRowClick(index: number) {
@@ -58,6 +69,39 @@ export class DeviceDetailsComponent implements OnInit {
 
   findNewDevice() {
     this.showNotification('Searching for new devices...');
+  }
+
+  private async loadData() {
+    this.loading = true;
+    this.error = null;
+
+    try {
+      // Load all data in parallel
+      const [devicesData, buildingGroupsData, buildingsData] = await Promise.all([
+        this.supabaseService.getDevices(),
+        this.supabaseService.getBuildingGroups(),
+        this.supabaseService.getBuildings()
+      ]);
+
+      this.devices = devicesData;
+      this.buildingGroups = buildingGroupsData;
+      this.buildings = buildingsData;
+      
+      // Filter unassigned devices (devices without apartment_id)
+      this.unassignedDevices = this.devices.filter(device => !device.apartment_id);
+
+      console.log('Device details data loaded successfully:', {
+        devices: this.devices.length,
+        groups: this.buildingGroups.length,
+        buildings: this.buildings.length,
+        unassigned: this.unassignedDevices.length
+      });
+    } catch (error) {
+      console.error('Error loading device details data:', error);
+      this.error = 'Failed to load data from server';
+    } finally {
+      this.loading = false;
+    }
   }
 
   private showNotification(message: string) {

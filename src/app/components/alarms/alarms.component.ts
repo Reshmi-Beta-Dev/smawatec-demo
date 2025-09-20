@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { SupabaseService, Alarm } from '../../services/supabase.service';
 
 @Component({
   selector: 'app-alarms',
@@ -10,9 +11,16 @@ import { CommonModule } from '@angular/common';
 })
 export class AlarmsComponent implements OnInit {
   selectedRow: number | null = null;
+  
+  // Supabase data properties
+  alarms: Alarm[] = [];
+  loading = false;
+  error: string | null = null;
 
-  ngOnInit() {
-    // Initialize any component logic here
+  constructor(private supabaseService: SupabaseService) {}
+
+  async ngOnInit() {
+    await this.loadAlarms();
   }
 
   onRowClick(index: number) {
@@ -45,6 +53,37 @@ export class AlarmsComponent implements OnInit {
       (row as HTMLElement).style.opacity = '1';
       (row as HTMLElement).style.textDecoration = 'none';
     });
+  }
+
+  private async loadAlarms() {
+    this.loading = true;
+    this.error = null;
+
+    try {
+      this.alarms = await this.supabaseService.getAlarms();
+      console.log('Alarms loaded successfully:', this.alarms.length);
+    } catch (error) {
+      console.error('Error loading alarms:', error);
+      this.error = 'Failed to load alarms from server';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  getTenantName(alarm: Alarm): string {
+    return alarm.devices?.apartments?.tenants?.first_name + ' ' + alarm.devices?.apartments?.tenants?.last_name || 'N/A';
+  }
+
+  getAlarmCount(type: string): number {
+    return this.alarms.filter(alarm => alarm.alarm_type === type).length;
+  }
+
+  getTotalLeakageAlarms(): number {
+    return this.alarms.filter(alarm => 
+      alarm.alarm_type === 'major_leak' || 
+      alarm.alarm_type === 'medium_leak' || 
+      alarm.alarm_type === 'micro_leak'
+    ).length;
   }
 
   private showNotification(message: string) {
