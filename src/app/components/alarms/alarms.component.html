@@ -2,22 +2,24 @@
     <main class="content">
         <!-- Alarm Summary Section -->
         <div class="alarm-summary">
-            <!-- Loading State -->
-            <div *ngIf="loading" class="loading-state">
-                <p>Loading alarm categories...</p>
-            </div>
-
-            <!-- Error State -->
-            <div *ngIf="error" class="error-state">
-                <p>{{ error }}</p>
-                <button (click)="loadAlarmCategories()" class="retry-button">Retry</button>
-            </div>
-
             <!-- Major Alarms -->
-            <div *ngIf="alarmCategories" class="alarm-section major-alarms-section">
+            <div class="alarm-section major-alarms-section">
                 <h3>Major Alarms</h3>
                 <div class="summary-panel major-alarms">
-                    <div class="alarm-stats">
+                    <!-- Loading State for Major Alarms -->
+                    <div *ngIf="loading" class="box-loading-state">
+                        <div class="loading-spinner"></div>
+                        <span>Loading alarm categories...</span>
+                    </div>
+                    
+                    <!-- Error State for Major Alarms -->
+                    <div *ngIf="error" class="box-error-state">
+                        <span>{{ error }}</span>
+                        <button (click)="loadAlarmCategories()" class="retry-button">Retry</button>
+                    </div>
+                    
+                    <!-- Data Display for Major Alarms -->
+                    <div *ngIf="alarmCategories && !loading && !error" class="alarm-stats">
                         <div class="stat-item">
                             <span class="stat-label">Major Leaks</span>
                             <span class="stat-value highlight">{{ alarmCategories.major.major_leaks }}</span>
@@ -35,10 +37,23 @@
             </div>
 
             <!-- Minor Alarms -->
-            <div *ngIf="alarmCategories" class="alarm-section minor-alarms-section">
+            <div class="alarm-section minor-alarms-section">
                 <h3>Minor Alarms</h3>
                 <div class="summary-panel minor-alarms">
-                    <div class="alarm-stats">
+                    <!-- Loading State for Minor Alarms -->
+                    <div *ngIf="loading" class="box-loading-state">
+                        <div class="loading-spinner"></div>
+                        <span>Loading alarm categories...</span>
+                    </div>
+                    
+                    <!-- Error State for Minor Alarms -->
+                    <div *ngIf="error" class="box-error-state">
+                        <span>{{ error }}</span>
+                        <button (click)="loadAlarmCategories()" class="retry-button">Retry</button>
+                    </div>
+                    
+                    <!-- Data Display for Minor Alarms -->
+                    <div *ngIf="alarmCategories && !loading && !error" class="alarm-stats">
                         <div class="stat-item">
                             <span class="stat-label">Medium Leaks</span>
                             <span class="stat-value highlight">{{ alarmCategories.minor.medium_leaks }}</span>
@@ -52,10 +67,23 @@
             </div>
 
             <!-- System Messages -->
-            <div *ngIf="alarmCategories" class="alarm-section system-messages-section">
+            <div class="alarm-section system-messages-section">
                 <h3>System Messages</h3>
                 <div class="summary-panel system-messages">
-                    <div class="alarm-stats">
+                    <!-- Loading State for System Messages -->
+                    <div *ngIf="loading" class="box-loading-state">
+                        <div class="loading-spinner"></div>
+                        <span>Loading alarm categories...</span>
+                    </div>
+                    
+                    <!-- Error State for System Messages -->
+                    <div *ngIf="error" class="box-error-state">
+                        <span>{{ error }}</span>
+                        <button (click)="loadAlarmCategories()" class="retry-button">Retry</button>
+                    </div>
+                    
+                    <!-- Data Display for System Messages -->
+                    <div *ngIf="alarmCategories && !loading && !error" class="alarm-stats">
                         <div class="stat-item">
                             <span class="stat-label">Wifi Connection Lost</span>
                             <span class="stat-value" [class.highlight]="alarmCategories.system.wifi_connection_lost > 0">{{ alarmCategories.system.wifi_connection_lost }}</span>
