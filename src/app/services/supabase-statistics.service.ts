@@ -150,24 +150,51 @@ export class SupabaseStatisticsService {
   }
 
   /**
-   * Get all apartments data (for now using hardcoded data, can be replaced with real data later)
+   * Get paginated apartments data from Supabase
    */
-  async getApartments(): Promise<Apartment[]> {
-    // For now, return hardcoded data
-    // This can be replaced with a real database query later
-    return [
-      { id: 1, apartment: 'Block 1, L2, APT 12', tenant: 'Mr. Francois Duc de la Roche Focault' },
-      { id: 2, apartment: 'L23, APT 3', tenant: 'Mr. Napoleon Bonaparte' },
-      { id: 3, apartment: 'Block 3, L45, APT 23', tenant: 'Mr. Gerard Depardieu' },
-      { id: 4, apartment: 'Block, 32 L1, APT1', tenant: 'Mr. Luis Vuitton' },
-      { id: 5, apartment: 'Block 4, L12, APT 5', tenant: 'Mr. Jean Dupont' },
-      { id: 6, apartment: 'L34, APT 7', tenant: 'Ms. Marie Martin' },
-      { id: 7, apartment: 'Block 5, L56, APT 9', tenant: 'Mr. Pierre Bernard' },
-      { id: 8, apartment: 'Block 6, L78, APT 11', tenant: 'Ms. Sophie Thomas' },
-      { id: 9, apartment: 'L90, APT 13', tenant: 'Mr. Jean Petit' },
-      { id: 10, apartment: 'Block 7, L23, APT 15', tenant: 'Ms. Anne Robert' },
-      { id: 11, apartment: 'Block 8, L45, APT 17', tenant: 'Mr. Michel Richard' },
-      { id: 12, apartment: 'L67, APT 19', tenant: 'Ms. Claire Durand' }
-    ];
+  async getApartments(
+    page: number = 1, 
+    pageSize: number = 8, 
+    sortBy: string = 'apartment', 
+    sortDirection: string = 'ASC'
+  ): Promise<{apartments: Apartment[], total_count: number, total_pages: number, current_page: number}> {
+    try {
+      console.log(`🔄 Fetching apartments: page ${page}, size ${pageSize}`);
+      
+      const { data, error } = await this.supabase
+        .rpc('get_statistics_apartments', {
+          page_number: page,
+          page_size: pageSize,
+          sort_by: sortBy,
+          sort_direction: sortDirection
+        });
+
+      if (error) {
+        console.error('❌ Error fetching apartments:', error);
+        throw new Error(`Failed to fetch apartments: ${error.message}`);
+      }
+
+      if (!data || data.length === 0) {
+        return {
+          apartments: [],
+          total_count: 0,
+          total_pages: 0,
+          current_page: page
+        };
+      }
+
+      const result = data[0];
+      console.log('✅ Apartments loaded:', result);
+      
+      return {
+        apartments: result.apartments || [],
+        total_count: result.total_count || 0,
+        total_pages: result.total_pages || 0,
+        current_page: result.current_page || page
+      };
+    } catch (error: any) {
+      console.error('❌ Critical error in getApartments:', error);
+      throw new Error(`Failed to fetch apartments: ${error.message}`);
+    }
   }
 }

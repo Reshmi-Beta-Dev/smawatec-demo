@@ -219,23 +219,23 @@
 
                 <!-- Parallel Layout: Building and Apartment Tables -->
                 <div class="parallel-tables-section">
-                    <!-- Building Table -->
-                    <div class="building-section">
-                        <h3>Building</h3>
-                        <div class="box">
-                            <div class="table-container">
-                                <table class="data-table">
-                                    <thead>
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Building</th>
-                                            <th>Zip Code</th>
-                                            <th>Address</th>
-                                            <th>Apartment</th>
-                                            <th>Tenant</th>
-                                        </tr>
-                                    </thead>
-                        <tbody>
+                <!-- Building Table -->
+                <div class="building-section">
+                    <h3>Building</h3>
+                    <div class="box">
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Building</th>
+                                        <th>Zip Code</th>
+                                        <th>Address</th>
+                                        <th>Apartment</th>
+                                        <th>Tenant</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
                             <!-- Loading State -->
                             <tr *ngIf="loading">
                                 <td colspan="6" class="loading-cell">
@@ -325,16 +325,46 @@
                                             <th>Tenant</th>
                                         </tr>
                                     </thead>
-                                    <tbody>
-                                        <tr *ngFor="let apartment of paginatedApartments; let i = index" 
-                                            (click)="onApartmentRowClick(i)" 
-                                            [class.selected]="selectedApartmentRow === i">
-                                            <td>{{ (apartmentCurrentPage - 1) * apartmentItemsPerPage + i + 1 }}</td>
-                                            <td>{{ apartment.apartment }}</td>
-                                            <td>{{ apartment.tenant }}</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
+                        <tbody>
+                            <!-- Loading State -->
+                            <tr *ngIf="loading">
+                                <td colspan="3" class="loading-cell">
+                                    <div class="table-loading-state">
+                                        <div class="loading-spinner"></div>
+                                        <span>Loading apartments...</span>
+                                    </div>
+                                </td>
+                                    </tr>
+                            
+                            <!-- Error State -->
+                            <tr *ngIf="error">
+                                <td colspan="3" class="error-cell">
+                                    <div class="table-error-state">
+                                        <span>{{ error }}</span>
+                                        <button (click)="loadData()" class="retry-button">Retry</button>
+                                    </div>
+                                </td>
+                                    </tr>
+                            
+                            <!-- No Data State -->
+                            <tr *ngIf="!loading && !error && paginatedApartments.length === 0">
+                                <td colspan="3" class="no-data-cell">
+                                    <div class="no-data-state">
+                                        <span>No apartments found</span>
+                                    </div>
+                                </td>
+                                    </tr>
+                            
+                            <!-- Data Rows -->
+                            <tr *ngFor="let apartment of paginatedApartments; let i = index" 
+                                (click)="onApartmentRowClick(i)" 
+                                [class.selected]="selectedApartmentRow === i">
+                                <td>{{ (apartmentCurrentPage - 1) * apartmentItemsPerPage + i + 1 }}</td>
+                                <td>{{ apartment.apartment }}</td>
+                                <td>{{ apartment.tenant }}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
                                 
                                 <!-- Apartment Pagination -->
                                 <div *ngIf="apartmentTotalPages > 1" class="pagination-container">

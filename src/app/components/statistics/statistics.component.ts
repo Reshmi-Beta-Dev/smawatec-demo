@@ -127,9 +127,16 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadApartments() {
     try {
-      this.allApartments = await this.supabaseStatisticsService.getApartments();
-      this.updateApartmentPagination();
-      console.log('✅ Apartments loaded:', this.allApartments.length, 'items');
+      const response = await this.supabaseStatisticsService.getApartments(
+        this.apartmentCurrentPage,
+        this.apartmentItemsPerPage
+      );
+      
+      this.paginatedApartments = response.apartments;
+      this.apartmentTotalItems = response.total_count;
+      this.apartmentTotalPages = response.total_pages;
+      
+      console.log('✅ Apartments loaded:', response.apartments.length, 'items');
     } catch (error: any) {
       console.error('❌ Error loading apartments:', error);
       throw error;
@@ -235,31 +242,23 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     return pages;
   }
 
-  // Apartment Pagination Methods
-  updateApartmentPagination() {
-    this.apartmentTotalItems = this.allApartments.length;
-    this.apartmentTotalPages = Math.ceil(this.apartmentTotalItems / this.apartmentItemsPerPage);
-    const startIndex = (this.apartmentCurrentPage - 1) * this.apartmentItemsPerPage;
-    const endIndex = startIndex + this.apartmentItemsPerPage;
-    this.paginatedApartments = this.allApartments.slice(startIndex, endIndex);
-  }
-
-  goToApartmentPage(page: number) {
+  // Apartment Pagination Methods (now using server-side pagination)
+  async goToApartmentPage(page: number) {
     if (page >= 1 && page <= this.apartmentTotalPages) {
       this.apartmentCurrentPage = page;
-      this.updateApartmentPagination();
+      await this.loadApartments();
     }
   }
 
-  nextApartmentPage() {
+  async nextApartmentPage() {
     if (this.apartmentCurrentPage < this.apartmentTotalPages) {
-      this.goToApartmentPage(this.apartmentCurrentPage + 1);
+      await this.goToApartmentPage(this.apartmentCurrentPage + 1);
     }
   }
 
-  previousApartmentPage() {
+  async previousApartmentPage() {
     if (this.apartmentCurrentPage > 1) {
-      this.goToApartmentPage(this.apartmentCurrentPage - 1);
+      await this.goToApartmentPage(this.apartmentCurrentPage - 1);
     }
   }
 
