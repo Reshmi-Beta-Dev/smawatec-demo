@@ -51,6 +51,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Apartment grid properties
   apartmentGridData: any[] = [];
+  fullApartmentGridData: any[] = []; // Store full dataset for pagination
   selectedApartmentRow: number | null = null;
   apartmentCurrentPage = 1;
   apartmentTotalPages = 1;
@@ -101,7 +102,11 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.loadConsumptionData()
       ]);
       
-      // No default apartment selection - let user choose
+      // Ensure apartment grid has data
+      if (this.apartmentGridData.length === 0) {
+        console.log('🔄 No apartment data found, loading fallback data');
+        await this.loadAllApartmentsForBuildingGroup();
+      }
       
       // Initialize chart after all data is loaded
       setTimeout(() => {
@@ -116,8 +121,10 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     // Select first building group by default
     if (this.paginatedBuildingGroups.length > 0) {
       this.selectedBuildingGroupRow = 0;
-      // Load buildings for the first group
       const firstGroup = this.paginatedBuildingGroups[0];
+      this.selectedBuildingGroupName = firstGroup.name || null;
+      
+      // Load buildings for the first group
       await this.loadBuildingsForGroup(firstGroup.id);
     }
   }
@@ -275,7 +282,9 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   async loadBuildingsForGroup(buildingGroupId: string) {
     try {
       this.loading = true;
+      console.log('🏢 loadBuildingsForGroup called with ID:', buildingGroupId);
       const buildings = await this.mockDataService.getBuildingsByGroup(buildingGroupId);
+      console.log('🏢 Loaded buildings:', buildings.length);
       this.paginatedBuildings = buildings;
       this.buildings = buildings;
       this.buildingTotalItems = buildings.length;
@@ -283,6 +292,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.currentBuildingPage = 1;
       
       // Load all apartments for the building group when no building is selected
+      console.log('🏢 About to call loadAllApartmentsForBuildingGroup');
       await this.loadAllApartmentsForBuildingGroup();
     } catch (error) {
       console.error('Error loading buildings for group:', error);
@@ -311,6 +321,10 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   async loadAllApartmentsForBuildingGroup() {
     try {
       this.loading = true;
+      console.log('🏢 loadAllApartmentsForBuildingGroup called');
+      console.log('selectedBuildingGroupName:', this.selectedBuildingGroupName);
+      console.log('selectedBuildingGroupRow:', this.selectedBuildingGroupRow);
+      
       if (this.selectedBuildingGroupName) {
         // Get all buildings in the selected group
         const allBuildings = await this.mockDataService.getBuildingsByGroup(
@@ -325,9 +339,9 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         }
         
         // Generate apartment grid data for all apartments
-        const apartmentGridData: any[] = [];
+        const fullApartmentGridData: any[] = [];
         allApartments.forEach((apartment, index) => {
-          apartmentGridData.push({
+          fullApartmentGridData.push({
             id: apartment.id,
             apartment: `Apt ${String(index + 1).padStart(3, '0')}`,
             tenant: apartment.tenant_name || 'Unknown Tenant',
@@ -336,15 +350,37 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
           });
         });
         
-        this.apartmentGridData = apartmentGridData;
-        this.apartmentTotalItems = apartmentGridData.length;
-        this.apartmentTotalPages = Math.ceil(apartmentGridData.length / this.itemsPerPage);
+        // Store full data and calculate pagination
+        this.fullApartmentGridData = fullApartmentGridData;
+        this.apartmentTotalItems = fullApartmentGridData.length;
+        this.apartmentTotalPages = Math.ceil(fullApartmentGridData.length / this.itemsPerPage);
         this.apartmentCurrentPage = 1;
         
-        // Get paginated data
+        // Get paginated data for display
         const startIndex = (this.apartmentCurrentPage - 1) * this.itemsPerPage;
         const endIndex = startIndex + this.itemsPerPage;
-        this.apartmentGridData = apartmentGridData.slice(startIndex, endIndex);
+        this.apartmentGridData = fullApartmentGridData.slice(startIndex, endIndex);
+        
+        console.log(`🏢 Loaded ${fullApartmentGridData.length} apartments from building group: ${this.selectedBuildingGroupName}`);
+      } else {
+        console.log('❌ No selectedBuildingGroupName, cannot load apartments');
+        console.log('selectedBuildingGroupName:', this.selectedBuildingGroupName);
+        console.log('selectedBuildingGroupRow:', this.selectedBuildingGroupRow);
+        console.log('paginatedBuildingGroups length:', this.paginatedBuildingGroups.length);
+        
+        // Fallback: Generate some demo apartment data
+        console.log('🔄 Generating fallback apartment data');
+        const fallbackData = this.generateApartmentData(8, 'Demo Building', 'demo-building');
+        this.fullApartmentGridData = fallbackData;
+        this.apartmentTotalItems = fallbackData.length;
+        this.apartmentTotalPages = Math.ceil(fallbackData.length / this.itemsPerPage);
+        this.apartmentCurrentPage = 1;
+        
+        const startIndex = (this.apartmentCurrentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        this.apartmentGridData = fallbackData.slice(startIndex, endIndex);
+        
+        console.log('🔄 Fallback apartment data generated:', this.apartmentGridData.length);
       }
     } catch (error) {
       console.error('Error loading all apartments for building group:', error);
@@ -389,6 +425,9 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     
     // Generate apartment data based on the building's apartment count
     const allApartmentData = this.generateApartmentData(apartmentCount, buildingName, selectedBuilding?.id);
+    
+    // Store full data for pagination
+    this.fullApartmentGridData = allApartmentData;
     
     // Set up pagination
     this.apartmentTotalItems = allApartmentData.length;
@@ -542,9 +581,24 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   onApartmentPageChange(page: number) {
     this.apartmentCurrentPage = page;
-    // Get the currently selected building
-    const selectedBuilding = this.selectedBuildingRow !== null ? this.paginatedBuildings[this.selectedBuildingRow] : null;
-    this.loadApartmentGridData(selectedBuilding, false);
+    
+    if (this.selectedBuildingRow !== null) {
+      // Building is selected - load apartments for that building
+      const selectedBuilding = this.paginatedBuildings[this.selectedBuildingRow];
+      this.loadApartmentGridData(selectedBuilding, false);
+    } else if (this.selectedBuildingGroupName) {
+      // No building selected - show all apartments from building group
+      this.updateApartmentGridPagination();
+    }
+  }
+  
+  // Update apartment grid pagination from full dataset
+  updateApartmentGridPagination() {
+    if (this.fullApartmentGridData.length > 0) {
+      const startIndex = (this.apartmentCurrentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      this.apartmentGridData = this.fullApartmentGridData.slice(startIndex, endIndex);
+    }
   }
 
   // Consumption methods
