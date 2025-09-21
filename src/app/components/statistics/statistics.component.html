@@ -81,7 +81,7 @@
                         </div>
                         
                         <div class="chart-container" *ngIf="!loading && !error && consumptionData && consumptionData.length > 0">
-                            <canvas id="waterChart" width="600" height="250"></canvas>
+                            <canvas id="waterChart" width="600" height="250" (click)="onChartClick($event)" style="cursor: pointer;"></canvas>
                         </div>
                     </div>
                 </div>
@@ -320,4 +320,89 @@
             </div>
         </div>
     </main>
+
+    <!-- Consumption Details Modal -->
+    <div class="modal-overlay" *ngIf="showConsumptionModal" (click)="closeConsumptionModal()">
+        <div class="modal-content consumption-modal" (click)="$event.stopPropagation()">
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h3>Consumption Details</h3>
+                <button class="close-button" (click)="closeConsumptionModal()">Close</button>
+            </div>
+
+            <!-- Modal Body -->
+            <div class="modal-body" *ngIf="consumptionModalData">
+                <!-- Top Section - Details -->
+                <div class="details-section">
+                    <!-- Apartment Details -->
+                    <div class="details-block">
+                        <h4>Apartment</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">Apartment:</span>
+                            <span class="detail-value">{{ consumptionModalData.apartment.apartment }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">City:</span>
+                            <span class="detail-value">{{ consumptionModalData.apartment.city }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">ZIP Code:</span>
+                            <span class="detail-value">{{ consumptionModalData.apartment.zipCode }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Street, #:</span>
+                            <span class="detail-value">{{ consumptionModalData.apartment.street }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Additional Info:</span>
+                            <span class="detail-value">{{ consumptionModalData.apartment.additionalInfo }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Tenant:</span>
+                            <span class="detail-value">{{ consumptionModalData.apartment.tenant }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Consumption Details -->
+                    <div class="details-block">
+                        <h4>Consumption Details</h4>
+                        <div class="detail-row">
+                            <span class="detail-label">From:</span>
+                            <span class="detail-value">{{ consumptionModalData.consumption.from }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">To:</span>
+                            <span class="detail-value">{{ consumptionModalData.consumption.to }}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Consumption:</span>
+                            <span class="detail-value">{{ consumptionModalData.consumption.consumption }} m3</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Costs:</span>
+                            <span class="detail-value">{{ consumptionModalData.consumption.costs }} Euro</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Previous Period:</span>
+                            <span class="detail-value">{{ consumptionModalData.consumption.previousPeriod }} m3</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Previous Costs:</span>
+                            <span class="detail-value">{{ consumptionModalData.consumption.previousCosts }} Euro</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Section - Monthly Chart -->
+                <div class="chart-section">
+                    <div class="chart-header-modal">
+                        <h4>{{ getSelectedDurationLabel() }}</h4>
+                    </div>
+                    <div class="chart-container-modal">
+                        <canvas id="monthlyChart" width="800" height="250"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>

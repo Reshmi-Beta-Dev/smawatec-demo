@@ -64,6 +64,13 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   // Pagination settings
   itemsPerPage = 8;
 
+  // Modal properties for consumption details
+  showConsumptionModal = false;
+  selectedApartmentForModal: any = null;
+  consumptionModalData: any = null;
+  monthlyChartData: any = null;
+  monthlyChart: any = null;
+
   // Consumption data and controls
   consumptionData: any[] = [];
   timePeriods: any[] = [];
@@ -697,6 +704,263 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  onChartClick(event: any) {
+    // Open consumption details modal when chart is clicked
+    this.openConsumptionModal();
+  }
+
+  openConsumptionModal() {
+    // Use selected apartment if available, otherwise use first apartment
+    let apartmentToUse;
+    if (this.selectedApartmentRow !== null && this.apartmentGridData[this.selectedApartmentRow]) {
+      apartmentToUse = this.apartmentGridData[this.selectedApartmentRow];
+    } else if (this.apartmentGridData.length > 0) {
+      apartmentToUse = this.apartmentGridData[0];
+    } else {
+      apartmentToUse = {
+        apartment: 'Block 1, L23, Apt 12',
+        tenant: 'Napoleon Bonaparte'
+      };
+    }
+    
+    this.selectedApartmentForModal = apartmentToUse;
+    this.prepareConsumptionModalData();
+    this.generateMonthlyChartData();
+    this.showConsumptionModal = true;
+    
+    // Initialize the monthly chart after modal is shown
+    setTimeout(() => {
+      this.initializeMonthlyChart();
+    }, 300);
+  }
+
+  closeConsumptionModal() {
+    this.showConsumptionModal = false;
+    this.selectedApartmentForModal = null;
+    this.consumptionModalData = null;
+    this.monthlyChartData = null;
+    
+    // Destroy the monthly chart
+    if (this.monthlyChart) {
+      this.monthlyChart.destroy();
+      this.monthlyChart = null;
+    }
+  }
+
+  getSelectedDurationLabel(): string {
+    const periodNames = {
+      'today': "Today's Consumption",
+      'last_month': "Last Month's Consumption",
+      'last_year': "Last Year's Consumption",
+      'last_5_years': "Last 5 Years' Consumption"
+    };
+    return periodNames[this.selectedTimePeriod as keyof typeof periodNames] || 'Current Consumption';
+  }
+
+  prepareConsumptionModalData() {
+    if (!this.selectedApartmentForModal) return;
+
+    const apartment = this.selectedApartmentForModal;
+    const building = this.paginatedBuildings[this.selectedBuildingRow || 0];
+    const buildingGroup = this.paginatedBuildingGroups[this.selectedBuildingGroupRow || 0];
+    
+    // Generate consumption data
+    const currentConsumption = 324.3;
+    const currentCosts = 45.43;
+    const previousConsumption = 301.9;
+    const previousCosts = 38.32;
+    
+    this.consumptionModalData = {
+      apartment: {
+        apartment: apartment.apartment || 'Block 1, L23, Apt 12',
+        city: building?.city || 'Paris',
+        zipCode: building?.zip_code || '30900',
+        street: building?.address || 'Champs Elysees, 23',
+        additionalInfo: 'Rue de la Place',
+        tenant: apartment.tenant || 'Napoleon Bonaparte'
+      },
+      consumption: {
+        from: '01.12.2024',
+        to: '31.12.2024',
+        consumption: currentConsumption,
+        costs: currentCosts,
+        previousPeriod: previousConsumption,
+        previousCosts: previousCosts
+      }
+    };
+  }
+
+  generateMonthlyChartData() {
+    // Use the same data as the parent chart
+    if (this.consumptionData && this.consumptionData.length > 0) {
+      const labels = this.consumptionData.map(item => item.time_label);
+      const data = this.consumptionData.map(item => item.consumption_m3);
+      
+      this.monthlyChartData = {
+        labels: labels,
+        datasets: [{
+          label: this.getChartLabel(),
+          data: data,
+          backgroundColor: 'rgba(123, 97, 255, 0.8)',
+          borderColor: '#7b61ff',
+          borderWidth: 2,
+          borderRadius: 6,
+          borderSkipped: false,
+          hoverBackgroundColor: 'rgba(123, 97, 255, 1)',
+          hoverBorderColor: '#5a4fcf',
+          hoverBorderWidth: 2
+        }]
+      };
+    } else {
+      // Fallback data if no consumption data available
+      const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+      const data = [7800, 6500, 7500, 8900, 9800, 7800, 4200, 5800, 6700, 0, 0, 0];
+      
+      this.monthlyChartData = {
+        labels: months,
+        datasets: [{
+          label: 'Consumption',
+          data: data,
+          backgroundColor: 'rgba(123, 97, 255, 0.8)',
+          borderColor: '#7b61ff',
+          borderWidth: 2,
+          borderRadius: 6,
+          borderSkipped: false,
+          hoverBackgroundColor: 'rgba(123, 97, 255, 1)',
+          hoverBorderColor: '#5a4fcf',
+          hoverBorderWidth: 2
+        }]
+      };
+    }
+  }
+
+  initializeMonthlyChart() {
+    console.log('Initializing monthly chart...');
+    const canvas = document.getElementById('monthlyChart') as HTMLCanvasElement;
+    if (!canvas) {
+      console.log('Canvas not found, retrying...');
+      setTimeout(() => this.initializeMonthlyChart(), 200);
+      return;
+    }
+    
+    if (!this.monthlyChartData) {
+      console.log('Chart data not available');
+      return;
+    }
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) {
+      console.log('Canvas context not available');
+      return;
+    }
+
+    // Destroy existing chart if it exists
+    if (this.monthlyChart) {
+      this.monthlyChart.destroy();
+    }
+
+    console.log('Creating chart with data:', this.monthlyChartData);
+    this.monthlyChart = new Chart(ctx, {
+      type: 'bar',
+      data: this.monthlyChartData,
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: {
+          padding: {
+            top: 10,
+            bottom: 10,
+            left: 10,
+            right: 10
+          }
+        },
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Consumption (m³)',
+              font: {
+                size: 12,
+                weight: 'bold'
+              },
+              color: '#374151'
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)',
+              drawBorder: false
+            },
+            ticks: {
+              font: {
+                size: 11
+              },
+              color: '#6b7280'
+            }
+          },
+          x: {
+            title: {
+              display: true,
+              text: this.getTimeAxisLabel(),
+              font: {
+                size: 12,
+                weight: 'bold'
+              },
+              color: '#374151'
+            },
+            grid: {
+              display: false
+            },
+            ticks: {
+              font: {
+                size: 11
+              },
+              color: '#6b7280'
+            }
+          }
+        },
+        plugins: {
+          title: {
+            display: false
+          },
+          legend: {
+            display: true,
+            position: 'top',
+            align: 'start',
+            labels: {
+              usePointStyle: true,
+              pointStyle: 'rect',
+              font: {
+                size: 11,
+                weight: '600'
+              },
+              color: '#374151',
+              padding: 15
+            }
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            titleColor: 'white',
+            bodyColor: 'white',
+            borderColor: '#7b61ff',
+            borderWidth: 1,
+            cornerRadius: 6,
+            displayColors: true,
+            titleFont: {
+              size: 12,
+              weight: 'bold'
+            },
+            bodyFont: {
+              size: 11
+            }
+          }
+        }
+      }
+    });
+    console.log('Chart created successfully');
+  }
+
   getApartmentPageNumbers(): number[] {
     const pages: number[] = [];
     const startPage = Math.max(1, this.apartmentCurrentPage - 2);
@@ -1161,31 +1425,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       console.log('✅ Chart recreated with new data');
     }
     
-    // Check if chart actually rendered something
-    setTimeout(() => {
-      const canvas = document.getElementById('waterChart') as HTMLCanvasElement;
-      if (canvas) {
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const hasContent = imageData.data.some(pixel => pixel !== 0);
-          console.log('🎨 Canvas content check:', {
-            hasContent: hasContent,
-            imageDataLength: imageData.data.length,
-            canvasWidth: canvas.width,
-            canvasHeight: canvas.height
-          });
-          
-          // Test if canvas can be drawn on
-          if (!hasContent) {
-            console.log('🧪 Testing canvas drawing capability...');
-            ctx.fillStyle = 'red';
-            ctx.fillRect(10, 10, 50, 50);
-            console.log('✅ Test rectangle drawn on canvas');
-          }
-        }
-      }
-    }, 500);
     
     console.log('✅ Chart updated successfully');
     console.log('📊 Final chart data:', this.chart.data);
