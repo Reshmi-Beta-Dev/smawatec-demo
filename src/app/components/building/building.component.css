@@ -896,13 +896,15 @@
     color: white;
 }
 
-.apartment-grid-panel .pill.danger {
-    background: #ff4757;
-    color: white;
+.apartment-grid-panel .pill.outline.danger {
+    color: #ef4444;
+    border-color: #ef4444;
 }
 
-.apartment-grid-panel .pill.danger:hover {
-    background: #ff3742;
+.apartment-grid-panel .pill.outline.danger:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #dc2626;
 }
 
 /* Responsive Building and Apartment Grids */
