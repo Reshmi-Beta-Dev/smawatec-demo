@@ -327,6 +327,32 @@
     background: #45a049;
 }
 
+/* Chart Panel Styles */
+.chart-panel {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border: 1px solid #dee2e6;
+}
+
+.chart-container {
+    padding: var(--spacing-md);
+    height: 300px;
+    position: relative;
+}
+
+.chart-container h4 {
+    margin: 0 0 var(--spacing-md) 0;
+    font-size: 16px;
+    font-weight: 600;
+    color: #495057;
+    text-align: center;
+}
+
+.chart-container canvas {
+    max-height: 250px;
+    width: 100% !important;
+    height: 250px !important;
+}
+
 /* Virtual Scroll Info Styles */
 .virtual-scroll-info {
     margin-bottom: var(--spacing-md);
