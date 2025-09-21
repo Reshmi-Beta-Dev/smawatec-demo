@@ -25,8 +25,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     tenant: '',
     tenantId: ''
   };
-  periodFrom: string = '';
-  periodTo: string = '';
   private chart: any;
 
   // Loading and error states
@@ -78,12 +76,74 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedBuildingId: string | null = null;
   selectedBuildingGroupName: string | null = null;
 
+  // Export data properties
+  exportData = {
+    today: '0 Liter',
+    yesterday: '0 Liter', 
+    thisWeek: '0 Liter',
+    thisMonth: '0 m3',
+    thisYear: '0 m3',
+    lastYear: '0 m3'
+  };
+
+  // Period controls
+  periodFrom: string = '';
+  periodTo: string = '';
+
   constructor(private mockDataService: MockDataService) {}
 
   ngOnInit() {
     this.loadTimePeriods();
     this.loadChartTypes();
+    this.setDefaultPeriods();
     this.loadData();
+  }
+
+  // Set default period values
+  setDefaultPeriods() {
+    const today = new Date();
+    const oneMonthAgo = new Date(today);
+    oneMonthAgo.setMonth(today.getMonth() - 1);
+    
+    this.periodFrom = oneMonthAgo.toISOString().split('T')[0]; // YYYY-MM-DD format
+    this.periodTo = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+  }
+
+  // Update export data based on current selections
+  updateExportData() {
+    // Generate realistic consumption data based on selection level
+    let baseConsumption = 100; // Base consumption in liters
+    
+    if (this.selectedApartmentId) {
+      // Apartment selected - show apartment-specific data
+      baseConsumption = 50 + Math.floor(Math.random() * 100);
+    } else if (this.selectedBuildingId) {
+      // Building selected - show building data (sum of apartments)
+      const building = this.paginatedBuildings.find(b => b.id === this.selectedBuildingId);
+      baseConsumption = (building?.apartmentCount || 8) * (30 + Math.floor(Math.random() * 50));
+    } else if (this.selectedBuildingGroupName) {
+      // Building group selected - show group data (sum of all buildings)
+      const group = this.paginatedBuildingGroups.find(g => g.name === this.selectedBuildingGroupName);
+      baseConsumption = (group?.apartmentCount || 50) * (25 + Math.floor(Math.random() * 40));
+    }
+
+    // Calculate consumption for different periods
+    const todayConsumption = Math.floor(baseConsumption * (0.8 + Math.random() * 0.4));
+    const yesterdayConsumption = Math.floor(baseConsumption * (0.7 + Math.random() * 0.6));
+    const weekConsumption = Math.floor(baseConsumption * 7 * (0.9 + Math.random() * 0.2));
+    const monthConsumption = Math.floor(baseConsumption * 30 * (0.8 + Math.random() * 0.4));
+    const yearConsumption = Math.floor(baseConsumption * 365 * (0.7 + Math.random() * 0.6));
+    const lastYearConsumption = Math.floor(yearConsumption * (0.8 + Math.random() * 0.4));
+
+    // Update export data
+    this.exportData = {
+      today: `${todayConsumption} Liter`,
+      yesterday: `${yesterdayConsumption} Liter`,
+      thisWeek: `${weekConsumption} Liter`,
+      thisMonth: `${(monthConsumption / 1000).toFixed(1)} m3`,
+      thisYear: `${(yearConsumption / 1000).toFixed(1)} m3`,
+      lastYear: `${(lastYearConsumption / 1000).toFixed(1)} m3`
+    };
   }
 
   async loadData() {
@@ -126,6 +186,9 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       
       // Load buildings for the first group
       await this.loadBuildingsForGroup(firstGroup.id);
+      
+      // Update export data with default selection
+      this.updateExportData();
     }
   }
 
@@ -189,6 +252,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       await this.loadBuildingsForGroup(buildingGroup.id);
       this.ensureChartReady();
       this.loadConsumptionData();
+      this.updateExportData();
     } finally {
       this.hideProcessing();
     }
@@ -257,6 +321,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       await this.loadApartmentGridData(building);
       this.ensureChartReady();
       this.loadConsumptionData();
+      this.updateExportData();
     } finally {
       this.hideProcessing();
     }
@@ -282,9 +347,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   async loadBuildingsForGroup(buildingGroupId: string) {
     try {
       this.loading = true;
-      console.log('🏢 loadBuildingsForGroup called with ID:', buildingGroupId);
       const buildings = await this.mockDataService.getBuildingsByGroup(buildingGroupId);
-      console.log('🏢 Loaded buildings:', buildings.length);
       this.paginatedBuildings = buildings;
       this.buildings = buildings;
       this.buildingTotalItems = buildings.length;
@@ -292,7 +355,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.currentBuildingPage = 1;
       
       // Load all apartments for the building group when no building is selected
-      console.log('🏢 About to call loadAllApartmentsForBuildingGroup');
       await this.loadAllApartmentsForBuildingGroup();
     } catch (error) {
       console.error('Error loading buildings for group:', error);
@@ -321,9 +383,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   async loadAllApartmentsForBuildingGroup() {
     try {
       this.loading = true;
-      console.log('🏢 loadAllApartmentsForBuildingGroup called');
-      console.log('selectedBuildingGroupName:', this.selectedBuildingGroupName);
-      console.log('selectedBuildingGroupRow:', this.selectedBuildingGroupRow);
       
       if (this.selectedBuildingGroupName) {
         // Get all buildings in the selected group
@@ -361,15 +420,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         const endIndex = startIndex + this.itemsPerPage;
         this.apartmentGridData = fullApartmentGridData.slice(startIndex, endIndex);
         
-        console.log(`🏢 Loaded ${fullApartmentGridData.length} apartments from building group: ${this.selectedBuildingGroupName}`);
       } else {
-        console.log('❌ No selectedBuildingGroupName, cannot load apartments');
-        console.log('selectedBuildingGroupName:', this.selectedBuildingGroupName);
-        console.log('selectedBuildingGroupRow:', this.selectedBuildingGroupRow);
-        console.log('paginatedBuildingGroups length:', this.paginatedBuildingGroups.length);
-        
         // Fallback: Generate some demo apartment data
-        console.log('🔄 Generating fallback apartment data');
         const fallbackData = this.generateApartmentData(8, 'Demo Building', 'demo-building');
         this.fullApartmentGridData = fallbackData;
         this.apartmentTotalItems = fallbackData.length;
@@ -379,8 +431,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         const startIndex = (this.apartmentCurrentPage - 1) * this.itemsPerPage;
         const endIndex = startIndex + this.itemsPerPage;
         this.apartmentGridData = fallbackData.slice(startIndex, endIndex);
-        
-        console.log('🔄 Fallback apartment data generated:', this.apartmentGridData.length);
       }
     } catch (error) {
       console.error('Error loading all apartments for building group:', error);
@@ -553,6 +603,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         this.selectedApartmentId = null;
         this.ensureChartReady();
         this.loadConsumptionData();
+        this.updateExportData();
         return;
       }
       
@@ -563,6 +614,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.selectedApartmentId = apartment.id || null;
       this.ensureChartReady();
       this.loadConsumptionData();
+      this.updateExportData();
     } finally {
       this.hideProcessing();
     }
@@ -1121,11 +1173,6 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  resetPeriod() {
-    this.periodFrom = '';
-    this.periodTo = '';
-    this.showNotification('Period has been reset to default');
-  }
 
   // Navigation button states
   isPreviousPeriodDisabled(): boolean {
@@ -1147,11 +1194,34 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     return periodNames[this.selectedTimePeriod as keyof typeof periodNames] || 'Device Consumption';
   }
 
+  // Reset period to default values
+  resetPeriod() {
+    this.setDefaultPeriods();
+    this.updateExportData();
+  }
+
+  // Export methods
   exportPDF() {
-    this.showNotification('PDF export functionality would generate a PDF report');
+    const selectionInfo = this.getSelectionInfo();
+    this.showNotification(`PDF export for ${selectionInfo} - Period: ${this.periodFrom} to ${this.periodTo}`);
   }
 
   exportXLS() {
-    this.showNotification('Excel export functionality would generate an Excel file');
+    const selectionInfo = this.getSelectionInfo();
+    this.showNotification(`Excel export for ${selectionInfo} - Period: ${this.periodFrom} to ${this.periodTo}`);
+  }
+
+  // Get current selection info for export
+  getSelectionInfo(): string {
+    if (this.selectedApartmentId) {
+      const apartment = this.apartmentGridData.find(apt => apt.id === this.selectedApartmentId);
+      return `Apartment: ${apartment?.apartment || 'Unknown'}`;
+    } else if (this.selectedBuildingId) {
+      const building = this.paginatedBuildings.find(b => b.id === this.selectedBuildingId);
+      return `Building: ${building?.name || 'Unknown'}`;
+    } else if (this.selectedBuildingGroupName) {
+      return `Building Group: ${this.selectedBuildingGroupName}`;
+    }
+    return 'All Data';
   }
 }
