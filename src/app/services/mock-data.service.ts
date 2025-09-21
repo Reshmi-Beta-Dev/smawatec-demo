@@ -29,6 +29,11 @@ export interface AlarmMessage {
   alarm_type_name: string;
   alarm_severity: string;
   alarm_color: string;
+  action_taken?: string;
+  apartment_id?: string;
+  floor_number?: string;
+  room_number?: string;
+  device_type?: string;
   // Additional properties for template compatibility
   alarm_type?: string;
   devices?: {
@@ -46,7 +51,6 @@ export interface AlarmMessage {
   alarm_types?: {
     type_name?: string;
   };
-  action_taken?: string;
   tenant?: string;
 }
 

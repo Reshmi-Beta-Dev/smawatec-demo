@@ -37,6 +37,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   
   // Hide alarm functionality
   hiddenAlarmIds: Set<string> = new Set();
+  
+  // Details modal functionality
+  selectedAlarmForDetails: AlarmMessage | null = null;
+  showDetailsModal: boolean = false;
 
   constructor(private mockDataService: MockDataService) {}
 
@@ -141,9 +145,27 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.selectedRow = this.selectedRow === index ? null : index;
   }
 
-  showDetails(event: Event) {
+  showDetails(event: Event, alarm: AlarmMessage) {
     event.stopPropagation();
-    this.showNotification('Details functionality would show alarm details');
+    this.selectedAlarmForDetails = alarm;
+    this.showDetailsModal = true;
+  }
+
+  closeDetailsModal() {
+    this.showDetailsModal = false;
+    this.selectedAlarmForDetails = null;
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
   }
 
   hideAlarm(event: Event, alarmId: string) {
@@ -438,6 +460,25 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   // Template helper methods
   getTenantName(alarm: any): string {
     return alarm.tenant || 'N/A';
+  }
+
+  getAlarmDuration(alarm: AlarmMessage): string {
+    if (!alarm.resolved_at) {
+      return 'Ongoing';
+    }
+    
+    const created = new Date(alarm.created_at);
+    const resolved = new Date(alarm.resolved_at);
+    const durationMs = resolved.getTime() - created.getTime();
+    
+    const hours = Math.floor(durationMs / (1000 * 60 * 60));
+    const minutes = Math.floor((durationMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (hours > 0) {
+      return `${hours}h ${minutes}m`;
+    } else {
+      return `${minutes}m`;
+    }
   }
 
   getAlarmCount(type: string): number {
