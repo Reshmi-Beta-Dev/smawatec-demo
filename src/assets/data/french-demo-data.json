@@ -7,8 +7,8 @@
       "address": "1 Place Vendôme, 75001 Paris",
       "created_at": "2018-03-15T10:30:00Z",
       "total_buildings": 8,
-      "total_apartments": 45,
-      "total_devices": 45
+      "total_apartments": 97,
+      "total_devices": 97
     },
     {
       "id": "bg-002",
@@ -133,8 +133,8 @@
       "city": "Paris",
       "city_id": "paris-01",
       "created_at": "2023-04-04T23:00:00.000Z",
-      "total_apartments": 2,
-      "total_devices": 1
+      "total_apartments": 12,
+      "total_devices": 12
     },
     {
       "id": "b-002",
@@ -147,8 +147,8 @@
       "city": "Paris",
       "city_id": "paris-01",
       "created_at": "2019-07-23T23:00:00.000Z",
-      "total_apartments": 2,
-      "total_devices": 1
+      "total_apartments": 15,
+      "total_devices": 15
     },
     {
       "id": "b-003",
@@ -161,8 +161,8 @@
       "city": "Paris",
       "city_id": "paris-01",
       "created_at": "2019-09-17T23:00:00.000Z",
-      "total_apartments": 3,
-      "total_devices": 1
+      "total_apartments": 8,
+      "total_devices": 8
     },
     {
       "id": "b-004",
@@ -175,8 +175,8 @@
       "city": "Paris",
       "city_id": "paris-01",
       "created_at": "2020-10-06T23:00:00.000Z",
-      "total_apartments": 3,
-      "total_devices": 3
+      "total_apartments": 20,
+      "total_devices": 20
     },
     {
       "id": "b-005",
@@ -189,8 +189,8 @@
       "city": "Paris",
       "city_id": "paris-01",
       "created_at": "2023-11-28T00:00:00.000Z",
-      "total_apartments": 4,
-      "total_devices": 1
+      "total_apartments": 10,
+      "total_devices": 10
     },
     {
       "id": "b-006",
@@ -203,8 +203,8 @@
       "city": "Paris",
       "city_id": "paris-01",
       "created_at": "2021-04-20T23:00:00.000Z",
-      "total_apartments": 4,
-      "total_devices": 2
+      "total_apartments": 18,
+      "total_devices": 18
     },
     {
       "id": "b-007",
@@ -217,8 +217,8 @@
       "city": "Paris",
       "city_id": "paris-01",
       "created_at": "2021-02-14T00:00:00.000Z",
-      "total_apartments": 4,
-      "total_devices": 4
+      "total_apartments": 14,
+      "total_devices": 14
     },
     {
       "id": "b-008",

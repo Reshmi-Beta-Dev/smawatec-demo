@@ -81,9 +81,13 @@ export class BuildingComponent implements OnInit {
     // Load other data in parallel (but don't load buildings again as it's already loaded by setDefaultSelections)
     await Promise.all([
       this.loadApartments(),
-      this.loadTenants(),
-      this.loadApartmentGridData()
+      this.loadTenants()
     ]);
+    
+    // Load apartment grid data based on default selected building
+    if (this.paginatedBuildings.length > 0) {
+      await this.loadApartmentGridData(this.paginatedBuildings[0]);
+    }
   }
 
   async setDefaultSelections() {
@@ -162,6 +166,8 @@ export class BuildingComponent implements OnInit {
       const building = this.paginatedBuildings[index];
       // Load apartments for this building
       await this.loadApartmentsForBuilding(building.id);
+      // Load apartment grid data based on building
+      await this.loadApartmentGridData(building);
     }
   }
 
@@ -187,6 +193,8 @@ export class BuildingComponent implements OnInit {
         this.selectedRow = 0;
         // Load apartments for the first building
         await this.loadApartmentsForBuilding(buildings[0].id);
+        // Load apartment grid data for the first building
+        await this.loadApartmentGridData(buildings[0]);
       }
     } catch (error) {
       console.error('Error loading buildings for group:', error);
@@ -478,70 +486,15 @@ export class BuildingComponent implements OnInit {
   }
 
   // Apartment grid methods
-  async loadApartmentGridData() {
-    // Mock apartment grid data based on the image - create more data for pagination
-    const allApartmentData = [
-      {
-        id: 1,
-        apartment: 'Block 1, L2, APT 12',
-        tenant: 'Mr. Francois Duc de la Roche Focault'
-      },
-      {
-        id: 2,
-        apartment: 'L23, APT 3',
-        tenant: 'Mr. Napoleon Bonaparte'
-      },
-      {
-        id: 3,
-        apartment: 'Block 3, L45, APT 23',
-        tenant: 'Mr. Gerard Depardieu'
-      },
-      {
-        id: 4,
-        apartment: 'Block, 32 L1, APT1',
-        tenant: 'Mr. Luis Vuitton'
-      },
-      {
-        id: 5,
-        apartment: 'Block 2, L5, APT 15',
-        tenant: 'Ms. Marie Curie'
-      },
-      {
-        id: 6,
-        apartment: 'L12, APT 8',
-        tenant: 'Mr. Victor Hugo'
-      },
-      {
-        id: 7,
-        apartment: 'Block 4, L8, APT 32',
-        tenant: 'Ms. Coco Chanel'
-      },
-      {
-        id: 8,
-        apartment: 'L45, APT 12',
-        tenant: 'Mr. Albert Einstein'
-      },
-      {
-        id: 9,
-        apartment: 'Block 5, L15, APT 45',
-        tenant: 'Ms. Edith Piaf'
-      },
-      {
-        id: 10,
-        apartment: 'L67, APT 23',
-        tenant: 'Mr. Claude Monet'
-      },
-      {
-        id: 11,
-        apartment: 'Block 6, L22, APT 67',
-        tenant: 'Ms. Brigitte Bardot'
-      },
-      {
-        id: 12,
-        apartment: 'L89, APT 34',
-        tenant: 'Mr. Jean-Paul Sartre'
-      }
-    ];
+  async loadApartmentGridData(selectedBuilding?: any) {
+    // Generate apartment data based on selected building's apartment count
+    // For demo purposes, ensure at least 8 apartments per building
+    const originalCount = selectedBuilding?.apartmentCount || 4;
+    const apartmentCount = Math.max(originalCount, 8); // Minimum 8 apartments for demo
+    const buildingName = selectedBuilding?.name || 'Building';
+    
+    // Generate apartment data based on the building's apartment count
+    const allApartmentData = this.generateApartmentData(apartmentCount, buildingName, selectedBuilding?.id);
     
     // Set up pagination
     this.apartmentTotalItems = allApartmentData.length;
@@ -552,6 +505,93 @@ export class BuildingComponent implements OnInit {
     const startIndex = (this.apartmentCurrentPage - 1) * this.itemsPerPage;
     const endIndex = startIndex + this.itemsPerPage;
     this.apartmentGridData = allApartmentData.slice(startIndex, endIndex);
+  }
+
+  generateApartmentData(count: number, buildingName: string, buildingId?: string): any[] {
+    const apartments = [];
+    
+    // Use building ID as seed for unique data generation
+    const seed = this.hashCode(buildingId || buildingName);
+    
+    const tenantNames = [
+      'Mr. Francois Duc de la Roche Focault', 'Mr. Napoleon Bonaparte', 'Mr. Gerard Depardieu', 'Mr. Luis Vuitton',
+      'Ms. Marie Curie', 'Mr. Victor Hugo', 'Ms. Coco Chanel', 'Mr. Albert Einstein',
+      'Ms. Edith Piaf', 'Mr. Claude Monet', 'Ms. Brigitte Bardot', 'Mr. Jean-Paul Sartre',
+      'Ms. Simone de Beauvoir', 'Mr. Marcel Proust', 'Ms. Josephine Baker', 'Mr. Henri Matisse',
+      'Ms. Coco Chanel', 'Mr. Louis Pasteur', 'Ms. Marie Antoinette', 'Mr. Charles de Gaulle',
+      'Ms. Simone Signoret', 'Mr. Yves Montand', 'Ms. Edith Piaf', 'Mr. Maurice Chevalier',
+      'Ms. Catherine Deneuve', 'Mr. Alain Delon', 'Ms. Brigitte Bardot', 'Mr. Jean Gabin',
+      'Ms. Isabelle Adjani', 'Mr. Gérard Depardieu', 'Ms. Juliette Binoche', 'Mr. Jean Reno',
+      'Ms. Marion Cotillard', 'Mr. Omar Sy', 'Ms. Audrey Tautou', 'Mr. Jean Dujardin',
+      'Ms. Sophie Marceau', 'Mr. Vincent Cassel', 'Ms. Eva Green', 'Mr. Romain Duris',
+      'Ms. Léa Seydoux', 'Mr. Guillaume Canet', 'Ms. Mélanie Laurent', 'Mr. Mathieu Amalric',
+      'Ms. Emmanuelle Béart', 'Mr. Daniel Auteuil', 'Ms. Fanny Ardant', 'Mr. Gaspard Ulliel',
+      'Ms. Charlotte Gainsbourg', 'Mr. Benoît Magimel', 'Ms. Sandrine Kiberlain', 'Mr. Fabrice Luchini',
+      'Ms. Karin Viard', 'Mr. François Cluzet', 'Ms. Nathalie Baye', 'Mr. Jean-Pierre Bacri',
+      'Ms. Isabelle Huppert', 'Mr. Michel Blanc', 'Ms. Valérie Lemercier', 'Mr. Kad Merad',
+      'Ms. Julie Depardieu', 'Mr. Jean-Paul Belmondo', 'Ms. Anouk Aimée', 'Mr. Philippe Noiret',
+      'Ms. Marion Cotillard', 'Mr. Omar Sy', 'Ms. Audrey Tautou', 'Mr. Jean Dujardin',
+      'Ms. Sophie Marceau', 'Mr. Vincent Cassel', 'Ms. Eva Green', 'Mr. Romain Duris',
+      'Ms. Léa Seydoux', 'Mr. Guillaume Canet', 'Ms. Mélanie Laurent', 'Mr. Mathieu Amalric',
+      'Ms. Emmanuelle Béart', 'Mr. Daniel Auteuil', 'Ms. Fanny Ardant', 'Mr. Gaspard Ulliel',
+      'Ms. Charlotte Gainsbourg', 'Mr. Benoît Magimel', 'Ms. Sandrine Kiberlain', 'Mr. Fabrice Luchini',
+      'Ms. Karin Viard', 'Mr. François Cluzet', 'Ms. Nathalie Baye', 'Mr. Jean-Pierre Bacri',
+      'Ms. Isabelle Huppert', 'Mr. Michel Blanc', 'Ms. Valérie Lemercier', 'Mr. Kad Merad',
+      'Ms. Julie Depardieu', 'Mr. Jean-Paul Belmondo', 'Ms. Anouk Aimée', 'Mr. Philippe Noiret'
+    ];
+
+    const apartmentTypes = [
+      'Block 1, L2, APT', 'L23, APT', 'Block 3, L45, APT', 'Block, 32 L1, APT',
+      'Block 2, L5, APT', 'L12, APT', 'Block 4, L8, APT', 'L45, APT',
+      'Block 5, L15, APT', 'L67, APT', 'Block 6, L22, APT', 'L89, APT',
+      'Block 7, L10, APT', 'L34, APT', 'Block 8, L18, APT', 'L56, APT',
+      'Block 9, L25, APT', 'L78, APT', 'Block 10, L30, APT', 'L90, APT',
+      'Block 11, L5, APT', 'L15, APT', 'Block 12, L20, APT', 'L35, APT',
+      'Block 13, L8, APT', 'L42, APT', 'Block 14, L12, APT', 'L58, APT',
+      'Block 15, L25, APT', 'L72, APT', 'Block 16, L18, APT', 'L85, APT',
+      'Block 17, L3, APT', 'L28, APT', 'Block 18, L14, APT', 'L63, APT',
+      'Block 19, L7, APT', 'L38, APT', 'Block 20, L22, APT', 'L75, APT',
+      'Block 21, L11, APT', 'L48, APT', 'Block 22, L16, APT', 'L68, APT',
+      'Block 23, L4, APT', 'L31, APT', 'Block 24, L19, APT', 'L76, APT',
+      'Block 25, L9, APT', 'L52, APT', 'Block 26, L24, APT', 'L81, APT',
+      'Block 27, L6, APT', 'L41, APT', 'Block 28, L17, APT', 'L59, APT',
+      'Block 29, L13, APT', 'L74, APT', 'Block 30, L21, APT', 'L87, APT',
+      'Block 31, L9, APT', 'L46, APT', 'Block 32, L26, APT', 'L93, APT',
+      'Block 33, L4, APT', 'L37, APT', 'Block 34, L19, APT', 'L64, APT',
+      'Block 35, L11, APT', 'L53, APT', 'Block 36, L28, APT', 'L79, APT',
+      'Block 37, L7, APT', 'L44, APT', 'Block 38, L15, APT', 'L71, APT',
+      'Block 39, L23, APT', 'L66, APT', 'Block 40, L12, APT', 'L88, APT'
+    ];
+
+    for (let i = 0; i < count; i++) {
+      // Use seeded random selection for unique data per building
+      const tenantIndex = (seed + i * 7) % tenantNames.length;
+      const apartmentTypeIndex = (seed + i * 11) % apartmentTypes.length;
+      
+      const apartmentType = apartmentTypes[apartmentTypeIndex];
+      const apartmentNumber = String(i + 1).padStart(2, '0');
+      const tenantName = tenantNames[tenantIndex];
+      
+      apartments.push({
+        id: i + 1,
+        apartment: `${apartmentType} ${apartmentNumber}`,
+        tenant: tenantName,
+        buildingName: buildingName
+      });
+    }
+
+    return apartments;
+  }
+
+  // Simple hash function to create seed from building ID
+  private hashCode(str: string): number {
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return Math.abs(hash);
   }
 
   onApartmentRowClick(index: number) {
