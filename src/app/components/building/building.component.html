@@ -185,7 +185,7 @@
                                 <tbody>
                                     <tr *ngFor="let building of paginatedBuildings; let i = index" 
                                         (click)="onBuildingRowClick(i)" 
-                                        (dblclick)="onBuildingRowDoubleClick(building, i)"
+                                        (dblclick)="onBuildingRowDoubleClick(i)"
                                         [class.selected]="selectedBuildingRow === i">
                                         <td>{{ (currentBuildingPage - 1) * itemsPerPage + i + 1 }}</td>
                                         <td>{{ building.name || 'N/A' }}</td>
@@ -198,8 +198,10 @@
                 </table>
                 <div class="action-buttons">
                     <div class="action-buttons-left">
-                        <button class="pill" (click)="addBuilding()">Add Building</button>
-                        <button class="pill outline danger" (click)="removeBuilding()">Delete Building</button>
+                        <button class="pill" (click)="openAddBuildingModal()">Add Building</button>
+                        <button class="pill outline danger" 
+                                (click)="openDeleteBuildingModal()"
+                                [disabled]="selectedBuildingRow === null">Delete Building</button>
                     </div>
                     
                     <!-- Pagination for Buildings -->
@@ -245,6 +247,7 @@
                         <tbody>
                             <tr *ngFor="let apartment of apartmentGridData; let i = index" 
                                 (click)="onApartmentRowClick(i)" 
+                                (dblclick)="onApartmentRowDoubleClick(i)"
                                 [class.selected]="selectedApartmentRow === i">
                                 <td>{{ (apartmentCurrentPage - 1) * itemsPerPage + i + 1 }}</td>
                                 <td>{{ apartment.apartment }}</td>
@@ -254,8 +257,10 @@
                     </table>
                     <div class="action-buttons">
                         <div class="action-buttons-left">
-                            <button class="pill" (click)="addApartment()">Add Apartment</button>
-                            <button class="pill outline danger" (click)="removeApartment()">Delete Apartment</button>
+                            <button class="pill" (click)="openAddApartmentModal()">Add Apartment</button>
+                            <button class="pill outline danger" 
+                                    (click)="openDeleteApartmentModal()"
+                                    [disabled]="selectedApartmentRow === null">Delete Apartment</button>
                         </div>
                         
                         <!-- Pagination for Apartments - on same line as buttons -->
@@ -352,7 +357,21 @@
         [modalType]="modalType"
         [groupName]="modalGroupName"
         [isLoading]="modalLoading"
+        [itemType]="modalItemType"
         (save)="onModalSave($event)"
         (cancel)="onModalCancel()">
     </app-building-group-modal>
+
+    <!-- Data Modal for Buildings and Apartments -->
+    <app-data-modal
+        [isVisible]="showDataModal"
+        [modalType]="dataModalType"
+        [itemType]="dataModalItemType"
+        [formData]="dataModalFormData"
+        [isLoading]="dataModalLoading"
+        [fieldConfigs]="dataModalFieldConfigs"
+        [deleteItemName]="dataModalDeleteItemName"
+        (save)="onDataModalSave($event)"
+        (cancel)="onDataModalCancel()">
+    </app-data-modal>
 </div>

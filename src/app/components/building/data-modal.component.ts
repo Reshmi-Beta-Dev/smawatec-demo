@@ -2,8 +2,17 @@ import { Component, EventEmitter, Input, Output, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
+interface FieldConfig {
+  name: string;
+  label: string;
+  type: 'text' | 'number' | 'email' | 'tel';
+  required: boolean;
+  placeholder: string;
+  maxlength?: number;
+}
+
 @Component({
-  selector: 'app-building-group-modal',
+  selector: 'app-data-modal',
   standalone: true,
   imports: [CommonModule, FormsModule],
   template: `
@@ -16,23 +25,25 @@ import { FormsModule } from '@angular/forms';
         
         <div class="modal-body">
           <div class="form-group" *ngIf="modalType !== 'delete'">
-            <label for="groupName">Building Group Name *</label>
-            <input 
-              type="text" 
-              id="groupName"
-              [(ngModel)]="groupName" 
-              (input)="onNameChange()"
-              [class.error]="hasError"
-              placeholder="Enter building group name..."
-              maxlength="100"
-            >
-            <div class="error-message" *ngIf="hasError">
-              {{ errorMessage }}
+            <div *ngFor="let field of fieldConfigs" class="field-group">
+              <label [for]="field.name">{{ field.label }}<span *ngIf="field.required"> *</span></label>
+              <input 
+                [type]="field.type"
+                [id]="field.name"
+                [(ngModel)]="formData[field.name]"
+                (input)="onFieldChange(field.name)"
+                [class.error]="hasFieldError(field.name)"
+                [placeholder]="field.placeholder"
+                [maxlength]="field.maxlength || null"
+                [required]="field.required">
+              <div class="error-message" *ngIf="hasFieldError(field.name)">
+                {{ getFieldError(field.name) }}
+              </div>
             </div>
           </div>
           
           <div class="form-group" *ngIf="modalType === 'delete'">
-            <p>Are you sure you want to delete "{{ groupName }}"?</p>
+            <p>Are you sure you want to delete "{{ deleteItemName }}"?</p>
           </div>
         </div>
         
@@ -102,11 +113,10 @@ import { FormsModule } from '@angular/forms';
       background: none;
       border: none;
       font-size: 24px;
-      color: #666;
+      color: #6c757d;
       cursor: pointer;
-      padding: 0;
-      width: 30px;
-      height: 30px;
+      width: 32px;
+      height: 32px;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -123,39 +133,34 @@ import { FormsModule } from '@angular/forms';
       padding: 24px;
     }
 
-    .form-group {
+    .field-group {
       margin-bottom: 20px;
     }
 
-    .form-group label {
+    .field-group label {
       display: block;
       margin-bottom: 8px;
       font-weight: 600;
       color: #2c3e50;
     }
 
-    .form-group p {
-      color: #333;
-      margin: 0;
-    }
-
-    .form-group input {
+    .field-group input {
       width: 100%;
       padding: 12px;
       border: 2px solid #e0e0e0;
       border-radius: 6px;
       font-size: 14px;
-      transition: border-color 0.3s ease;
+      transition: all 0.2s ease;
       box-sizing: border-box;
     }
 
-    .form-group input:focus {
+    .field-group input:focus {
       outline: none;
       border-color: #3498db;
       box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
     }
 
-    .form-group input.error {
+    .field-group input.error {
       border-color: #e74c3c;
       box-shadow: 0 0 0 3px rgba(231, 76, 96, 0.1);
     }
@@ -166,8 +171,6 @@ import { FormsModule } from '@angular/forms';
       margin-top: 6px;
       font-weight: 500;
     }
-
-
 
     .modal-footer {
       display: flex;
@@ -184,9 +187,9 @@ import { FormsModule } from '@angular/forms';
       border: none;
       border-radius: 6px;
       font-size: 14px;
-      font-weight: 600;
+      font-weight: 500;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       min-width: 80px;
     }
 
@@ -254,7 +257,7 @@ import { FormsModule } from '@angular/forms';
     @keyframes slideIn {
       from { 
         opacity: 0;
-        transform: translateY(-20px) scale(0.95);
+        transform: translateY(-50px) scale(0.95);
       }
       to { 
         opacity: 1;
@@ -268,17 +271,18 @@ import { FormsModule } from '@angular/forms';
     }
   `]
 })
-export class BuildingGroupModalComponent implements OnInit {
+export class DataModalComponent implements OnInit {
   @Input() isVisible: boolean = false;
   @Input() modalType: 'add' | 'edit' | 'delete' = 'add';
-  @Input() groupName: string = '';
-  @Input() isLoading: boolean = false;
   @Input() itemType: 'Building Group' | 'Building' | 'Apartment' = 'Building Group';
-  @Output() save = new EventEmitter<{ type: string, name: string }>();
+  @Input() formData: any = {};
+  @Input() isLoading: boolean = false;
+  @Input() fieldConfigs: FieldConfig[] = [];
+  @Input() deleteItemName: string = '';
+  @Output() save = new EventEmitter<{ type: string, data: any }>();
   @Output() cancel = new EventEmitter<void>();
 
-  hasError: boolean = false;
-  errorMessage: string = '';
+  fieldErrors: { [key: string]: string } = {};
 
   get modalTitle(): string {
     switch (this.modalType) {
@@ -300,69 +304,97 @@ export class BuildingGroupModalComponent implements OnInit {
 
   get isValid(): boolean {
     if (this.modalType === 'delete') {
-      return true; // Delete is always valid if modal is shown
+      return true;
     }
-    return this.groupName.trim().length >= 3;
+
+    // Check if all required fields are filled
+    for (const field of this.fieldConfigs) {
+      if (field.required && (!this.formData[field.name] || this.formData[field.name].toString().trim() === '')) {
+        return false;
+      }
+    }
+
+    // Check if there are any field errors
+    return Object.keys(this.fieldErrors).length === 0;
   }
 
   ngOnInit() {
-    if (this.modalType === 'add') {
-      this.groupName = '';
+    this.resetForm();
+  }
+
+  onOverlayClick(event: MouseEvent) {
+    if (event.target === event.currentTarget) {
+      this.onCancel();
     }
   }
 
-  onNameChange() {
-    this.validateInput();
+  onFieldChange(fieldName: string) {
+    this.validateField(fieldName);
   }
 
-  validateInput() {
-    this.hasError = false;
-    this.errorMessage = '';
+  validateField(fieldName: string) {
+    const field = this.fieldConfigs.find(f => f.name === fieldName);
+    if (!field) return;
 
-    if (this.modalType === 'delete') {
+    const value = this.formData[fieldName];
+    
+    if (field.required && (!value || value.toString().trim() === '')) {
+      this.fieldErrors[fieldName] = `${field.label} is required`;
       return;
     }
 
-    const trimmedName = this.groupName.trim();
-    
-    if (trimmedName.length === 0) {
-      this.hasError = true;
-      this.errorMessage = 'Building group name is required';
-    } else if (trimmedName.length < 3) {
-      this.hasError = true;
-      this.errorMessage = 'Building group name must be at least 3 characters long';
-    } else if (trimmedName.length > 100) {
-      this.hasError = true;
-      this.errorMessage = 'Building group name must be less than 100 characters';
-    } else if (!/^[a-zA-Z0-9\s\-_&.,()]+$/.test(trimmedName)) {
-      this.hasError = true;
-      this.errorMessage = 'Building group name contains invalid characters';
+    if (value && field.type === 'email' && !this.isValidEmail(value)) {
+      this.fieldErrors[fieldName] = 'Please enter a valid email address';
+      return;
     }
+
+    if (value && field.type === 'tel' && !this.isValidPhone(value)) {
+      this.fieldErrors[fieldName] = 'Please enter a valid phone number';
+      return;
+    }
+
+    if (value && field.type === 'number' && isNaN(Number(value))) {
+      this.fieldErrors[fieldName] = 'Please enter a valid number';
+      return;
+    }
+
+    // Clear error if validation passes
+    delete this.fieldErrors[fieldName];
+  }
+
+  hasFieldError(fieldName: string): boolean {
+    return !!this.fieldErrors[fieldName];
+  }
+
+  getFieldError(fieldName: string): string {
+    return this.fieldErrors[fieldName] || '';
+  }
+
+  isValidEmail(email: string): boolean {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  }
+
+  isValidPhone(phone: string): boolean {
+    const phoneRegex = /^[\+]?[1-9][\d]{0,15}$/;
+    return phoneRegex.test(phone.replace(/[\s\-\(\)]/g, ''));
   }
 
   onSave() {
-    if (!this.isValid || this.isLoading) {
-      return;
+    if (this.isValid) {
+      this.save.emit({
+        type: this.modalType,
+        data: this.formData
+      });
     }
-
-    this.validateInput();
-    if (this.hasError) {
-      return;
-    }
-
-    this.save.emit({
-      type: this.modalType,
-      name: this.groupName.trim()
-    });
   }
 
   onCancel() {
     this.cancel.emit();
   }
 
-  onOverlayClick(event: Event) {
-    if (event.target === event.currentTarget) {
-      this.onCancel();
-    }
+  resetForm() {
+    this.formData = {};
+    this.fieldErrors = {};
   }
 }

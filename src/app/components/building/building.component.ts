@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService, BuildingGroup, Building, Apartment } from '../../services/mock-data.service';
 import { BuildingGroupModalComponent } from './building-group-modal.component';
+import { DataModalComponent } from './data-modal.component';
 
 @Component({
   selector: 'app-building',
   standalone: true,
-  imports: [CommonModule, FormsModule, BuildingGroupModalComponent],
+  imports: [CommonModule, FormsModule, BuildingGroupModalComponent, DataModalComponent],
   templateUrl: './building.component.html',
   styleUrls: ['./building.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -34,6 +35,16 @@ export class BuildingComponent implements OnInit {
   modalType: 'add' | 'edit' | 'delete' = 'add';
   modalGroupName: string = '';
   modalLoading: boolean = false;
+  modalItemType: 'Building Group' | 'Building' | 'Apartment' = 'Building Group';
+  
+  // Data modal functionality
+  showDataModal: boolean = false;
+  dataModalType: 'add' | 'edit' | 'delete' = 'add';
+  dataModalItemType: 'Building Group' | 'Building' | 'Apartment' = 'Building Group';
+  dataModalFormData: any = {};
+  dataModalLoading: boolean = false;
+  dataModalFieldConfigs: any[] = [];
+  dataModalDeleteItemName: string = '';
 
 
   // Pagination properties
@@ -177,9 +188,9 @@ export class BuildingComponent implements OnInit {
     await this.loadApartmentGridData(building);
   }
 
-  onBuildingRowDoubleClick(building: any, index: number) {
-    this.selectedBuildingForEdit = building;
-    this.showUpdateBuildingModal = true;
+  onBuildingRowDoubleClick(index: number) {
+    this.selectedBuildingRow = index;
+    this.openEditBuildingModal();
   }
 
   // Load buildings for a specific group
@@ -383,9 +394,6 @@ export class BuildingComponent implements OnInit {
     }
   }
 
-  addBuilding() {
-    this.showAddBuildingModal = true;
-  }
 
   removeBuilding() {
     if (this.selectedBuildingRow !== null) {
@@ -747,6 +755,11 @@ export class BuildingComponent implements OnInit {
     }
   }
 
+  onApartmentRowDoubleClick(index: number) {
+    this.selectedApartmentRow = index;
+    this.openEditApartmentModal();
+  }
+
   loadApartmentDetails(apartment: any) {
     // Load apartment details - this could populate a details panel or form
     console.log('Selected apartment:', apartment);
@@ -754,9 +767,6 @@ export class BuildingComponent implements OnInit {
     // For now, we'll just log the selection
   }
 
-  addApartment() {
-    this.showNotification('Add Apartment functionality');
-  }
 
   removeApartment() {
     if (this.selectedApartmentRow !== null) {
@@ -790,10 +800,30 @@ export class BuildingComponent implements OnInit {
   // Math object for template
   Math = Math;
 
+  // Field configurations for different item types
+  buildingGroupFields = [
+    { name: 'name', label: 'Group Name', type: 'text', required: true, placeholder: 'Enter group name...', maxlength: 100 },
+    { name: 'address', label: 'Address', type: 'text', required: true, placeholder: 'Enter group address...', maxlength: 200 }
+  ];
+
+  buildingFields = [
+    { name: 'name', label: 'Building Name', type: 'text', required: true, placeholder: 'Enter building name...', maxlength: 100 },
+    { name: 'address', label: 'Address', type: 'text', required: true, placeholder: 'Enter building address...', maxlength: 200 },
+    { name: 'zip_code', label: 'Zip Code', type: 'text', required: true, placeholder: 'Enter zip code...', maxlength: 10 }
+  ];
+
+  apartmentFields = [
+    { name: 'apartment_number', label: 'Apartment Number', type: 'text', required: true, placeholder: 'Enter apartment number...', maxlength: 20 },
+    { name: 'tenant', label: 'Tenant Name', type: 'text', required: true, placeholder: 'Enter tenant name...', maxlength: 100 },
+    { name: 'apartment_type', label: 'Apartment Type', type: 'text', required: true, placeholder: 'Enter apartment type...', maxlength: 50 },
+    { name: 'floor', label: 'Floor', type: 'number', required: true, placeholder: 'Enter floor number...' }
+  ];
+
   // Modal methods
   openAddGroupModal() {
     this.modalType = 'add';
     this.modalGroupName = '';
+    this.modalItemType = 'Building Group';
     this.showModal = true;
   }
 
@@ -801,6 +831,7 @@ export class BuildingComponent implements OnInit {
     if (this.selectedGroupRow !== null && this.paginatedBuildingGroups[this.selectedGroupRow]) {
       this.modalType = 'edit';
       this.modalGroupName = this.paginatedBuildingGroups[this.selectedGroupRow].name || '';
+      this.modalItemType = 'Building Group';
       this.showModal = true;
     }
   }
@@ -809,6 +840,7 @@ export class BuildingComponent implements OnInit {
     if (this.selectedGroupRow !== null && this.paginatedBuildingGroups[this.selectedGroupRow]) {
       this.modalType = 'delete';
       this.modalGroupName = this.paginatedBuildingGroups[this.selectedGroupRow].name || '';
+      this.modalItemType = 'Building Group';
       this.showModal = true;
     }
   }
@@ -829,12 +861,19 @@ export class BuildingComponent implements OnInit {
         } else if (event.type === 'edit') {
           this.editBuildingGroup(event.name);
         } else if (event.type === 'delete') {
-          this.deleteBuildingGroup();
+          // Determine what to delete based on current selection
+          if (this.selectedGroupRow !== null) {
+            this.deleteBuildingGroup();
+          } else if (this.selectedBuildingRow !== null) {
+            this.deleteBuilding();
+          } else if (this.selectedApartmentRow !== null) {
+            this.deleteApartment();
+          }
         }
         
         this.showModal = false;
         this.modalLoading = false;
-        this.showNotification(`Building group ${event.type === 'add' ? 'added' : event.type === 'edit' ? 'updated' : 'deleted'} successfully`);
+        this.showNotification(`Item ${event.type === 'add' ? 'added' : event.type === 'edit' ? 'updated' : 'deleted'} successfully`);
       } catch (error) {
         this.modalLoading = false;
         this.showNotification('Error processing request. Please try again.');
@@ -845,6 +884,78 @@ export class BuildingComponent implements OnInit {
   onModalCancel() {
     this.showModal = false;
     this.modalLoading = false;
+  }
+
+  // Data modal methods
+  openAddBuildingModal() {
+    this.dataModalType = 'add';
+    this.dataModalItemType = 'Building';
+    this.dataModalFieldConfigs = this.buildingFields;
+    this.dataModalFormData = {};
+    this.showDataModal = true;
+  }
+
+  openEditBuildingModal() {
+    if (this.selectedBuildingRow !== null && this.paginatedBuildings[this.selectedBuildingRow]) {
+      this.dataModalType = 'edit';
+      this.dataModalItemType = 'Building';
+      this.dataModalFieldConfigs = this.buildingFields;
+      this.dataModalFormData = { ...this.paginatedBuildings[this.selectedBuildingRow] };
+      this.showDataModal = true;
+    }
+  }
+
+  openAddApartmentModal() {
+    this.dataModalType = 'add';
+    this.dataModalItemType = 'Apartment';
+    this.dataModalFieldConfigs = this.apartmentFields;
+    this.dataModalFormData = {};
+    this.showDataModal = true;
+  }
+
+  openEditApartmentModal() {
+    if (this.selectedApartmentRow !== null && this.apartmentGridData[this.selectedApartmentRow]) {
+      this.dataModalType = 'edit';
+      this.dataModalItemType = 'Apartment';
+      this.dataModalFieldConfigs = this.apartmentFields;
+      this.dataModalFormData = { ...this.apartmentGridData[this.selectedApartmentRow] };
+      this.showDataModal = true;
+    }
+  }
+
+  onDataModalSave(event: { type: string, data: any }) {
+    this.dataModalLoading = true;
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      try {
+        if (event.type === 'add') {
+          if (this.dataModalItemType === 'Building') {
+            this.addBuilding(event.data);
+          } else if (this.dataModalItemType === 'Apartment') {
+            this.addApartment(event.data);
+          }
+        } else if (event.type === 'edit') {
+          if (this.dataModalItemType === 'Building') {
+            this.editBuilding(event.data);
+          } else if (this.dataModalItemType === 'Apartment') {
+            this.editApartment(event.data);
+          }
+        }
+        
+        this.showDataModal = false;
+        this.dataModalLoading = false;
+        this.showNotification(`${this.dataModalItemType} ${event.type === 'add' ? 'added' : 'updated'} successfully`);
+      } catch (error) {
+        this.dataModalLoading = false;
+        this.showNotification('Error processing request. Please try again.');
+      }
+    }, 1000);
+  }
+
+  onDataModalCancel() {
+    this.showDataModal = false;
+    this.dataModalLoading = false;
   }
 
   private addBuildingGroup(name: string) {
@@ -870,14 +981,132 @@ export class BuildingComponent implements OnInit {
 
   private deleteBuildingGroup() {
     if (this.selectedGroupRow !== null) {
-      this.paginatedBuildingGroups.splice(this.selectedGroupRow, 1);
-      this.buildingGroupTotalItems--;
-      this.buildingGroupTotalPages = Math.ceil(this.buildingGroupTotalItems / this.itemsPerPage);
+      const groupToDelete = this.paginatedBuildingGroups[this.selectedGroupRow];
+      // Remove from source data
+      this.buildingGroups = this.buildingGroups.filter(group => group.id !== groupToDelete.id);
+      // Refresh the UI
+      this.loadBuildingGroups();
+      this.selectedGroupRow = null;
+    }
+  }
+
+  // Building delete functionality
+  openDeleteBuildingModal() {
+    if (this.selectedBuildingRow !== null && this.paginatedBuildings[this.selectedBuildingRow]) {
+      this.modalType = 'delete';
+      this.modalGroupName = this.paginatedBuildings[this.selectedBuildingRow].name || '';
+      this.modalItemType = 'Building';
+      this.showModal = true;
+    }
+  }
+
+  private deleteBuilding() {
+    if (this.selectedBuildingRow !== null) {
+      const buildingToDelete = this.paginatedBuildings[this.selectedBuildingRow];
+      // Remove from source data
+      this.buildings = this.buildings.filter(building => building.id !== buildingToDelete.id);
+      // Refresh the UI
+      this.loadBuildings();
+      this.selectedBuildingRow = null;
       
-      // Reset selection if needed
-      if (this.selectedGroupRow >= this.paginatedBuildingGroups.length) {
-        this.selectedGroupRow = null;
+      // Refresh apartment grid
+      this.loadApartmentGridData();
+    }
+  }
+
+  // Apartment delete functionality
+  openDeleteApartmentModal() {
+    if (this.selectedApartmentRow !== null && this.apartmentGridData[this.selectedApartmentRow]) {
+      this.modalType = 'delete';
+      this.modalGroupName = this.apartmentGridData[this.selectedApartmentRow].apartment_number || '';
+      this.modalItemType = 'Apartment';
+      this.showModal = true;
+    }
+  }
+
+  private deleteApartment() {
+    if (this.selectedApartmentRow !== null) {
+      const apartmentToDelete = this.apartmentGridData[this.selectedApartmentRow];
+      // Remove from source data
+      this.apartments = this.apartments.filter(apartment => apartment.id !== apartmentToDelete.id);
+      // Refresh the UI
+      this.loadApartmentGridData();
+      this.selectedApartmentRow = null;
+    }
+  }
+
+  // Building add/edit methods
+  private addBuilding(data: any) {
+    const newBuilding: any = {
+      id: `b-${Date.now()}`,
+      name: data.name,
+      address: data.address,
+      zip_code: data.zip_code,
+      apartmentCount: 0,
+      deviceCount: 0,
+      building_group_id: this.selectedGroupRow !== null ? this.paginatedBuildingGroups[this.selectedGroupRow].id : null
+    };
+    
+    this.buildings.unshift(newBuilding);
+    this.buildingTotalItems++;
+    this.buildingTotalPages = Math.ceil(this.buildingTotalItems / this.itemsPerPage);
+    this.loadBuildings();
+  }
+
+  private editBuilding(data: any) {
+    if (this.selectedBuildingRow !== null) {
+      const building = this.paginatedBuildings[this.selectedBuildingRow];
+      building.name = data.name;
+      building.address = data.address;
+      building.zip_code = data.zip_code;
+      
+      // Update in source data
+      const sourceIndex = this.buildings.findIndex(b => b.id === building.id);
+      if (sourceIndex !== -1) {
+        this.buildings[sourceIndex] = { ...building };
       }
+      
+      this.loadBuildings();
+    }
+  }
+
+  // Apartment add/edit methods
+  private addApartment(data: any) {
+    const selectedBuilding = this.selectedBuildingRow !== null ? this.paginatedBuildings[this.selectedBuildingRow] : null;
+    if (!selectedBuilding) return;
+
+    const newApartment: any = {
+      id: `a-${Date.now()}`,
+      apartment_number: data.apartment_number,
+      tenant: data.tenant,
+      apartment_type: data.apartment_type,
+      floor: data.floor,
+      building_id: selectedBuilding.id,
+      apartment: data.apartment_number // For compatibility
+    };
+    
+    this.apartments.unshift(newApartment);
+    this.apartmentTotalItems++;
+    this.apartmentTotalPages = Math.ceil(this.apartmentTotalItems / this.itemsPerPage);
+    this.loadApartmentGridData();
+  }
+
+  private editApartment(data: any) {
+    if (this.selectedApartmentRow !== null) {
+      const apartment = this.apartmentGridData[this.selectedApartmentRow];
+      apartment.apartment_number = data.apartment_number;
+      apartment.tenant = data.tenant;
+      apartment.apartment_type = data.apartment_type;
+      apartment.floor = data.floor;
+      apartment.apartment = data.apartment_number; // For compatibility
+      
+      // Update in source data
+      const sourceIndex = this.apartments.findIndex(a => a.id === apartment.id);
+      if (sourceIndex !== -1) {
+        this.apartments[sourceIndex] = { ...apartment };
+      }
+      
+      this.loadApartmentGridData();
     }
   }
 
