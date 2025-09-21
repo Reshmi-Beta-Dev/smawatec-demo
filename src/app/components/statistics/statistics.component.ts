@@ -390,24 +390,23 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
           this.paginatedBuildingGroups[this.selectedBuildingGroupRow!].id
         );
         
-        // Load apartments from all buildings in the group
-        const allApartments = [];
-        for (const building of allBuildings) {
-          const apartments = await this.mockDataService.getApartmentsByBuilding(building.id);
-          allApartments.push(...apartments);
-        }
-        
-        // Generate apartment grid data for all apartments
+        // Generate apartment data for all buildings in the group
         const fullApartmentGridData: any[] = [];
-        allApartments.forEach((apartment, index) => {
-          fullApartmentGridData.push({
-            id: apartment.id,
-            apartment: `Apt ${String(index + 1).padStart(3, '0')}`,
-            tenant: apartment.tenant_name || 'Unknown Tenant',
-            type: apartment.type || 'Standard',
-            building: apartment.building_name || 'Unknown Building'
-          });
-        });
+        let apartmentIndex = 1;
+        
+        for (const building of allBuildings) {
+          // Generate apartment data for this building
+          const buildingApartmentCount = building.apartmentCount || 8;
+          const buildingApartmentData = this.generateApartmentData(
+            buildingApartmentCount, 
+            building.name, 
+            building.id
+          );
+          
+          // Add building apartments to the full dataset
+          fullApartmentGridData.push(...buildingApartmentData);
+          apartmentIndex += buildingApartmentCount;
+        }
         
         // Store full data and calculate pagination
         this.fullApartmentGridData = fullApartmentGridData;
