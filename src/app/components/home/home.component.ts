@@ -26,6 +26,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   loading = false;
   error: string | null = null;
 
+  // Sort functionality
+  sortByImportance: boolean = false;
+  sortedAlarms: AlarmMessage[] = [];
+
   constructor(private mockDataService: MockDataService) {}
 
   async ngOnInit() {
@@ -64,6 +68,8 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       ]);
 
       this.alarms = alarms;
+      this.sortedAlarms = [...alarms]; // Initialize sorted alarms
+      this.applySorting(); // Apply initial sorting
       this.consumptionData = consumption;
       this.deviceStatus = deviceStatus;
       this.monthlyStats = monthlyStats;
@@ -78,7 +84,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadAlarms(): Promise<AlarmMessage[]> {
     try {
-      const response = await this.mockDataService.getAlarmMessages(1, 5);
+      const response = await this.mockDataService.getAlarmMessages(1, 15);
       return response.alarms;
     } catch (error) {
       console.error('Error loading alarms:', error);
@@ -135,6 +141,39 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showOverview = !this.showOverview;
   }
 
+  // Sort functionality
+  toggleSortByImportance() {
+    this.sortByImportance = !this.sortByImportance;
+    this.applySorting();
+  }
+
+  private applySorting() {
+    if (this.sortByImportance) {
+      // Sort by priority: high -> medium -> low, then by creation date
+      this.sortedAlarms = [...this.alarms].sort((a, b) => {
+        const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
+        const aPriority = priorityOrder[a.alarm_severity as keyof typeof priorityOrder] || 0;
+        const bPriority = priorityOrder[b.alarm_severity as keyof typeof priorityOrder] || 0;
+        
+        if (aPriority !== bPriority) {
+          return bPriority - aPriority; // Higher priority first
+        }
+        
+        // If same priority, sort by creation date (newest first)
+        return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+      });
+    } else {
+      // Default sort by creation date (newest first)
+      this.sortedAlarms = [...this.alarms].sort((a, b) => 
+        new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+      );
+    }
+  }
+
+  getDisplayAlarms(): AlarmMessage[] {
+    return this.sortedAlarms;
+  }
+
   // Chart methods
   private initializeChart() {
     // Check if Chart is available
@@ -150,7 +189,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const canvas = document.getElementById('waterChart') as HTMLCanvasElement;
+    const canvas = document.getElementById('monthlyChart') as HTMLCanvasElement;
     if (!canvas) {
       console.error('Canvas element not found');
       return;
@@ -161,14 +200,14 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.chart.destroy();
     }
 
-    const chartData = this.processConsumptionDataForChart();
+    const chartData = this.processMonthlyStatsForChart();
 
     this.chart = new Chart(canvas, {
       type: 'line',
       data: {
         labels: chartData.labels,
         datasets: [{
-          label: 'Daily Water Consumption (L)',
+          label: 'Monthly Water Consumption (m³)',
           data: chartData.data,
           borderColor: '#7b61ff',
           backgroundColor: 'rgba(123, 97, 255, 0.1)',
@@ -185,13 +224,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
             beginAtZero: true,
             title: {
               display: true,
-              text: 'Consumption (Liters)'
+              text: 'Consumption (m³)'
             }
           },
           x: {
             title: {
               display: true,
-              text: 'Date'
+              text: 'Month'
             }
           }
         },
@@ -216,6 +255,17 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
     const labels = this.consumptionData.map(item => item.date);
     const data = this.consumptionData.map(item => item.consumption);
+
+    return { data, labels };
+  }
+
+  private processMonthlyStatsForChart() {
+    if (!this.monthlyStats || this.monthlyStats.length === 0) {
+      return { data: [], labels: [] };
+    }
+
+    const labels = this.monthlyStats.map(item => item.month);
+    const data = this.monthlyStats.map(item => item.consumption);
 
     return { data, labels };
   }

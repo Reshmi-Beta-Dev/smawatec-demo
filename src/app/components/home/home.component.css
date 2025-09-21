@@ -57,6 +57,7 @@
     box-shadow: none;
     overflow: auto;
     margin-bottom: var(--spacing-lg); /* 16px - using standard spacing */
+    max-height: 400px; /* Fixed height for scrolling */
 }
 
 .message-table {
@@ -88,12 +89,28 @@
     cursor: pointer;
 }
 
-.message-table tbody tr.alarm-row.major {
+.message-table tbody tr.alarm-row.high {
     background: #f4dfe3;
 }
 
-.message-table tbody tr.alarm-row.major:hover td {
+.message-table tbody tr.alarm-row.high:hover td {
     background: #f4dfe3;
+}
+
+.message-table tbody tr.alarm-row.medium {
+    background: #fff3d6;
+}
+
+.message-table tbody tr.alarm-row.medium:hover td {
+    background: #fff3d6;
+}
+
+.message-table tbody tr.alarm-row.low {
+    background: #dbeafe;
+}
+
+.message-table tbody tr.alarm-row.low:hover td {
+    background: #dbeafe;
 }
 
 .message-table tbody tr.selected {
@@ -134,14 +151,9 @@
     text-transform: uppercase;
 }
 
-.alarm-badge.major {
+.alarm-badge.high {
     background: #ffe4e6;
     color: #b91c1c;
-}
-
-.alarm-badge.low-temp {
-    background: #fff3d6;
-    color: #b45309;
 }
 
 .alarm-badge.medium {
@@ -149,7 +161,7 @@
     color: #d97706;
 }
 
-.alarm-badge.micro {
+.alarm-badge.low {
     background: #dbeafe;
     color: #2563eb;
 }
@@ -305,6 +317,15 @@
     background: #fff;
     border: 1px solid #e5e7eb;
     color: #4b4f58;
+}
+
+.pill.active {
+    background: #4caf50;
+    color: white;
+}
+
+.pill.active:hover {
+    background: #45a049;
 }
 
 /* Responsive Design */

@@ -22,12 +22,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr *ngFor="let alarm of alarms; let i = index" 
+                            <tr *ngFor="let alarm of getDisplayAlarms(); let i = index" 
                                 class="alarm-row" 
-                                [class.major]="alarm.alarm_type === 'major_leak'"
-                                [class.medium]="alarm.alarm_type === 'medium_leak'"
-                                [class.micro]="alarm.alarm_type === 'micro_leak'"
-                                [class.low-temp]="alarm.alarm_type === 'low_temperature'"
+                                [class.major]="alarm.alarm_severity === 'high'"
+                                [class.medium]="alarm.alarm_severity === 'medium'"
+                                [class.low]="alarm.alarm_severity === 'low'"
                                 (click)="onRowClick(i)" 
                                 [class.selected]="selectedRow === i">
                                 <td>{{ i + 1 }}</td>
@@ -37,11 +36,10 @@
                                 <td>{{ getTenantName(alarm) }}</td>
                                 <td>
                                     <span class="alarm-badge" 
-                                          [class.major]="alarm.alarm_type === 'major_leak'"
-                                          [class.medium]="alarm.alarm_type === 'medium_leak'"
-                                          [class.micro]="alarm.alarm_type === 'micro_leak'"
-                                          [class.low-temp]="alarm.alarm_type === 'low_temperature'">
-                                        {{ alarm.alarm_types?.type_name || 'Unknown' }}
+                                          [class.high]="alarm.alarm_severity === 'high'"
+                                          [class.medium]="alarm.alarm_severity === 'medium'"
+                                          [class.low]="alarm.alarm_severity === 'low'">
+                                        {{ alarm.alarm_type_name || 'Unknown' }}
                                     </span>
                                 </td>
                                 <td>{{ alarm.message || 'N/A' }}</td>
@@ -55,7 +53,11 @@
                     </table>
                 </div>
                 <div class="table-actions">
-                    <button class="pill">Sort by Importance</button>
+                    <button class="pill" 
+                            [class.active]="sortByImportance"
+                            (click)="toggleSortByImportance()">
+                        {{ sortByImportance ? 'Sort by Date' : 'Sort by Importance' }}
+                    </button>
                     <button class="pill outline">View all alarms</button>
                 </div>
             </div>

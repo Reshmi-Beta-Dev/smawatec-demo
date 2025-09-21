@@ -196,7 +196,11 @@ export class MockDataService {
   getAlarmMessages(page: number = 1, pageSize: number = 10, sortBy: string = 'created_at', sortDirection: string = 'DESC'): Promise<{alarms: AlarmMessage[], totalCount: number, totalPages: number, currentPage: number}> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        const alarms = this.frenchData.alarms.map(alarm => ({
+        // Generate additional alarm data to have 15+ alarms
+        const additionalAlarms = this.generateAdditionalAlarms();
+        const allAlarms = [...this.frenchData.alarms, ...additionalAlarms];
+        
+        const alarms = allAlarms.map(alarm => ({
           ...alarm,
           resolved_at: alarm.resolved_at || undefined,
           devices: {
@@ -244,6 +248,77 @@ export class MockDataService {
         });
       }, 300);
     });
+  }
+
+  // Generate additional alarm data
+  private generateAdditionalAlarms(): any[] {
+    const alarmTypes = [
+      { id: 'at-001', name: 'Major Leak', severity: 'high', color: '#dc3545' },
+      { id: 'at-002', name: 'Minor Leak', severity: 'medium', color: '#ffc107' },
+      { id: 'at-003', name: 'Micro Leak', severity: 'low', color: '#17a2b8' },
+      { id: 'at-004', name: 'Auto Shutoff', severity: 'high', color: '#dc3545' },
+      { id: 'at-005', name: 'Low Temperature', severity: 'medium', color: '#ffc107' },
+      { id: 'at-006', name: 'Wifi Connection Lost', severity: 'low', color: '#6c757d' },
+      { id: 'at-007', name: 'Power Loss', severity: 'high', color: '#dc3545' },
+      { id: 'at-008', name: 'Valve Failure', severity: 'medium', color: '#ffc107' },
+      { id: 'at-009', name: 'Poor WiFi', severity: 'low', color: '#6c757d' }
+    ];
+
+    const buildings = this.frenchData.buildings.slice(0, 15);
+    const tenants = this.frenchData.tenants;
+    const statuses = ['active', 'resolved', 'acknowledged'];
+    const actions = [
+      'Vanne principale fermée automatiquement',
+      'Réparation effectuée par le plombier',
+      'Tentative de reconnexion en cours',
+      'En cours d\'analyse',
+      'Maintenance programmée',
+      'Signal faible détecté',
+      'Intervention technique requise'
+    ];
+
+    const additionalAlarms = [];
+    const now = new Date();
+
+    for (let i = 4; i <= 15; i++) {
+      const building = buildings[i % buildings.length];
+      const alarmType = alarmTypes[Math.floor(Math.random() * alarmTypes.length)];
+      const tenant = tenants[Math.floor(Math.random() * tenants.length)];
+      const status = statuses[Math.floor(Math.random() * statuses.length)];
+      const action = actions[Math.floor(Math.random() * actions.length)];
+      
+      // Generate random date within last 30 days
+      const randomDays = Math.floor(Math.random() * 30);
+      const createdDate = new Date(now.getTime() - randomDays * 24 * 60 * 60 * 1000);
+      
+      const alarm = {
+        id: `alarm-${String(i).padStart(3, '0')}`,
+        device_id: `dev-${String(i).padStart(3, '0')}`,
+        apartment_id: `apt-${String(i).padStart(3, '0')}`,
+        building_id: building.id,
+        alarm_type_id: alarmType.id,
+        message: `${alarmType.name} détecté dans l'appartement ${String(i).padStart(3, '0')}`,
+        status: status,
+        severity: alarmType.severity,
+        created_at: createdDate.toISOString(),
+        resolved_at: status === 'resolved' ? new Date(createdDate.getTime() + Math.random() * 24 * 60 * 60 * 1000).toISOString() : null,
+        action_taken: action,
+        device_serial: `SMW-${String(i).padStart(3, '0')}-${String(i).padStart(3, '0')}-01`,
+        device_name: 'Compteur d\'eau principal',
+        device_status: 'active',
+        building_name: building.name,
+        building_address: building.address,
+        building_group_name: this.frenchData.buildingGroups.find(g => g.id === building.building_group_id)?.name || 'N/A',
+        alarm_type_name: alarmType.name,
+        alarm_severity: alarmType.severity,
+        alarm_color: alarmType.color,
+        tenant: `${tenant.first_name} ${tenant.last_name}`
+      };
+
+      additionalAlarms.push(alarm);
+    }
+
+    return additionalAlarms;
   }
 
   // Building Groups
