@@ -9,39 +9,42 @@
                     <div class="search-column">
                         <div class="form-group">
                             <label>Keyword</label>
-                            <input type="text" placeholder="" [(ngModel)]="searchData.keyword">
+                            <input type="text" placeholder="Search across all data..." [(ngModel)]="searchData.keyword" (input)="onSearch()">
                         </div>
                         <div class="form-group">
                             <label>Building</label>
-                            <input type="text" placeholder="" [(ngModel)]="searchData.building">
+                            <input type="text" placeholder="Filter by building name..." [(ngModel)]="searchData.building" (input)="onSearch()">
                         </div>
                         <div class="form-group">
                             <label>Building Group</label>
-                            <input type="text" placeholder="" [(ngModel)]="searchData.buildingGroup">
+                            <input type="text" placeholder="Filter by group name..." [(ngModel)]="searchData.buildingGroup" (input)="onSearch()">
                         </div>
                         <div class="form-group">
                             <label>Device Name</label>
-                            <input type="text" placeholder="" [(ngModel)]="searchData.deviceName">
+                            <input type="text" placeholder="Filter by device name..." [(ngModel)]="searchData.deviceName" (input)="onSearch()">
                         </div>
                     </div>
                     <div class="search-column">
                         <div class="form-group">
                             <label>City</label>
-                            <input type="text" placeholder="" [(ngModel)]="searchData.city">
+                            <input type="text" placeholder="Filter by city..." [(ngModel)]="searchData.city" (input)="onSearch()">
                         </div>
                         <div class="form-group">
                             <label>Zip Code</label>
-                            <input type="text" placeholder="" [(ngModel)]="searchData.zipCode">
+                            <input type="text" placeholder="Filter by zip code..." [(ngModel)]="searchData.zipCode" (input)="onSearch()">
                         </div>
                         <div class="form-group">
                             <label>Tenant</label>
-                            <input type="text" placeholder="" [(ngModel)]="searchData.tenant">
+                            <input type="text" placeholder="Filter by tenant name..." [(ngModel)]="searchData.tenant" (input)="onSearch()">
                         </div>
                         <div class="form-group">
                             <label>Tenant ID</label>
-                            <input type="text" placeholder="" [(ngModel)]="searchData.tenantId">
+                            <input type="text" placeholder="Filter by tenant ID..." [(ngModel)]="searchData.tenantId" (input)="onSearch()">
                         </div>
                     </div>
+                </div>
+                <div class="search-actions">
+                    <button class="pill outline" (click)="onClearSearch()">Clear Search</button>
                 </div>
             </div>
 

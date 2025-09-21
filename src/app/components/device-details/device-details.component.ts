@@ -50,6 +50,13 @@ export class DeviceDetailsComponent implements OnInit {
     tenant: '',
     tenantId: ''
   };
+  
+  // Search state
+  private searchTimeout: any;
+  private originalBuildingGroups: any[] = [];
+  private originalBuildings: any[] = [];
+  private originalUnassignedDevices: any[] = [];
+  
   loading = false;
   error: string | null = null;
 
@@ -131,15 +138,27 @@ export class DeviceDetailsComponent implements OnInit {
       this.loadUnassignedDevices(),
       this.loadDefaultBuildings()
     ]);
+    
+    // Store original data for search functionality (building groups already stored in loadBuildingGroups)
+    this.originalBuildings = [...this.buildings];
+    // originalUnassignedDevices already stored in loadUnassignedDevices
   }
 
   async loadBuildingGroups() {
     try {
       this.loading = true;
-      const response = await this.mockDataService.getBuildingGroups(this.currentGroupPage, this.itemsPerPage);
-      this.buildingGroups = response.buildingGroups;
-      this.buildingGroupTotalPages = response.totalPages;
+      // Load all building groups for search functionality
+      const response = await this.mockDataService.getBuildingGroups(1, 1000); // Load all groups
+      this.originalBuildingGroups = response.buildingGroups; // Store all groups for search
+      
+      // Set up pagination for display
       this.buildingGroupTotalItems = response.totalCount;
+      this.buildingGroupTotalPages = Math.ceil(response.totalCount / this.itemsPerPage);
+      
+      // Get paginated data for display
+      const startIndex = (this.currentGroupPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      this.buildingGroups = response.buildingGroups.slice(startIndex, endIndex);
     } catch (error) {
       console.error('Error loading building groups:', error);
       this.error = 'Failed to load building groups';
@@ -368,6 +387,9 @@ export class DeviceDetailsComponent implements OnInit {
         }
       ];
       
+      // Store all unassigned devices for search
+      this.originalUnassignedDevices = [...allUnassignedDevices];
+      
       // Set up pagination
       this.unassignedTotalItems = allUnassignedDevices.length;
       this.unassignedTotalPages = Math.ceil(allUnassignedDevices.length / this.itemsPerPage);
@@ -454,7 +476,12 @@ export class DeviceDetailsComponent implements OnInit {
 
   onGroupPageChange(page: number) {
     this.currentGroupPage = page;
-    this.loadBuildingGroups();
+    // Update displayed building groups with pagination
+    if (this.originalBuildingGroups.length > 0) {
+      const startIndex = (this.currentGroupPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      this.buildingGroups = this.originalBuildingGroups.slice(startIndex, endIndex);
+    }
   }
 
   onBuildingPageChange(page: number) {
@@ -560,5 +587,190 @@ export class DeviceDetailsComponent implements OnInit {
 
   showNotification(message: string) {
     console.log('Notification:', message);
+  }
+
+  // Search functionality
+  onSearch() {
+    // Clear existing timeout
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+    
+    // Set new timeout for debounced search
+    this.searchTimeout = setTimeout(() => {
+      this.performSearch();
+    }, 300); // 300ms delay
+  }
+
+  onClearSearch() {
+    this.searchData = {
+      keyword: '',
+      building: '',
+      buildingGroup: '',
+      deviceName: '',
+      city: '',
+      zipCode: '',
+      tenant: '',
+      tenantId: ''
+    };
+    // Reset to show all data with pagination
+    this.resetToOriginalData();
+  }
+
+  resetToOriginalData() {
+    // Reset pagination
+    this.currentGroupPage = 1;
+    this.currentBuildingPage = 1;
+    this.currentUnassignedPage = 1;
+
+    // Update pagination info
+    this.buildingGroupTotalItems = this.originalBuildingGroups.length;
+    this.buildingGroupTotalPages = Math.ceil(this.originalBuildingGroups.length / this.itemsPerPage);
+
+    this.buildingTotalItems = this.originalBuildings.length;
+    this.buildingTotalPages = Math.ceil(this.originalBuildings.length / this.itemsPerPage);
+
+    this.unassignedTotalItems = this.originalUnassignedDevices.length;
+    this.unassignedTotalPages = Math.ceil(this.originalUnassignedDevices.length / this.itemsPerPage);
+
+    // Update displayed data with pagination
+    const groupStartIndex = (this.currentGroupPage - 1) * this.itemsPerPage;
+    const groupEndIndex = groupStartIndex + this.itemsPerPage;
+    this.buildingGroups = this.originalBuildingGroups.slice(groupStartIndex, groupEndIndex);
+
+    const buildingStartIndex = (this.currentBuildingPage - 1) * this.itemsPerPage;
+    const buildingEndIndex = buildingStartIndex + this.itemsPerPage;
+    this.buildings = this.originalBuildings.slice(buildingStartIndex, buildingEndIndex);
+
+    const unassignedStartIndex = (this.currentUnassignedPage - 1) * this.itemsPerPage;
+    const unassignedEndIndex = unassignedStartIndex + this.itemsPerPage;
+    this.unassignedDevices = this.originalUnassignedDevices.slice(unassignedStartIndex, unassignedEndIndex);
+
+    // Select first rows by default
+    this.selectedGroupRow = this.originalBuildingGroups.length > 0 ? 0 : null;
+    this.selectedBuildingRow = this.originalBuildings.length > 0 ? 0 : null;
+    this.selectedUnassignedRow = this.originalUnassignedDevices.length > 0 ? 0 : null;
+  }
+
+  performSearch() {
+    const searchTerm = this.searchData.keyword.toLowerCase().trim();
+    const buildingGroupFilter = this.searchData.buildingGroup.toLowerCase().trim();
+    const buildingFilter = this.searchData.building.toLowerCase().trim();
+    const deviceNameFilter = this.searchData.deviceName.toLowerCase().trim();
+    const cityFilter = this.searchData.city.toLowerCase().trim();
+    const zipCodeFilter = this.searchData.zipCode.toLowerCase().trim();
+    const tenantFilter = this.searchData.tenant.toLowerCase().trim();
+    const tenantIdFilter = this.searchData.tenantId.toLowerCase().trim();
+
+    // If no search criteria, show all data
+    if (!searchTerm && !buildingGroupFilter && !buildingFilter && !deviceNameFilter && !cityFilter && !zipCodeFilter && !tenantFilter && !tenantIdFilter) {
+      this.loadData();
+      return;
+    }
+
+    // Filter building groups
+    const filteredBuildingGroups = this.originalBuildingGroups.filter(group => {
+      const matchesKeyword = !searchTerm || 
+        group.name.toLowerCase().includes(searchTerm) ||
+        group.description?.toLowerCase().includes(searchTerm) ||
+        group.address.toLowerCase().includes(searchTerm);
+      
+      const matchesBuildingGroup = !buildingGroupFilter || 
+        group.name.toLowerCase().includes(buildingGroupFilter);
+      
+      return matchesKeyword && matchesBuildingGroup;
+    });
+
+    // Filter buildings
+    const filteredBuildings = this.originalBuildings.filter(building => {
+      const matchesKeyword = !searchTerm || 
+        building.name.toLowerCase().includes(searchTerm) ||
+        building.address.toLowerCase().includes(searchTerm) ||
+        building.apartmentAddress?.toLowerCase().includes(searchTerm) ||
+        building.tenantName?.toLowerCase().includes(searchTerm);
+      
+      const matchesBuilding = !buildingFilter || 
+        building.name.toLowerCase().includes(buildingFilter);
+      
+      const matchesCity = !cityFilter || 
+        building.address.toLowerCase().includes(cityFilter);
+      
+      const matchesZipCode = !zipCodeFilter || 
+        building.zip_code?.toLowerCase().includes(zipCodeFilter) ||
+        building.address.toLowerCase().includes(zipCodeFilter);
+      
+      const matchesTenant = !tenantFilter || 
+        building.tenantName?.toLowerCase().includes(tenantFilter);
+      
+      const matchesDeviceName = !deviceNameFilter || 
+        building.name.toLowerCase().includes(deviceNameFilter);
+      
+      const matchesBuildingGroup = !buildingGroupFilter || 
+        this.originalBuildingGroups.find(g => g.id === building.building_group_id)?.name.toLowerCase().includes(buildingGroupFilter);
+      
+      return matchesKeyword && matchesBuilding && matchesCity && matchesZipCode && matchesTenant && matchesDeviceName && matchesBuildingGroup;
+    });
+
+    // Filter unassigned devices
+    const filteredUnassignedDevices = this.originalUnassignedDevices.filter(device => {
+      const matchesKeyword = !searchTerm || 
+        device.serial.toLowerCase().includes(searchTerm) ||
+        device.lastDeviceName.toLowerCase().includes(searchTerm) ||
+        device.lastAddress.toLowerCase().includes(searchTerm) ||
+        device.lastApartment.toLowerCase().includes(searchTerm) ||
+        device.lastTenant.toLowerCase().includes(searchTerm);
+      
+      const matchesDeviceName = !deviceNameFilter || 
+        device.lastDeviceName.toLowerCase().includes(deviceNameFilter) ||
+        device.serial.toLowerCase().includes(deviceNameFilter);
+      
+      const matchesTenant = !tenantFilter || 
+        device.lastTenant.toLowerCase().includes(tenantFilter);
+      
+      const matchesTenantId = !tenantIdFilter || 
+        device.id.toString().includes(tenantIdFilter);
+      
+      const matchesCity = !cityFilter || 
+        device.lastAddress.toLowerCase().includes(cityFilter);
+      
+      const matchesZipCode = !zipCodeFilter || 
+        device.lastAddress.toLowerCase().includes(zipCodeFilter);
+      
+      return matchesKeyword && matchesDeviceName && matchesTenant && matchesTenantId && matchesCity && matchesZipCode;
+    });
+
+    // Update pagination info
+    this.buildingGroupTotalItems = filteredBuildingGroups.length;
+    this.buildingGroupTotalPages = Math.ceil(filteredBuildingGroups.length / this.itemsPerPage);
+    this.currentGroupPage = 1;
+
+    this.buildingTotalItems = filteredBuildings.length;
+    this.buildingTotalPages = Math.ceil(filteredBuildings.length / this.itemsPerPage);
+    this.currentBuildingPage = 1;
+
+    this.unassignedTotalItems = filteredUnassignedDevices.length;
+    this.unassignedTotalPages = Math.ceil(filteredUnassignedDevices.length / this.itemsPerPage);
+    this.currentUnassignedPage = 1;
+
+    // Update displayed data with pagination
+    const groupStartIndex = (this.currentGroupPage - 1) * this.itemsPerPage;
+    const groupEndIndex = groupStartIndex + this.itemsPerPage;
+    this.buildingGroups = filteredBuildingGroups.slice(groupStartIndex, groupEndIndex);
+
+    const buildingStartIndex = (this.currentBuildingPage - 1) * this.itemsPerPage;
+    const buildingEndIndex = buildingStartIndex + this.itemsPerPage;
+    this.buildings = filteredBuildings.slice(buildingStartIndex, buildingEndIndex);
+
+    const unassignedStartIndex = (this.currentUnassignedPage - 1) * this.itemsPerPage;
+    const unassignedEndIndex = unassignedStartIndex + this.itemsPerPage;
+    this.unassignedDevices = filteredUnassignedDevices.slice(unassignedStartIndex, unassignedEndIndex);
+
+    // Select first rows by default
+    this.selectedGroupRow = filteredBuildingGroups.length > 0 ? 0 : null;
+    this.selectedBuildingRow = filteredBuildings.length > 0 ? 0 : null;
+    this.selectedUnassignedRow = filteredUnassignedDevices.length > 0 ? 0 : null;
+
+    // Show search results notification
+    this.showNotification(`Search completed: ${filteredBuildingGroups.length} groups, ${filteredBuildings.length} buildings, ${filteredUnassignedDevices.length} unassigned devices found`);
   }
 }
