@@ -15,6 +15,7 @@ export class AlarmsComponent implements OnInit {
   // Alarm data properties
   alarmCategories: AlarmCategory[] = [];
   alarmMessages: AlarmMessage[] = [];
+  allAlarmMessages: AlarmMessage[] = []; // Store all alarms for counting
   loading = false;
   error: string | null = null;
 
@@ -76,7 +77,10 @@ export class AlarmsComponent implements OnInit {
       // Generate more data for pagination - request 100 items to ensure we have enough data
       const response = await this.mockDataService.getAlarmMessages(1, 100);
       
-      // Filter out hidden alarms
+      // Store all alarms for counting (including hidden ones)
+      this.allAlarmMessages = response.alarms;
+      
+      // Filter out hidden alarms for display
       const visibleAlarms = response.alarms.filter(alarm => !this.hiddenAlarmIds.has(alarm.id));
       
       this.totalItems = visibleAlarms.length;
@@ -145,7 +149,48 @@ export class AlarmsComponent implements OnInit {
 
   // Template helper methods
   getAlarmCount(type: string): number {
-    return this.alarmMessages.filter(alarm => alarm.alarm_type_name === type).length;
+    // Count alarms from the complete dataset (allAlarmMessages), not just current page
+    const count = this.allAlarmMessages.filter(alarm => {
+      const alarmType = alarm.alarm_type_name || '';
+      const severity = alarm.alarm_severity?.toLowerCase() || '';
+      
+      switch (type) {
+        case 'major_leak':
+          return alarmType === 'Major Leak' && severity === 'high';
+        case 'auto_shutoff':
+          return alarmType === 'Auto Shutoff' && severity === 'high';
+        case 'low_temperature':
+          return alarmType === 'Low Temperature' && severity === 'medium';
+        case 'medium_leak':
+          return alarmType === 'Minor Leak' && severity === 'medium';
+        case 'micro_leak':
+          return alarmType === 'Micro Leak' && severity === 'low';
+        case 'wifi_connection_lost':
+          return alarmType === 'Wifi Connection Lost' && severity === 'low';
+        case 'power_loss':
+          return alarmType === 'Power Loss' && severity === 'high';
+        case 'valve_failure':
+          return alarmType === 'Valve Failure' && severity === 'medium';
+        case 'poor_wifi':
+          return alarmType === 'Poor WiFi' && severity === 'low';
+        default:
+          return false;
+      }
+    }).length;
+    
+    // Debug logging to verify counts
+    if (type === 'major_leak') {
+      console.log('=== ALARM DATA DEBUG ===');
+      console.log('Total alarms in complete dataset:', this.allAlarmMessages.length);
+      console.log('Alarm types in complete dataset:', this.allAlarmMessages.map(a => ({ 
+        type: a.alarm_type_name, 
+        severity: a.alarm_severity 
+      })).slice(0, 10));
+      console.log('Major Leak count from complete dataset:', count);
+      console.log('Major Leak alarms from complete dataset:', this.allAlarmMessages.filter(a => a.alarm_type_name === 'Major Leak' && a.alarm_severity === 'high'));
+    }
+    
+    return count;
   }
 
   getTenantName(alarm: any): string {
