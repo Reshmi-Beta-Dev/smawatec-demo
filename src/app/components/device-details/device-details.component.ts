@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService } from '../../services/mock-data.service';
+import { FindDeviceModalComponent } from './find-device-modal.component';
 
 @Component({
   selector: 'app-device-details',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, FindDeviceModalComponent],
   templateUrl: './device-details.component.html',
   styleUrls: ['./device-details.component.css']
 })
@@ -19,6 +20,10 @@ export class DeviceDetailsComponent implements OnInit {
   // Device details properties
   selectedDevice: any = null;
   deviceDetails: any = null;
+  
+  // Find Device Modal properties
+  showFindDeviceModal: boolean = false;
+  findDeviceLoading: boolean = false;
   
   // Data properties
   devices: any[] = [];
@@ -50,7 +55,7 @@ export class DeviceDetailsComponent implements OnInit {
     tenant: '',
     tenantId: ''
   };
-  
+
   // Search state
   private searchTimeout: any;
   private originalBuildingGroups: any[] = [];
@@ -128,7 +133,38 @@ export class DeviceDetailsComponent implements OnInit {
   }
 
   findNewDevice() {
-    this.showNotification('Find new device functionality');
+    this.showFindDeviceModal = true;
+  }
+
+  onFindDeviceAssign(device: any) {
+    this.findDeviceLoading = true;
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      // Add device to unassigned devices list
+      const newDevice = {
+        id: device.id,
+        name: device.name,
+        type: device.type,
+        status: device.status,
+        signalStrength: device.signalStrength,
+        lastSeen: device.lastSeen,
+        isOnline: device.isOnline
+      };
+      
+      this.unassignedDevices.unshift(newDevice);
+      this.unassignedTotalItems++;
+      this.unassignedTotalPages = Math.ceil(this.unassignedTotalItems / this.itemsPerPage);
+      
+      this.showFindDeviceModal = false;
+      this.findDeviceLoading = false;
+      this.showNotification(`Device "${device.name}" found and added to unassigned devices`);
+    }, 1000);
+  }
+
+  onFindDeviceCancel() {
+    this.showFindDeviceModal = false;
+    this.findDeviceLoading = false;
   }
 
   async loadData() {

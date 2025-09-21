@@ -43,9 +43,6 @@
                         </div>
                     </div>
                 </div>
-                <div class="search-actions">
-                    <button class="pill outline" (click)="onClearSearch()">Clear Search</button>
-                </div>
             </div>
 
             <!-- Device Information Section -->
@@ -239,4 +236,12 @@
             </div>
         </div>
     </main>
+
+    <!-- Find Device Modal -->
+    <app-find-device-modal
+        [isVisible]="showFindDeviceModal"
+        [isLoading]="findDeviceLoading"
+        (assign)="onFindDeviceAssign($event)"
+        (cancel)="onFindDeviceCancel()">
+    </app-find-device-modal>
 </div>
