@@ -381,6 +381,16 @@ export class BuildingComponent implements OnInit {
     this.showAddGroupModal = true;
   }
 
+  editBuildingApartmentDetails() {
+    if (this.selectedBuildingRow !== null && this.paginatedBuildings[this.selectedBuildingRow]) {
+      this.dataModalType = 'edit';
+      this.dataModalItemType = 'Building';
+      this.dataModalFieldConfigs = this.buildingFields;
+      this.dataModalFormData = { ...this.paginatedBuildings[this.selectedBuildingRow] };
+      this.showDataModal = true;
+    }
+  }
+
   removeGroup() {
     if (this.selectedGroupRow !== null) {
       const group = this.paginatedBuildingGroups[this.selectedGroupRow];
@@ -1053,7 +1063,7 @@ export class BuildingComponent implements OnInit {
     this.loadBuildings();
   }
 
-  private editBuilding(data: any) {
+  editBuilding(data: any) {
     if (this.selectedBuildingRow !== null) {
       const building = this.paginatedBuildings[this.selectedBuildingRow];
       building.name = data.name;
@@ -1071,27 +1081,33 @@ export class BuildingComponent implements OnInit {
   }
 
   // Apartment add/edit methods
-  private addApartment(data: any) {
-    const selectedBuilding = this.selectedBuildingRow !== null ? this.paginatedBuildings[this.selectedBuildingRow] : null;
-    if (!selectedBuilding) return;
+  addApartment(data?: any) {
+    if (data) {
+      // Called from modal with data
+      const selectedBuilding = this.selectedBuildingRow !== null ? this.paginatedBuildings[this.selectedBuildingRow] : null;
+      if (!selectedBuilding) return;
 
-    const newApartment: any = {
-      id: `a-${Date.now()}`,
-      apartment_number: data.apartment_number,
-      tenant: data.tenant,
-      apartment_type: data.apartment_type,
-      floor: data.floor,
-      building_id: selectedBuilding.id,
-      apartment: data.apartment_number // For compatibility
-    };
-    
-    this.apartments.unshift(newApartment);
-    this.apartmentTotalItems++;
-    this.apartmentTotalPages = Math.ceil(this.apartmentTotalItems / this.itemsPerPage);
-    this.loadApartmentGridData();
+      const newApartment: any = {
+        id: `a-${Date.now()}`,
+        apartment_number: data.apartment_number,
+        tenant: data.tenant,
+        apartment_type: data.apartment_type,
+        floor: data.floor,
+        building_id: selectedBuilding.id,
+        apartment: data.apartment_number // For compatibility
+      };
+      
+      this.apartments.unshift(newApartment);
+      this.apartmentTotalItems++;
+      this.apartmentTotalPages = Math.ceil(this.apartmentTotalItems / this.itemsPerPage);
+      this.loadApartmentGridData();
+    } else {
+      // Called from button click - open add modal
+      this.openAddApartmentModal();
+    }
   }
 
-  private editApartment(data: any) {
+  editApartment(data: any) {
     if (this.selectedApartmentRow !== null) {
       const apartment = this.apartmentGridData[this.selectedApartmentRow];
       apartment.apartment_number = data.apartment_number;

@@ -158,9 +158,11 @@
                             <span class="kv-value">{{ getSelectedBuilding()?.city || getSelectedBuilding()?.address?.split(',')[0]?.trim() }}</span>
                         </div>
                     </div>
-                    <!-- <div class="action-buttons">
-                        <button class="pill" (click)="addApartment()">Add Apartment</button>
-                    </div> -->
+                    <div class="action-buttons">
+                        <div class="action-buttons-left">
+                            <button class="pill outline" (click)="editBuildingApartmentDetails()" [disabled]="!getSelectedBuilding()">Edit Details</button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
