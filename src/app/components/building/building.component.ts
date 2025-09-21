@@ -27,6 +27,7 @@ export class BuildingComponent implements OnInit {
     tenant: '',
     tenantId: ''
   };
+  
 
   // Pagination properties
   currentBuildingPage = 1;
@@ -488,9 +489,18 @@ export class BuildingComponent implements OnInit {
   }
 
   // Search functionality
+  private searchTimeout: any;
+  
   onSearch() {
-    this.showNotification('Search functionality');
-    // Implement search logic here
+    // Clear existing timeout
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+    
+    // Set new timeout for debounced search
+    this.searchTimeout = setTimeout(() => {
+      this.performSearch();
+    }, 300); // 300ms delay
   }
 
   onClearSearch() {
@@ -504,7 +514,100 @@ export class BuildingComponent implements OnInit {
       tenant: '',
       tenantId: ''
     };
+    // Reset to show all data
     this.loadData();
+  }
+
+  performSearch() {
+    const searchTerm = this.searchData.keyword.toLowerCase().trim();
+    const buildingGroupFilter = this.searchData.buildingGroup.toLowerCase().trim();
+    const buildingFilter = this.searchData.building.toLowerCase().trim();
+    const cityFilter = this.searchData.city.toLowerCase().trim();
+    const zipCodeFilter = this.searchData.zipCode.toLowerCase().trim();
+    const tenantFilter = this.searchData.tenant.toLowerCase().trim();
+    const tenantIdFilter = this.searchData.tenantId.toLowerCase().trim();
+
+    // If no search criteria, show all data
+    if (!searchTerm && !buildingGroupFilter && !buildingFilter && !cityFilter && !zipCodeFilter && !tenantFilter && !tenantIdFilter) {
+      this.loadData();
+      return;
+    }
+
+    // Filter building groups
+    const filteredBuildingGroups = this.buildingGroups.filter(group => {
+      const matchesKeyword = !searchTerm || 
+        group.name.toLowerCase().includes(searchTerm) ||
+        group.description.toLowerCase().includes(searchTerm) ||
+        group.address.toLowerCase().includes(searchTerm);
+      
+      const matchesBuildingGroup = !buildingGroupFilter || 
+        group.name.toLowerCase().includes(buildingGroupFilter);
+      
+      return matchesKeyword && matchesBuildingGroup;
+    });
+
+    // Filter buildings
+    const filteredBuildings = this.buildings.filter(building => {
+      const matchesKeyword = !searchTerm || 
+        building.name.toLowerCase().includes(searchTerm) ||
+        building.address.toLowerCase().includes(searchTerm) ||
+        building.city.toLowerCase().includes(searchTerm);
+      
+      const matchesBuilding = !buildingFilter || 
+        building.name.toLowerCase().includes(buildingFilter);
+      
+      const matchesCity = !cityFilter || 
+        building.city.toLowerCase().includes(cityFilter);
+      
+      const matchesZipCode = !zipCodeFilter || 
+        building.zip_code.toLowerCase().includes(zipCodeFilter);
+      
+      const matchesBuildingGroup = !buildingGroupFilter || 
+        this.buildingGroups.find(g => g.id === building.building_group_id)?.name.toLowerCase().includes(buildingGroupFilter);
+      
+      return matchesKeyword && matchesBuilding && matchesCity && matchesZipCode && matchesBuildingGroup;
+    });
+
+    // Filter apartments based on tenant search
+    const filteredApartments = this.apartmentGridData.filter(apartment => {
+      const matchesTenant = !tenantFilter || 
+        apartment.tenant.toLowerCase().includes(tenantFilter);
+      
+      const matchesTenantId = !tenantIdFilter || 
+        apartment.id.toString().includes(tenantIdFilter);
+      
+      const matchesKeyword = !searchTerm || 
+        apartment.apartment.toLowerCase().includes(searchTerm) ||
+        apartment.tenant.toLowerCase().includes(searchTerm);
+      
+      return matchesTenant && matchesTenantId && matchesKeyword;
+    });
+
+    // Update paginated data
+    this.paginatedBuildingGroups = filteredBuildingGroups;
+    this.paginatedBuildings = filteredBuildings;
+    this.apartmentGridData = filteredApartments;
+
+    // Update pagination info
+    this.buildingGroupTotalItems = filteredBuildingGroups.length;
+    this.buildingGroupTotalPages = Math.ceil(filteredBuildingGroups.length / this.itemsPerPage);
+    this.currentGroupPage = 1;
+
+    this.buildingTotalItems = filteredBuildings.length;
+    this.buildingTotalPages = Math.ceil(filteredBuildings.length / this.itemsPerPage);
+    this.currentBuildingPage = 1;
+
+    this.apartmentTotalItems = filteredApartments.length;
+    this.apartmentTotalPages = Math.ceil(filteredApartments.length / this.itemsPerPage);
+    this.apartmentCurrentPage = 1;
+
+    // Select first rows by default
+    this.selectedGroupRow = filteredBuildingGroups.length > 0 ? 0 : null;
+    this.selectedBuildingRow = filteredBuildings.length > 0 ? 0 : null;
+    this.selectedApartmentRow = filteredApartments.length > 0 ? 0 : null;
+
+    // Show search results notification
+    this.showNotification(`Search completed: ${filteredBuildingGroups.length} groups, ${filteredBuildings.length} buildings, ${filteredApartments.length} apartments found`);
   }
 
   // Utility methods
