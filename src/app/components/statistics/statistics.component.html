@@ -51,9 +51,13 @@
                     <!-- Chart Section -->
                     <div class="chart-section">
                         <div class="chart-header">
-                            <button class="nav-btn" (click)="previousPeriod()">←</button>
-                            <h3>Today's Device Consumption</h3>
-                            <button class="nav-btn" (click)="nextPeriod()">→</button>
+                            <button class="nav-btn" 
+                                    [disabled]="isPreviousPeriodDisabled()" 
+                                    (click)="previousPeriod()">←</button>
+                            <h3>{{ getChartTitle() }}</h3>
+                            <button class="nav-btn" 
+                                    [disabled]="isNextPeriodDisabled()" 
+                                    (click)="nextPeriod()">→</button>
                         </div>
                         <!-- Loading and Error States -->
                         <div class="chart-loading" *ngIf="loading">

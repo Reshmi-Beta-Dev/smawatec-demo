@@ -1845,27 +1845,27 @@
   "timePeriods": [
     {
       "id": "today",
-      "name": "Aujourd'hui",
-      "description": "Consommation du jour en cours",
+      "name": "Today",
+      "description": "Consumption for today",
       "hours": 24
     },
     {
       "id": "last_month",
-      "name": "Mois dernier",
-      "description": "Consommation du mois précédent",
+      "name": "Last Month",
+      "description": "Consumption from today to 1 month back",
       "days": 30
     },
     {
-      "id": "current_year",
-      "name": "Année en cours",
-      "description": "Consommation de l'année en cours",
-      "months": 12
+      "id": "last_year",
+      "name": "Last Year",
+      "description": "Consumption from today to 1 year back",
+      "days": 365
     },
     {
       "id": "last_5_years",
-      "name": "5 dernières années",
-      "description": "Consommation des 5 dernières années",
-      "years": 5
+      "name": "Last 5 Years",
+      "description": "Consumption from today to 5 years back",
+      "days": 1825
     }
   ],
   "chartTypes": [

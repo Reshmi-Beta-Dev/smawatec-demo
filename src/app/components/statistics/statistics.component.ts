@@ -67,6 +67,10 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   chartTypes: any[] = [];
   selectedTimePeriod = 'today';
   selectedChartType = 'hourly';
+  
+  // Time period navigation (UI only - excludes future_year for demo purposes)
+  private timePeriodOrder = ['today', 'last_month', 'last_year', 'last_5_years'];
+  private currentTimePeriodIndex = 0;
   selectedApartmentId: string | null = null;
   selectedBuildingId: string | null = null;
   selectedBuildingGroupName: string | null = null;
@@ -92,12 +96,12 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.loadConsumptionData()
     ]);
     
-    // Load apartment grid data based on default selected building
-    if (this.paginatedBuildings.length > 0) {
-      await this.loadApartmentGridData(this.paginatedBuildings[0]);
-      // Select first apartment by default
-      this.selectedApartmentRow = 0;
-    }
+    // No default apartment selection - let user choose
+    
+    // Initialize chart after all data is loaded
+    setTimeout(() => {
+      this.initializeChart();
+    }, 100);
   }
 
   async setDefaultSelections() {
@@ -111,10 +115,15 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    // Initialize chart after view is ready
+    // Test Chart.js availability
+    console.log('🔍 Testing Chart.js availability...');
+    console.log('Chart object:', typeof Chart);
+    console.log('Chart constructor:', Chart);
+    
+    // Initialize chart after view is ready and data is loaded
     setTimeout(() => {
       this.initializeChart();
-    }, 100);
+    }, 500);
   }
 
   ngOnDestroy() {
@@ -143,7 +152,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async onBuildingGroupRowClick(index: number) {
-    // Always select the clicked row (no unselect)
+    // Always select the clicked row (no unselect for building groups)
     this.selectedBuildingGroupRow = index;
     this.selectedBuildingRow = null;
     this.selectedApartmentRow = null;
@@ -191,7 +200,19 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async onBuildingRowClick(index: number) {
-    // Always select the clicked row (no unselect)
+    // Toggle selection - unselect if clicking the same row
+    if (this.selectedBuildingRow === index) {
+      this.selectedBuildingRow = null;
+      this.selectedBuildingId = null;
+      this.selectedApartmentId = null;
+      this.selectedApartmentRow = null;
+      // Load all apartments from the selected building group
+      await this.loadAllApartmentsForBuildingGroup();
+      this.loadConsumptionData();
+      return;
+    }
+    
+    // Select the clicked row
     this.selectedBuildingRow = index;
     this.selectedApartmentRow = null;
     
@@ -232,17 +253,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.buildingTotalPages = Math.ceil(buildings.length / this.itemsPerPage);
       this.currentBuildingPage = 1;
       
-      // Select first building by default and load its apartments
-      if (buildings.length > 0) {
-        this.selectedBuildingRow = 0;
-        const firstBuilding = buildings[0];
-        this.selectedBuildingId = firstBuilding.id?.toString() || null;
-        await this.loadApartmentsForBuilding(firstBuilding.id);
-        // Load apartment grid data for the first building
-        await this.loadApartmentGridData(firstBuilding);
-        // Select first apartment by default
-        this.selectedApartmentRow = 0;
-      }
+      // Load all apartments for the building group when no building is selected
+      await this.loadAllApartmentsForBuildingGroup();
     } catch (error) {
       console.error('Error loading buildings for group:', error);
       this.error = 'Failed to load buildings for group';
@@ -261,6 +273,53 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch (error) {
       console.error('Error loading apartments for building:', error);
       this.error = 'Failed to load apartments for building';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  // Load all apartments for the selected building group
+  async loadAllApartmentsForBuildingGroup() {
+    try {
+      this.loading = true;
+      if (this.selectedBuildingGroupName) {
+        // Get all buildings in the selected group
+        const allBuildings = await this.mockDataService.getBuildingsByGroup(
+          this.paginatedBuildingGroups[this.selectedBuildingGroupRow!].id
+        );
+        
+        // Load apartments from all buildings in the group
+        const allApartments = [];
+        for (const building of allBuildings) {
+          const apartments = await this.mockDataService.getApartmentsByBuilding(building.id);
+          allApartments.push(...apartments);
+        }
+        
+        // Generate apartment grid data for all apartments
+        const apartmentGridData: any[] = [];
+        allApartments.forEach((apartment, index) => {
+          apartmentGridData.push({
+            id: apartment.id,
+            apartment: `Apt ${String(index + 1).padStart(3, '0')}`,
+            tenant: apartment.tenant_name || 'Unknown Tenant',
+            type: apartment.type || 'Standard',
+            building: apartment.building_name || 'Unknown Building'
+          });
+        });
+        
+        this.apartmentGridData = apartmentGridData;
+        this.apartmentTotalItems = apartmentGridData.length;
+        this.apartmentTotalPages = Math.ceil(apartmentGridData.length / this.itemsPerPage);
+        this.apartmentCurrentPage = 1;
+        
+        // Get paginated data
+        const startIndex = (this.apartmentCurrentPage - 1) * this.itemsPerPage;
+        const endIndex = startIndex + this.itemsPerPage;
+        this.apartmentGridData = apartmentGridData.slice(startIndex, endIndex);
+      }
+    } catch (error) {
+      console.error('Error loading all apartments for building group:', error);
+      this.error = 'Failed to load apartments for building group';
     } finally {
       this.loading = false;
     }
@@ -376,6 +435,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       const typeIndex = Math.floor(random() * apartmentTypes.length);
       
       apartments.push({
+        id: `apt-${String(i + 1).padStart(3, '0')}`,
         apartment: `Apt ${String(i + 1).padStart(3, '0')}`,
         tenant: tenantNames[tenantIndex],
         type: apartmentTypes[typeIndex],
@@ -405,11 +465,19 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onApartmentRowClick(index: number) {
-    // Always select the clicked row (no unselect)
+    // Toggle selection - unselect if clicking the same row
+    if (this.selectedApartmentRow === index) {
+      this.selectedApartmentRow = null;
+      this.selectedApartmentId = null;
+      this.loadConsumptionData();
+      return;
+    }
+    
+    // Select the clicked row
     this.selectedApartmentRow = index;
     
     const apartment = this.apartmentGridData[index];
-    this.selectedApartmentId = apartment.apartment || null;
+    this.selectedApartmentId = apartment.id || null;
     this.loadConsumptionData();
   }
 
@@ -495,6 +563,9 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onTimePeriodChange() {
+    // Update the current index when dropdown changes
+    this.currentTimePeriodIndex = this.timePeriodOrder.indexOf(this.selectedTimePeriod);
+    console.log('🔄 Time period changed to:', this.selectedTimePeriod);
     this.loadConsumptionData();
   }
 
@@ -504,99 +575,206 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   // Chart methods
   private initializeChart() {
+    console.log('🔄 Initializing chart...');
+    
     // Check if Chart is available
     if (typeof Chart === 'undefined') {
-      console.error('Chart.js is not loaded');
+      console.error('❌ Chart.js is not loaded');
       return;
     }
+    console.log('✅ Chart.js is available');
 
     const canvas = document.getElementById('waterChart') as HTMLCanvasElement;
     if (!canvas) {
-      console.error('Canvas element not found');
+      console.error('❌ Canvas element not found');
       return;
     }
+    console.log('✅ Canvas element found');
+    
+    // Check if canvas is visible
+    const canvasStyle = window.getComputedStyle(canvas);
+    if (canvasStyle.display === 'none' || canvasStyle.visibility === 'hidden') {
+      console.error('❌ Canvas element is not visible, retrying in 500ms...');
+    setTimeout(() => {
+      this.initializeChart();
+      }, 500);
+      return;
+    }
+    console.log('✅ Canvas element is visible');
 
     // Destroy existing chart if it exists
     if (this.chart) {
       this.chart.destroy();
     }
 
-    this.chart = new Chart(canvas, {
-      type: 'line',
+    try {
+      // Test with minimal chart first
+      console.log('🧪 Creating test chart...');
+      this.chart = new Chart(canvas, {
+      type: 'bar',
       data: {
-        labels: [],
+        labels: ['Test 1', 'Test 2', 'Test 3'],
       datasets: [{
           label: 'Water Consumption (m³)',
-          data: [],
+          data: [1, 2, 3],
+          backgroundColor: 'rgba(123, 97, 255, 0.8)',
           borderColor: '#7b61ff',
-          backgroundColor: 'rgba(123, 97, 255, 0.1)',
           borderWidth: 2,
-          fill: true,
-          tension: 0.4
+          borderRadius: 6,
+        borderSkipped: false,
+          hoverBackgroundColor: 'rgba(123, 97, 255, 1)',
+          hoverBorderColor: '#5a4fcf',
+          hoverBorderWidth: 2
         }]
       },
         options: {
           responsive: true,
           maintainAspectRatio: false,
+        layout: {
+          padding: {
+            top: 10,
+            bottom: 10,
+            left: 10,
+            right: 10
+            }
+          },
           scales: {
-            y: {
-              beginAtZero: true,
+          y: {
+            beginAtZero: true,
             title: {
               display: true,
-              text: 'Consumption (m³)'
+              text: 'Consumption (m³)',
+              font: {
+                size: 12,
+                weight: 'bold'
+              },
+              color: '#374151'
+            },
+            grid: {
+              color: 'rgba(0, 0, 0, 0.05)',
+              drawBorder: false
+            },
+            ticks: {
+              font: {
+                size: 11
+              },
+              color: '#6b7280'
             }
           },
           x: {
             title: {
               display: true,
-              text: this.getTimeAxisLabel()
+              text: this.getTimeAxisLabel(),
+              font: {
+                size: 12,
+                weight: 'bold'
+              },
+              color: '#374151'
+            },
+              grid: {
+                display: false
+              },
+              ticks: {
+                font: {
+                  size: 11
+              },
+              color: '#6b7280'
             }
           }
         },
         plugins: {
+          title: {
+            display: false
+          },
           legend: {
             display: true,
-            position: 'top'
+            position: 'top',
+            align: 'start',
+            labels: {
+              usePointStyle: true,
+              pointStyle: 'rect',
+                font: {
+                size: 11,
+                weight: '600'
+              },
+              color: '#374151',
+              padding: 15
+            }
           },
           tooltip: {
             mode: 'index',
-            intersect: false
+            intersect: false,
+            backgroundColor: 'rgba(0, 0, 0, 0.9)',
+            titleColor: 'white',
+            bodyColor: 'white',
+            borderColor: '#7b61ff',
+            borderWidth: 1,
+            cornerRadius: 6,
+            displayColors: true,
+            titleFont: {
+              size: 12,
+              weight: 'bold'
+            },
+            bodyFont: {
+              size: 11
+            }
             }
           }
         }
       });
-
-    this.updateChart();
+      console.log('✅ Chart created successfully');
+      
+      // Load consumption data after chart is created
+      this.loadConsumptionData();
+    } catch (error) {
+      console.error('❌ Error creating chart:', error);
+      return;
+    }
   }
 
   private updateChart() {
-    if (!this.chart) return;
+    if (!this.chart) {
+      console.log('❌ Chart not initialized, cannot update');
+      return;
+    }
 
+    console.log('🔄 Updating chart with data:', this.consumptionData.length, 'records');
+    console.log('📊 Consumption data:', this.consumptionData);
+    
     const labels = this.consumptionData.map(item => item.time_label);
     const data = this.consumptionData.map(item => item.consumption_m3);
+    
+    console.log('🏷️ Labels:', labels);
+    console.log('📈 Data values:', data);
 
     this.chart.data.labels = labels;
     this.chart.data.datasets[0].data = data;
     this.chart.data.datasets[0].label = this.getChartLabel();
     this.chart.options.scales.x.title.text = this.getTimeAxisLabel();
     this.chart.update();
+    
+    console.log('✅ Chart updated successfully');
+    console.log('📊 Final chart data:', this.chart.data);
   }
 
   getTimeAxisLabel(): string {
-    switch (this.selectedChartType) {
-      case 'hourly': return 'Hour';
-      case 'daily': return 'Day';
-      case 'monthly': return 'Month';
-      case 'yearly': return 'Year';
+    switch (this.selectedTimePeriod) {
+      case 'today': return 'Hour';
+      case 'last_month': return 'Day';
+      case 'last_year': return 'Month';
+      case 'last_5_years': return 'Year';
+      case 'future_year': return 'Month (Future)';
       default: return 'Time';
     }
   }
 
   getChartLabel(): string {
     if (this.selectedApartmentId) {
-      return 'Apartment Consumption';
+      const apartment = this.apartmentGridData.find(a => a.id === this.selectedApartmentId);
+      return `Apartment: ${apartment?.apartment || this.selectedApartmentId} (${apartment?.tenant || 'Unknown Tenant'})`;
     } else if (this.selectedBuildingId) {
-      return 'Building Consumption';
+      const building = this.paginatedBuildings.find(b => b.id === this.selectedBuildingId);
+      return `Building: ${building?.name || this.selectedBuildingId}`;
     } else if (this.selectedBuildingGroupName) {
       return `Building Group: ${this.selectedBuildingGroupName}`;
     } else {
@@ -613,27 +791,53 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   // Math object for template
   Math = Math;
 
-  // Legacy methods for compatibility
+  // Time period navigation methods
   async previousPeriod() {
-    this.showNotification('Previous period navigation');
-    await this.loadConsumptionData();
-    setTimeout(() => {
-      this.updateChart();
-    }, 100);
+    if (this.currentTimePeriodIndex > 0) {
+      this.currentTimePeriodIndex--;
+      this.selectedTimePeriod = this.timePeriodOrder[this.currentTimePeriodIndex];
+      console.log('🔄 Previous period:', this.selectedTimePeriod);
+      await this.loadConsumptionData();
+    } else {
+      console.log('⚠️ Already at first time period');
+    }
   }
     
   async nextPeriod() {
-    this.showNotification('Next period navigation');
-    await this.loadConsumptionData();
-    setTimeout(() => {
-      this.updateChart();
-    }, 100);
+    if (this.currentTimePeriodIndex < this.timePeriodOrder.length - 1) {
+      this.currentTimePeriodIndex++;
+      this.selectedTimePeriod = this.timePeriodOrder[this.currentTimePeriodIndex];
+      console.log('🔄 Next period:', this.selectedTimePeriod);
+      await this.loadConsumptionData();
+    } else {
+      console.log('⚠️ Already at last time period');
+    }
   }
 
   resetPeriod() {
     this.periodFrom = '';
     this.periodTo = '';
     this.showNotification('Period has been reset to default');
+  }
+
+  // Navigation button states
+  isPreviousPeriodDisabled(): boolean {
+    return this.currentTimePeriodIndex <= 0;
+  }
+
+  isNextPeriodDisabled(): boolean {
+    return this.currentTimePeriodIndex >= this.timePeriodOrder.length - 1;
+  }
+
+  // Get dynamic chart title based on current time period
+  getChartTitle(): string {
+    const periodNames = {
+      'today': 'Today\'s Device Consumption',
+      'last_month': 'Last Month\'s Device Consumption',
+      'last_year': 'Last Year\'s Device Consumption',
+      'last_5_years': 'Last 5 Years\' Device Consumption'
+    };
+    return periodNames[this.selectedTimePeriod as keyof typeof periodNames] || 'Device Consumption';
   }
 
   exportPDF() {

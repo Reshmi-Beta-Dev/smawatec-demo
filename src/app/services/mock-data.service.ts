@@ -385,88 +385,199 @@ export class MockDataService {
   }
 
   // Consumption Data for Charts
-  getConsumptionByApartment(apartmentId: string, timePeriod: string, chartType: string): Promise<ConsumptionData[]> {
+  getConsumptionByApartment(timePeriod: string, apartmentId: string, chartType: string): Promise<ConsumptionData[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Filter consumption data for specific apartment
-        const apartmentConsumption = this.frenchData.consumptionData.filter(c => c.apartment_id === apartmentId);
-        
-        const consumptionData = apartmentConsumption.map(cons => ({
-          time_label: cons.consumption_hour.toString(),
-          consumption_m3: cons.consumption_m3,
-          device_name: this.frenchData.devices.find(d => d.id === cons.device_id)?.serial_number || 'N/A',
-          building_name: this.frenchData.buildings.find(b => b.id === cons.building_id)?.name || 'N/A',
-          building_group_name: this.frenchData.buildingGroups.find(g => g.id === this.frenchData.buildings.find(b => b.id === cons.building_id)?.building_group_id)?.name || 'N/A',
-          device_count: 1
-        }));
-
-        resolve(consumptionData);
+        // Generate consumption data based on time period and apartment
+        const data = this.generateConsumptionData(timePeriod, chartType, 'apartment', apartmentId);
+        resolve(data);
       }, 300);
     });
   }
 
-  getConsumptionByBuilding(buildingId: string, timePeriod: string, chartType: string): Promise<ConsumptionData[]> {
+  getConsumptionByBuilding(timePeriod: string, buildingId: string, chartType: string): Promise<ConsumptionData[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Filter consumption data for specific building
-        const buildingConsumption = this.frenchData.consumptionData.filter(c => c.building_id === buildingId);
-        
-        // Group by hour and sum consumption
-        const groupedData = buildingConsumption.reduce((acc, cons) => {
-          const hour = cons.consumption_hour;
-          if (!acc[hour]) {
-            acc[hour] = {
-              time_label: hour.toString(),
-              consumption_m3: 0,
-              device_name: this.frenchData.devices.find(d => d.id === cons.device_id)?.serial_number || 'N/A',
-              building_name: this.frenchData.buildings.find(b => b.id === cons.building_id)?.name || 'N/A',
-              building_group_name: this.frenchData.buildingGroups.find(g => g.id === this.frenchData.buildings.find(b => b.id === cons.building_id)?.building_group_id)?.name || 'N/A',
-              device_count: 0
-            };
-          }
-          acc[hour].consumption_m3 += cons.consumption_m3;
-          acc[hour].device_count += 1;
-          return acc;
-        }, {} as Record<number, ConsumptionData>);
-
-        const consumptionData = Object.values(groupedData);
-        resolve(consumptionData);
+        // Generate consumption data based on time period and building
+        const data = this.generateConsumptionData(timePeriod, chartType, 'building', buildingId);
+        resolve(data);
       }, 300);
     });
   }
 
-  getConsumptionByBuildingGroup(buildingGroupId: string, timePeriod: string, chartType: string): Promise<ConsumptionData[]> {
+  getConsumptionByBuildingGroup(timePeriod: string, buildingGroupId: string, chartType: string): Promise<ConsumptionData[]> {
     return new Promise((resolve) => {
       setTimeout(() => {
-        // Get all buildings in the group
-        const groupBuildings = this.frenchData.buildings.filter(b => b.building_group_id === buildingGroupId);
-        const buildingIds = groupBuildings.map(b => b.id);
-        
-        // Filter consumption data for all buildings in the group
-        const groupConsumption = this.frenchData.consumptionData.filter(c => buildingIds.includes(c.building_id));
-        
-        // Group by hour and sum consumption
-        const groupedData = groupConsumption.reduce((acc, cons) => {
-          const hour = cons.consumption_hour;
-          if (!acc[hour]) {
-            acc[hour] = {
-              time_label: hour.toString(),
-              consumption_m3: 0,
-              device_name: 'Multiple Devices',
-              building_name: 'Multiple Buildings',
-              building_group_name: this.frenchData.buildingGroups.find(g => g.id === buildingGroupId)?.name || 'N/A',
-              device_count: 0
-            };
-          }
-          acc[hour].consumption_m3 += cons.consumption_m3;
-          acc[hour].device_count += 1;
-          return acc;
-        }, {} as Record<number, ConsumptionData>);
-
-        const consumptionData = Object.values(groupedData);
-        resolve(consumptionData);
+        // Generate consumption data based on time period and building group
+        const data = this.generateConsumptionData(timePeriod, chartType, 'buildingGroup', buildingGroupId);
+        resolve(data);
       }, 300);
     });
+  }
+
+  // Generate comprehensive consumption data based on time period and hierarchy level
+  private generateConsumptionData(timePeriod: string, chartType: string, level: 'apartment' | 'building' | 'buildingGroup', id: string): ConsumptionData[] {
+    const now = new Date();
+    let dataPoints: number;
+    let timeLabels: string[];
+    let baseConsumption: number;
+
+    // Determine data points and time labels based on time period
+    switch (timePeriod) {
+      case 'today':
+        dataPoints = 24; // 24 hours
+        timeLabels = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+        baseConsumption = 0.1; // Base consumption per hour
+        break;
+      case 'last_month':
+        dataPoints = 30; // 30 days
+        timeLabels = Array.from({ length: 30 }, (_, i) => {
+          const date = new Date(now);
+          date.setDate(date.getDate() - (29 - i));
+          return date.toISOString().split('T')[0];
+        });
+        baseConsumption = 2.5; // Base consumption per day
+        break;
+      case 'last_year':
+        dataPoints = 12; // 12 months
+        timeLabels = Array.from({ length: 12 }, (_, i) => {
+          const date = new Date(now);
+          date.setMonth(date.getMonth() - (11 - i));
+          return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        });
+        baseConsumption = 75; // Base consumption per month
+        break;
+      case 'last_5_years':
+        dataPoints = 5; // 5 years
+        timeLabels = Array.from({ length: 5 }, (_, i) => {
+          const year = now.getFullYear() - (4 - i);
+          return year.toString();
+        });
+        baseConsumption = 900; // Base consumption per year
+        break;
+      case 'future_year':
+        dataPoints = 12; // 12 months (future)
+        timeLabels = Array.from({ length: 12 }, (_, i) => {
+          const date = new Date(now);
+          date.setMonth(date.getMonth() + i + 1);
+          return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        });
+        baseConsumption = 80; // Slightly higher for future projection
+        break;
+      default:
+        dataPoints = 24;
+        timeLabels = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+        baseConsumption = 0.1;
+    }
+
+    // Adjust base consumption based on hierarchy level
+    let multiplier = 1;
+    let deviceCount = 1;
+    let buildingName = 'N/A';
+    let buildingGroupName = 'N/A';
+
+    switch (level) {
+      case 'apartment':
+        multiplier = 1;
+        deviceCount = 1;
+        // Find apartment details
+        const apartment = this.frenchData.apartments.find(a => a.id === id);
+        if (apartment) {
+          const building = this.frenchData.buildings.find(b => b.id === apartment.building_id);
+          if (building) {
+            buildingName = building.name;
+            const buildingGroup = this.frenchData.buildingGroups.find(g => g.id === building.building_group_id);
+            if (buildingGroup) {
+              buildingGroupName = buildingGroup.name;
+            }
+          }
+        }
+        break;
+      case 'building':
+        multiplier = 8; // Average 8 apartments per building
+        deviceCount = 8;
+        // Find building details
+        const building = this.frenchData.buildings.find(b => b.id === id);
+        if (building) {
+          buildingName = building.name;
+          const buildingGroup = this.frenchData.buildingGroups.find(g => g.id === building.building_group_id);
+          if (buildingGroup) {
+            buildingGroupName = buildingGroup.name;
+          }
+        }
+        break;
+      case 'buildingGroup':
+        multiplier = 50; // Average 50 apartments per building group
+        deviceCount = 50;
+        // Find building group details
+        const buildingGroup = this.frenchData.buildingGroups.find(g => g.id === id);
+        if (buildingGroup) {
+          buildingGroupName = buildingGroup.name;
+          buildingName = 'Multiple Buildings';
+        }
+        break;
+    }
+
+    // Generate consumption data with realistic patterns
+    const consumptionData: ConsumptionData[] = [];
+    
+    for (let i = 0; i < dataPoints; i++) {
+      let consumption = baseConsumption * multiplier;
+      
+      // Add realistic variations based on time period
+      if (timePeriod === 'today') {
+        // Hourly pattern: higher during day, lower at night
+        const hour = i;
+        if (hour >= 6 && hour <= 22) {
+          consumption *= (1 + Math.sin((hour - 6) * Math.PI / 16) * 0.5);
+        } else {
+          consumption *= 0.3; // Lower at night
+        }
+      } else if (timePeriod === 'last_month' || timePeriod === 'future_year') {
+        // Daily/monthly pattern: higher on weekdays, lower on weekends
+        const dayOfWeek = (i + 1) % 7;
+        if (dayOfWeek === 0 || dayOfWeek === 6) { // Weekend
+          consumption *= 0.7;
+        }
+        // Add seasonal variation
+        const month = (i % 12) + 1;
+        if (month >= 6 && month <= 8) { // Summer months
+          consumption *= 1.3;
+        } else if (month >= 12 || month <= 2) { // Winter months
+          consumption *= 0.8;
+        }
+      } else if (timePeriod === 'last_year') {
+        // Monthly pattern: higher in summer, lower in winter
+        const month = i + 1;
+        if (month >= 6 && month <= 8) { // Summer
+          consumption *= 1.4;
+        } else if (month >= 12 || month <= 2) { // Winter
+          consumption *= 0.7;
+        }
+      } else if (timePeriod === 'last_5_years') {
+        // Yearly pattern: gradual increase over years
+        consumption *= (1 + i * 0.1); // 10% increase per year
+      }
+
+      // Add random variation (±20%)
+      const randomVariation = 0.8 + Math.random() * 0.4;
+      consumption *= randomVariation;
+
+      // Round to 3 decimal places
+      consumption = Math.round(consumption * 1000) / 1000;
+
+      consumptionData.push({
+        time_label: timeLabels[i],
+        consumption_m3: consumption,
+        device_name: level === 'apartment' ? `Device-${id}` : 
+                    level === 'building' ? `Building-${id}-Devices` : 'Multiple Devices',
+        building_name: buildingName,
+        building_group_name: buildingGroupName,
+        device_count: deviceCount
+      });
+    }
+
+    return consumptionData;
   }
 
   // Time Periods
