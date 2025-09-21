@@ -34,6 +34,9 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   showAllAlarms: boolean = false;
   allAlarms: AlarmMessage[] = [];
   pageSize: number = 10; // Default to 10 alarms
+  
+  // Hide alarm functionality
+  hiddenAlarmIds: Set<string> = new Set();
 
   constructor(private mockDataService: MockDataService) {}
 
@@ -143,9 +146,30 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     this.showNotification('Details functionality would show alarm details');
   }
 
-  hideAlarm(event: Event) {
+  hideAlarm(event: Event, alarmId: string) {
     event.stopPropagation();
-    this.showNotification('Hide alarm functionality would hide this alarm');
+    
+    // Add alarm to hidden set
+    this.hiddenAlarmIds.add(alarmId);
+    
+    // Show notification
+    this.showNotification(`Alarm ${alarmId} has been hidden`);
+    
+    // Force change detection to update the display
+    this.updateDisplay();
+  }
+
+  showHiddenAlarms() {
+    // Clear all hidden alarms
+    this.hiddenAlarmIds.clear();
+    this.showNotification('All hidden alarms have been restored');
+    this.updateDisplay();
+  }
+
+  private updateDisplay() {
+    // Trigger change detection by updating a dummy property
+    // This forces Angular to re-evaluate the template
+    this.sortedAlarms = [...this.sortedAlarms];
   }
 
   toggleOverview() {
@@ -196,10 +220,16 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getDisplayAlarms(): AlarmMessage[] {
+    let alarmsToShow: AlarmMessage[];
+    
     if (this.showAllAlarms) {
-      return this.allAlarms; // Show all alarms with virtual scrolling
+      alarmsToShow = this.allAlarms;
+    } else {
+      alarmsToShow = this.sortedAlarms.slice(0, this.pageSize);
     }
-    return this.sortedAlarms.slice(0, this.pageSize);
+    
+    // Filter out hidden alarms
+    return alarmsToShow.filter(alarm => !this.hiddenAlarmIds.has(alarm.id));
   }
 
   // View all alarms functionality

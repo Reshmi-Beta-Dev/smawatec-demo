@@ -327,6 +327,24 @@
     background: #45a049;
 }
 
+/* Hide alarm button styling */
+.pill.outline:hover {
+    background: #f8f9fa;
+    border-color: #6c757d;
+}
+
+/* Show hidden alarms button */
+.pill.outline:last-child {
+    background: #fff3cd;
+    border-color: #ffc107;
+    color: #856404;
+}
+
+.pill.outline:last-child:hover {
+    background: #ffeaa7;
+    border-color: #f39c12;
+}
+
 /* Chart Panel Styles */
 .chart-panel {
     background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);

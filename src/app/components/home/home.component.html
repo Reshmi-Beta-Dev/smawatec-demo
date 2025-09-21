@@ -46,7 +46,7 @@
                                 <td>{{ alarm.action_taken || 'None' }}</td>
                                 <td class="actions">
                                     <button class="pill" (click)="showDetails($event)">Details</button>
-                                    <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
+                                    <button class="pill outline" (click)="hideAlarm($event, alarm.id)">Hide Alarm</button>
                                 </td>
                             </tr>
                         </tbody>
@@ -75,6 +75,11 @@
                             *ngIf="showAllAlarms"
                             (click)="revertToLimitedView()">
                         Back to limited view
+                    </button>
+                    <button class="pill outline" 
+                            *ngIf="hiddenAlarmIds.size > 0"
+                            (click)="showHiddenAlarms()">
+                        Show Hidden Alarms ({{ hiddenAlarmIds.size }})
                     </button>
                 </div>
             </div>
