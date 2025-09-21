@@ -16,8 +16,23 @@ export class DeviceDetailsComponent implements OnInit {
   selectedBuildingRow: number | null = null;
   selectedUnassignedRow: number | null = null;
   
-  // Mock data properties
+  // Data properties
   devices: any[] = [];
+  buildingGroups: any[] = [];
+  buildings: any[] = [];
+  apartments: any[] = [];
+  tenants: any[] = [];
+  unassignedDevices: any[] = [];
+  
+  // Pagination properties
+  currentGroupPage = 1;
+  buildingGroupTotalPages = 1;
+  buildingGroupTotalItems = 0;
+  currentBuildingPage = 1;
+  buildingTotalPages = 1;
+  buildingTotalItems = 0;
+  itemsPerPage = 8;
+  
   searchData: any = {
     keyword: '',
     building: '',
@@ -34,7 +49,7 @@ export class DeviceDetailsComponent implements OnInit {
   constructor(private mockDataService: MockDataService) {}
 
   async ngOnInit() {
-    await this.loadDevices();
+    await this.loadData();
   }
 
   onRowClick(index: number) {
@@ -43,6 +58,10 @@ export class DeviceDetailsComponent implements OnInit {
 
   onGroupRowClick(index: number) {
     this.selectedGroupRow = this.selectedGroupRow === index ? null : index;
+    if (this.selectedGroupRow !== null) {
+      const buildingGroup = this.buildingGroups[this.selectedGroupRow];
+      this.loadBuildingsForGroup(buildingGroup.id);
+    }
   }
 
   onBuildingRowClick(index: number) {
@@ -70,16 +89,55 @@ export class DeviceDetailsComponent implements OnInit {
     this.showNotification('Find new device functionality');
   }
 
-  private async loadDevices() {
+  async loadData() {
+    await Promise.all([
+      this.loadBuildingGroups(),
+      this.loadDevices(),
+      this.loadUnassignedDevices()
+    ]);
+  }
+
+  async loadBuildingGroups() {
+    try {
+      this.loading = true;
+      const response = await this.mockDataService.getBuildingGroups(this.currentGroupPage, this.itemsPerPage);
+      this.buildingGroups = response.buildingGroups;
+      this.buildingGroupTotalPages = response.totalPages;
+      this.buildingGroupTotalItems = response.totalCount;
+    } catch (error) {
+      console.error('Error loading building groups:', error);
+      this.error = 'Failed to load building groups';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async loadBuildingsForGroup(buildingGroupId: string) {
+    try {
+      this.loading = true;
+      const buildings = await this.mockDataService.getBuildingsByGroup(buildingGroupId);
+      this.buildings = buildings;
+      this.buildingTotalItems = buildings.length;
+      this.buildingTotalPages = Math.ceil(buildings.length / this.itemsPerPage);
+      this.currentBuildingPage = 1;
+    } catch (error) {
+      console.error('Error loading buildings for group:', error);
+      this.error = 'Failed to load buildings for group';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async loadDevices() {
     try {
       this.loading = true;
       this.error = null;
 
-      // Mock device data
+      // Mock device data with French context
       this.devices = [
-        { id: 1, name: 'Water Meter 001', serial: 'WT-001-001', status: 'Active', location: 'Building A' },
-        { id: 2, name: 'Water Meter 002', serial: 'WT-002-001', status: 'Maintenance', location: 'Building B' },
-        { id: 3, name: 'Water Meter 003', serial: 'WT-003-001', status: 'Active', location: 'Building C' }
+        { id: 1, name: 'Compteur Eau 001', serial: 'SM-001-001', status: 'Actif', location: 'Résidence Vendôme' },
+        { id: 2, name: 'Compteur Eau 002', serial: 'SM-002-001', status: 'Maintenance', location: 'Résidence Champs-Élysées' },
+        { id: 3, name: 'Compteur Eau 003', serial: 'SM-003-001', status: 'Actif', location: 'Résidence Montmartre' }
       ];
 
     } catch (error) {
@@ -89,6 +147,76 @@ export class DeviceDetailsComponent implements OnInit {
       this.loading = false;
     }
   }
+
+  async loadUnassignedDevices() {
+    try {
+      this.loading = true;
+      // Mock unassigned devices with French context
+      this.unassignedDevices = [
+        { 
+          id: 1, 
+          serial: 'SM-UN-001', 
+          lastDeviceName: 'Compteur Eau Ancien', 
+          lastAddress: '15 Place Vendôme, 75001 Paris',
+          lastApartment: 'Apt 101',
+          lastTenant: 'Marie Dubois'
+        },
+        { 
+          id: 2, 
+          serial: 'SM-UN-002', 
+          lastDeviceName: 'Compteur Eau Retiré', 
+          lastAddress: '42 Champs-Élysées, 75008 Paris',
+          lastApartment: 'Apt 205',
+          lastTenant: 'Pierre Martin'
+        }
+      ];
+    } catch (error) {
+      console.error('Error loading unassigned devices:', error);
+      this.error = 'Failed to load unassigned devices';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  // Pagination helper methods
+  getGroupPageNumbers(): number[] {
+    const pages: number[] = [];
+    const startPage = Math.max(1, this.currentGroupPage - 2);
+    const endPage = Math.min(this.buildingGroupTotalPages, this.currentGroupPage + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  getBuildingPageNumbers(): number[] {
+    const pages: number[] = [];
+    const startPage = Math.max(1, this.currentBuildingPage - 2);
+    const endPage = Math.min(this.buildingTotalPages, this.currentBuildingPage + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  onGroupPageChange(page: number) {
+    this.currentGroupPage = page;
+    this.loadBuildingGroups();
+  }
+
+  onBuildingPageChange(page: number) {
+    this.currentBuildingPage = page;
+    // Reload buildings for current group
+    if (this.selectedGroupRow !== null) {
+      const buildingGroup = this.buildingGroups[this.selectedGroupRow];
+      this.loadBuildingsForGroup(buildingGroup.id);
+    }
+  }
+
+  // Math object for template
+  Math = Math;
 
   showNotification(message: string) {
     console.log('Notification:', message);

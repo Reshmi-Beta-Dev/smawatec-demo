@@ -52,11 +52,19 @@
                     <div class="device-details">
                         <div class="device-field">
                             <span class="device-label">Device Name:</span>
-                            <span class="device-value">New Device 019201290</span>
+                            <span class="device-value">{{ devices[0]?.name || 'Compteur Eau Principal' }}</span>
                         </div>
                         <div class="device-field">
                             <span class="device-label">Serial Number:</span>
-                            <span class="device-value">SM239012930</span>
+                            <span class="device-value">{{ devices[0]?.serial || 'SM-001-001' }}</span>
+                        </div>
+                        <div class="device-field">
+                            <span class="device-label">Status:</span>
+                            <span class="device-value">{{ devices[0]?.status || 'Actif' }}</span>
+                        </div>
+                        <div class="device-field">
+                            <span class="device-label">Location:</span>
+                            <span class="device-value">{{ devices[0]?.location || 'Résidence Vendôme' }}</span>
                         </div>
                     </div>
                     <div class="device-actions">
@@ -82,64 +90,42 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr (click)="onGroupRowClick(0)" [class.selected]="selectedGroupRow === 0">
-                            <td>1</td>
-                            <td>PAR - GP1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                        </tr>
-                        <tr (click)="onGroupRowClick(1)" [class.selected]="selectedGroupRow === 1">
-                            <td>2</td>
-                            <td>PAR - GP1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23234</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                        </tr>
-                        <tr (click)="onGroupRowClick(2)" [class.selected]="selectedGroupRow === 2">
-                            <td>3</td>
-                            <td>PAR - GP1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                        </tr>
-                        <tr (click)="onGroupRowClick(3)" [class.selected]="selectedGroupRow === 3">
-                            <td>4</td>
-                            <td>PAR - GP1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                        </tr>
-                        <tr (click)="onGroupRowClick(4)" [class.selected]="selectedGroupRow === 4">
-                            <td>5</td>
-                            <td>PAR - GP1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                        </tr>
-                        <tr (click)="onGroupRowClick(5)" [class.selected]="selectedGroupRow === 5">
-                            <td>6</td>
-                            <td>PAR - GP1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                        </tr>
-                        <tr (click)="onGroupRowClick(6)" [class.selected]="selectedGroupRow === 6">
-                            <td>7</td>
-                            <td>PAR - GP1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                        </tr>
-                        <tr (click)="onGroupRowClick(7)" [class.selected]="selectedGroupRow === 7">
-                            <td>8</td>
-                            <td>PAR - GP1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
+                        <tr *ngFor="let group of buildingGroups; let i = index" 
+                            (click)="onGroupRowClick(i)" 
+                            [class.selected]="selectedGroupRow === i">
+                            <td>{{ (currentGroupPage - 1) * itemsPerPage + i + 1 }}</td>
+                            <td>{{ group.name || 'Groupe Immobilier Paris Centre' }}</td>
+                            <td>{{ group.address || 'Résidence Vendôme' }}</td>
+                            <td>{{ group.address?.split(',')[1]?.trim() || '75001' }}</td>
+                            <td>{{ group.address || '15 Place Vendôme, 75001 Paris' }}</td>
                         </tr>
                     </tbody>
                 </table>
+                
+                <!-- Pagination for Building Groups -->
+                <div class="pagination-inline" *ngIf="buildingGroupTotalPages > 1">
+                    <div class="pagination-info">
+                        {{ (currentGroupPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentGroupPage * itemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }}
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" 
+                                [disabled]="currentGroupPage === 1" 
+                                (click)="onGroupPageChange(currentGroupPage - 1)">
+                            ‹
+                        </button>
+                        <button *ngFor="let page of getGroupPageNumbers()" 
+                                class="pagination-btn" 
+                                [class.active]="page === currentGroupPage"
+                                (click)="onGroupPageChange(page)">
+                            {{ page }}
+                        </button>
+                        <button class="pagination-btn" 
+                                [disabled]="currentGroupPage === buildingGroupTotalPages" 
+                                (click)="onGroupPageChange(currentGroupPage + 1)">
+                            ›
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -159,40 +145,43 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr (click)="onBuildingRowClick(0)" [class.selected]="selectedBuildingRow === 0">
-                            <td>1</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap12</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                        <tr (click)="onBuildingRowClick(1)" [class.selected]="selectedBuildingRow === 1">
-                            <td>2</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap12</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                        <tr (click)="onBuildingRowClick(2)" [class.selected]="selectedBuildingRow === 2">
-                            <td>3</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap12</td>
-                            <td>Bonaparte, Napoleon</td>
-                        </tr>
-                        <tr (click)="onBuildingRowClick(3)" [class.selected]="selectedBuildingRow === 3">
-                            <td>4</td>
-                            <td>PAR-GP1-B12012</td>
-                            <td>23212</td>
-                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                            <td>Block 1, L23, Ap12</td>
-                            <td>Bonaparte, Napoleon</td>
+                        <tr *ngFor="let building of buildings; let i = index" 
+                            (click)="onBuildingRowClick(i)" 
+                            [class.selected]="selectedBuildingRow === i">
+                            <td>{{ (currentBuildingPage - 1) * itemsPerPage + i + 1 }}</td>
+                            <td>{{ building.name || 'Résidence Vendôme' }}</td>
+                            <td>{{ building.zip_code || building.address?.split(',')[1]?.trim() || '75001' }}</td>
+                            <td>{{ building.address || '15 Place Vendôme, 75001 Paris' }}</td>
+                            <td>{{ building.apartmentCount || 'Apt 101' }}</td>
+                            <td>{{ building.buildingGroup || 'Marie Dubois' }}</td>
                         </tr>
                     </tbody>
                 </table>
+                
+                <!-- Pagination for Buildings -->
+                <div class="pagination-inline" *ngIf="buildingTotalPages > 1">
+                    <div class="pagination-info">
+                        {{ (currentBuildingPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentBuildingPage * itemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }}
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" 
+                                [disabled]="currentBuildingPage === 1" 
+                                (click)="onBuildingPageChange(currentBuildingPage - 1)">
+                            ‹
+                        </button>
+                        <button *ngFor="let page of getBuildingPageNumbers()" 
+                                class="pagination-btn" 
+                                [class.active]="page === currentBuildingPage"
+                                (click)="onBuildingPageChange(page)">
+                            {{ page }}
+                        </button>
+                        <button class="pagination-btn" 
+                                [disabled]="currentBuildingPage === buildingTotalPages" 
+                                (click)="onBuildingPageChange(currentBuildingPage + 1)">
+                            ›
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -215,21 +204,15 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr (click)="onUnassignedRowClick(0)" [class.selected]="selectedUnassignedRow === 0">
-                            <td>1</td>
-                            <td>SM233123-0901</td>
-                            <td>XXX</td>
-                            <td>None</td>
-                            <td>None</td>
-                            <td>None</td>
-                        </tr>
-                        <tr (click)="onUnassignedRowClick(1)" [class.selected]="selectedUnassignedRow === 1">
-                            <td>2</td>
-                            <td>SM233123-0984</td>
-                            <td>PAR-GP1-B120912</td>
-                            <td>23129 Paris, Champs Elysess, Rue da Place 31</td>
-                            <td>Block 1, L23, Ap12</td>
-                            <td>Mitterand, Francois</td>
+                        <tr *ngFor="let device of unassignedDevices; let i = index" 
+                            (click)="onUnassignedRowClick(i)" 
+                            [class.selected]="selectedUnassignedRow === i">
+                            <td>{{ i + 1 }}</td>
+                            <td>{{ device.serial || 'SM-UN-001' }}</td>
+                            <td>{{ device.lastDeviceName || 'Compteur Eau Ancien' }}</td>
+                            <td>{{ device.lastAddress || '15 Place Vendôme, 75001 Paris' }}</td>
+                            <td>{{ device.lastApartment || 'Apt 101' }}</td>
+                            <td>{{ device.lastTenant || 'Marie Dubois' }}</td>
                         </tr>
                     </tbody>
                 </table>
