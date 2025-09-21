@@ -143,7 +143,7 @@
     padding: 0;
     box-shadow: none;
     overflow: auto;
-    margin-bottom: 0;
+    margin-bottom: 16px; /* Add space between table and pagination */
     flex: 0 0 auto; /* Don't grow to fill space */
 }
 
@@ -608,8 +608,8 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-top: 8px;
-    padding: 8px 0;
+    margin-top: auto; /* Push to bottom */
+    padding: 16px 0 8px 0; /* Add top padding and maintain bottom padding */
     border-top: 1px solid #e5e7eb;
 }
 

@@ -99,30 +99,30 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                
-                                <!-- Building Groups Pagination -->
-                                <div class="pagination-inline" *ngIf="buildingGroupTotalPages > 1">
-                                    <div class="pagination-info">
-                                        Showing {{ (buildingGroupCurrentPage - 1) * buildingGroupItemsPerPage + 1 }}-{{ Math.min(buildingGroupCurrentPage * buildingGroupItemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }} groups
-                                    </div>
-                                    <div class="pagination-controls">
-                                        <button class="pagination-btn" 
-                                                [disabled]="buildingGroupCurrentPage === 1" 
-                                                (click)="onBuildingGroupPageChange(buildingGroupCurrentPage - 1)">
-                                            ‹
-                                        </button>
-                                        <button *ngFor="let page of getBuildingGroupPageNumbers()" 
-                                                class="pagination-btn" 
-                                                [class.active]="page === buildingGroupCurrentPage"
-                                                (click)="onBuildingGroupPageChange(page)">
-                                            {{ page }}
-                                        </button>
-                                        <button class="pagination-btn" 
-                                                [disabled]="buildingGroupCurrentPage === buildingGroupTotalPages" 
-                                                (click)="onBuildingGroupPageChange(buildingGroupCurrentPage + 1)">
-                                            ›
-                                        </button>
-                                    </div>
+                            </div>
+                            
+                            <!-- Building Groups Pagination - moved to bottom -->
+                            <div class="pagination-inline" *ngIf="buildingGroupTotalPages > 1">
+                                <div class="pagination-info">
+                                    Showing {{ (buildingGroupCurrentPage - 1) * buildingGroupItemsPerPage + 1 }}-{{ Math.min(buildingGroupCurrentPage * buildingGroupItemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }} groups
+                                </div>
+                                <div class="pagination-controls">
+                                    <button class="pagination-btn" 
+                                            [disabled]="buildingGroupCurrentPage === 1" 
+                                            (click)="onBuildingGroupPageChange(buildingGroupCurrentPage - 1)">
+                                        ‹
+                                    </button>
+                                    <button *ngFor="let page of getBuildingGroupPageNumbers()" 
+                                            class="pagination-btn" 
+                                            [class.active]="page === buildingGroupCurrentPage"
+                                            (click)="onBuildingGroupPageChange(page)">
+                                        {{ page }}
+                                    </button>
+                                    <button class="pagination-btn" 
+                                            [disabled]="buildingGroupCurrentPage === buildingGroupTotalPages" 
+                                            (click)="onBuildingGroupPageChange(buildingGroupCurrentPage + 1)">
+                                        ›
+                                    </button>
                                 </div>
                             </div>
                         </div>
