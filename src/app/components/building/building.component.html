@@ -62,6 +62,7 @@
                         <tbody>
                             <tr *ngFor="let group of paginatedBuildingGroups; let i = index" 
                                 (click)="onGroupRowClick((currentGroupPage - 1) * itemsPerPage + i)" 
+                                (dblclick)="onGroupRowDoubleClick((currentGroupPage - 1) * itemsPerPage + i)"
                                 [class.selected]="selectedGroupRow === (currentGroupPage - 1) * itemsPerPage + i">
                                 <td>{{ (currentGroupPage - 1) * itemsPerPage + i + 1 }}</td>
                                 <td>{{ group.name || 'N/A' }}</td>
@@ -73,8 +74,10 @@
                     </table>
                 <div class="action-buttons">
                     <div class="action-buttons-left">
-                        <button class="pill" (click)="addGroup()">Add Group</button>
-                        <button class="pill outline danger" (click)="removeGroup()">Delete Group</button>
+                        <button class="pill" (click)="openAddGroupModal()">Add Group</button>
+                        <button class="pill outline danger" 
+                                (click)="openDeleteGroupModal()"
+                                [disabled]="selectedGroupRow === null">Delete Group</button>
                     </div>
                     
                     <!-- Pagination for Building Groups -->
@@ -155,9 +158,9 @@
                             <span class="kv-value">{{ getSelectedBuilding()?.city || getSelectedBuilding()?.address?.split(',')[0]?.trim() }}</span>
                         </div>
                     </div>
-                    <div class="action-buttons">
+                    <!-- <div class="action-buttons">
                         <button class="pill" (click)="addApartment()">Add Apartment</button>
-                    </div>
+                    </div> -->
                 </div>
             </div>
         </div>
@@ -342,4 +345,14 @@
         (confirm)="onDeleteConfirm()"
         (cancel)="onDeleteCancel()">
     </app-confirmation-modal>
+
+    <!-- Building Group Modal -->
+    <app-building-group-modal
+        [isVisible]="showModal"
+        [modalType]="modalType"
+        [groupName]="modalGroupName"
+        [isLoading]="modalLoading"
+        (save)="onModalSave($event)"
+        (cancel)="onModalCancel()">
+    </app-building-group-modal>
 </div>

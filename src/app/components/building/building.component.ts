@@ -2,11 +2,12 @@ import { Component, OnInit, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService, BuildingGroup, Building, Apartment } from '../../services/mock-data.service';
+import { BuildingGroupModalComponent } from './building-group-modal.component';
 
 @Component({
   selector: 'app-building',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, BuildingGroupModalComponent],
   templateUrl: './building.component.html',
   styleUrls: ['./building.component.css'],
   schemas: [CUSTOM_ELEMENTS_SCHEMA]
@@ -27,6 +28,12 @@ export class BuildingComponent implements OnInit {
     tenant: '',
     tenantId: ''
   };
+
+  // Modal functionality
+  showModal: boolean = false;
+  modalType: 'add' | 'edit' | 'delete' = 'add';
+  modalGroupName: string = '';
+  modalLoading: boolean = false;
 
 
   // Pagination properties
@@ -782,4 +789,96 @@ export class BuildingComponent implements OnInit {
 
   // Math object for template
   Math = Math;
+
+  // Modal methods
+  openAddGroupModal() {
+    this.modalType = 'add';
+    this.modalGroupName = '';
+    this.showModal = true;
+  }
+
+  openEditGroupModal() {
+    if (this.selectedGroupRow !== null && this.paginatedBuildingGroups[this.selectedGroupRow]) {
+      this.modalType = 'edit';
+      this.modalGroupName = this.paginatedBuildingGroups[this.selectedGroupRow].name || '';
+      this.showModal = true;
+    }
+  }
+
+  openDeleteGroupModal() {
+    if (this.selectedGroupRow !== null && this.paginatedBuildingGroups[this.selectedGroupRow]) {
+      this.modalType = 'delete';
+      this.modalGroupName = this.paginatedBuildingGroups[this.selectedGroupRow].name || '';
+      this.showModal = true;
+    }
+  }
+
+  onGroupRowDoubleClick(index: number) {
+    this.selectedGroupRow = index;
+    this.openEditGroupModal();
+  }
+
+  onModalSave(event: { type: string, name: string }) {
+    this.modalLoading = true;
+    
+    // Simulate API call delay
+    setTimeout(() => {
+      try {
+        if (event.type === 'add') {
+          this.addBuildingGroup(event.name);
+        } else if (event.type === 'edit') {
+          this.editBuildingGroup(event.name);
+        } else if (event.type === 'delete') {
+          this.deleteBuildingGroup();
+        }
+        
+        this.showModal = false;
+        this.modalLoading = false;
+        this.showNotification(`Building group ${event.type === 'add' ? 'added' : event.type === 'edit' ? 'updated' : 'deleted'} successfully`);
+      } catch (error) {
+        this.modalLoading = false;
+        this.showNotification('Error processing request. Please try again.');
+      }
+    }, 1000);
+  }
+
+  onModalCancel() {
+    this.showModal = false;
+    this.modalLoading = false;
+  }
+
+  private addBuildingGroup(name: string) {
+    const newGroup: BuildingGroup = {
+      id: `bg-${Date.now()}`,
+      name: name,
+      address: 'New Address',
+      buildingCount: 0,
+      apartmentCount: 0,
+      deviceCount: 0
+    };
+    
+    this.paginatedBuildingGroups.unshift(newGroup);
+    this.buildingGroupTotalItems++;
+    this.buildingGroupTotalPages = Math.ceil(this.buildingGroupTotalItems / this.itemsPerPage);
+  }
+
+  private editBuildingGroup(name: string) {
+    if (this.selectedGroupRow !== null) {
+      this.paginatedBuildingGroups[this.selectedGroupRow].name = name;
+    }
+  }
+
+  private deleteBuildingGroup() {
+    if (this.selectedGroupRow !== null) {
+      this.paginatedBuildingGroups.splice(this.selectedGroupRow, 1);
+      this.buildingGroupTotalItems--;
+      this.buildingGroupTotalPages = Math.ceil(this.buildingGroupTotalItems / this.itemsPerPage);
+      
+      // Reset selection if needed
+      if (this.selectedGroupRow >= this.paginatedBuildingGroups.length) {
+        this.selectedGroupRow = null;
+      }
+    }
+  }
+
 }
