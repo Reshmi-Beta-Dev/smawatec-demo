@@ -118,19 +118,12 @@
 
 .pill.active {
     background: #7b61ff;
-    position: relative;
+    opacity: 1;
+    filter: brightness(1.1);
 }
 
-.pill.active::after {
-    content: '';
-    position: absolute;
-    bottom: -2px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 20px;
-    height: 3px;
-    background: #7b61ff;
-    border-radius: 2px;
+.pill:not(.active) {
+    opacity: 0.7;
 }
 
 /* Mobile Responsive */
