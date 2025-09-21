@@ -341,21 +341,90 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getAlarmCount(type: string): number {
+    if (type === 'major_leak') {
+      return this.alarms.filter(alarm => 
+        alarm.alarm_type_name?.toLowerCase().includes('major') || 
+        alarm.alarm_type_name?.toLowerCase().includes('majeure') ||
+        alarm.alarm_severity === 'high'
+      ).length;
+    }
+    if (type === 'system') {
+      return this.alarms.filter(alarm => 
+        alarm.alarm_type_name?.toLowerCase().includes('system') ||
+        alarm.alarm_type_name?.toLowerCase().includes('wifi') ||
+        alarm.alarm_type_name?.toLowerCase().includes('power') ||
+        alarm.alarm_type_name?.toLowerCase().includes('temperature')
+      ).length;
+    }
     return this.alarms.filter(alarm => alarm.alarm_type_name === type).length;
   }
 
   getTotalLeakageAlarms(): number {
     return this.alarms.filter(alarm => 
-      alarm.alarm_type_name?.includes('leak') || alarm.alarm_type_name?.includes('Leak')
+      alarm.alarm_type_name?.toLowerCase().includes('leak') || 
+      alarm.alarm_type_name?.toLowerCase().includes('fuite') ||
+      alarm.message?.toLowerCase().includes('leak') ||
+      alarm.message?.toLowerCase().includes('fuite')
     ).length;
   }
 
   getEstimatedLoss(): number {
-    return Math.floor(Math.random() * 100) + 50; // Mock data
+    const leakageAlarms = this.alarms.filter(alarm => 
+      alarm.alarm_type_name?.toLowerCase().includes('leak') || 
+      alarm.alarm_type_name?.toLowerCase().includes('fuite')
+    );
+    
+    // Calculate based on alarm severity and duration
+    let totalLoss = 0;
+    leakageAlarms.forEach(alarm => {
+      const created = new Date(alarm.created_at);
+      const resolved = alarm.resolved_at ? new Date(alarm.resolved_at) : new Date();
+      const durationHours = (resolved.getTime() - created.getTime()) / (1000 * 60 * 60);
+      
+      // Loss rate based on severity
+      let lossRate = 0;
+      switch (alarm.alarm_severity) {
+        case 'high': lossRate = 2.5; break; // 2.5 m³/hour
+        case 'medium': lossRate = 1.2; break; // 1.2 m³/hour
+        case 'low': lossRate = 0.5; break; // 0.5 m³/hour
+        default: lossRate = 1.0;
+      }
+      
+      totalLoss += durationHours * lossRate;
+    });
+    
+    return Math.round(totalLoss * 10) / 10; // Round to 1 decimal
   }
 
   getWaterSavings(): number {
-    return Math.floor(Math.random() * 200) + 100; // Mock data
+    const resolvedAlarms = this.alarms.filter(alarm => 
+      alarm.status === 'resolved' && 
+      (alarm.alarm_type_name?.toLowerCase().includes('leak') || 
+       alarm.alarm_type_name?.toLowerCase().includes('fuite'))
+    );
+    
+    // Calculate potential savings from early detection
+    let totalSavings = 0;
+    resolvedAlarms.forEach(alarm => {
+      const created = new Date(alarm.created_at);
+      const resolved = new Date(alarm.resolved_at!);
+      const responseTimeHours = (resolved.getTime() - created.getTime()) / (1000 * 60 * 60);
+      
+      // Savings based on quick response (prevented further loss)
+      let savingsRate = 0;
+      switch (alarm.alarm_severity) {
+        case 'high': savingsRate = 5.0; break; // 5 m³/hour prevented
+        case 'medium': savingsRate = 2.5; break; // 2.5 m³/hour prevented
+        case 'low': savingsRate = 1.0; break; // 1 m³/hour prevented
+        default: savingsRate = 2.0;
+      }
+      
+      // More savings for faster response
+      const responseMultiplier = responseTimeHours < 2 ? 1.5 : responseTimeHours < 6 ? 1.2 : 1.0;
+      totalSavings += savingsRate * responseMultiplier;
+    });
+    
+    return Math.round(totalSavings * 10) / 10; // Round to 1 decimal
   }
 
   getCurrentYear(): number {
