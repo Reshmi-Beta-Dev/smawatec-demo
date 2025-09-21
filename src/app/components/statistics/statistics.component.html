@@ -182,11 +182,11 @@
                                         <div class="period-inputs">
                                             <div class="form-group">
                                                 <label>Period from</label>
-                                                <input type="date" [(ngModel)]="periodFrom" (change)="updateExportData()">
+                                                <input type="date" [(ngModel)]="periodFrom" (change)="onPeriodFromChange()">
                                             </div>
                                             <div class="form-group">
                                                 <label>Period to</label>
-                                                <input type="date" [(ngModel)]="periodTo" (change)="updateExportData()">
+                                                <input type="date" [(ngModel)]="periodTo" (change)="onPeriodToChange()">
                                             </div>
                                             <button class="btn btn-primary" (click)="resetPeriod()">
                                                 Reset Period

@@ -89,6 +89,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   // Period controls
   periodFrom: string = '';
   periodTo: string = '';
+  userModifiedPeriod: boolean = false; // Track if user manually changed period dates
 
   constructor(private mockDataService: MockDataService) {}
 
@@ -107,6 +108,56 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     
     this.periodFrom = oneMonthAgo.toISOString().split('T')[0]; // YYYY-MM-DD format
     this.periodTo = today.toISOString().split('T')[0]; // YYYY-MM-DD format
+    this.userModifiedPeriod = false; // Reset user modification flag
+  }
+
+  // Update period based on selected time period (only if user hasn't manually changed it)
+  updatePeriodFromTimeSelection() {
+    if (this.userModifiedPeriod) {
+      return; // Don't update if user has manually changed the period
+    }
+
+    const today = new Date();
+    let fromDate = new Date(today);
+    let toDate = new Date(today);
+
+    switch (this.selectedTimePeriod) {
+      case 'today':
+        // Today: from start of today to end of today
+        fromDate.setHours(0, 0, 0, 0);
+        toDate.setHours(23, 59, 59, 999);
+        this.periodFrom = fromDate.toISOString().split('T')[0];
+        this.periodTo = toDate.toISOString().split('T')[0];
+        break;
+      
+      case 'last_month':
+        // Last month: from 1 month ago to today
+        fromDate.setMonth(today.getMonth() - 1);
+        this.periodFrom = fromDate.toISOString().split('T')[0];
+        this.periodTo = today.toISOString().split('T')[0];
+        break;
+      
+      case 'last_year':
+        // Last year: from 1 year ago to today
+        fromDate.setFullYear(today.getFullYear() - 1);
+        this.periodFrom = fromDate.toISOString().split('T')[0];
+        this.periodTo = today.toISOString().split('T')[0];
+        break;
+      
+      case 'last_5_years':
+        // Last 5 years: from 5 years ago to today
+        fromDate.setFullYear(today.getFullYear() - 5);
+        this.periodFrom = fromDate.toISOString().split('T')[0];
+        this.periodTo = today.toISOString().split('T')[0];
+        break;
+      
+      default:
+        // Default to last month
+        fromDate.setMonth(today.getMonth() - 1);
+        this.periodFrom = fromDate.toISOString().split('T')[0];
+        this.periodTo = today.toISOString().split('T')[0];
+        break;
+    }
   }
 
   // Update export data based on current selections
@@ -189,6 +240,9 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       
       // Update export data with default selection
       this.updateExportData();
+      
+      // Update period based on default time period
+      this.updatePeriodFromTimeSelection();
     }
   }
 
@@ -722,7 +776,9 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     // Update the current index when dropdown changes
     this.currentTimePeriodIndex = this.timePeriodOrder.indexOf(this.selectedTimePeriod);
     console.log('🔄 Time period changed to:', this.selectedTimePeriod);
+    this.updatePeriodFromTimeSelection();
     this.loadConsumptionData();
+    this.updateExportData();
   }
 
   onChartTypeChange() {
@@ -922,7 +978,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
               weight: 'bold'
             },
             bodyFont: {
-              size: 11
+                  size: 11
             }
             }
           }
@@ -1152,8 +1208,10 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.currentTimePeriodIndex--;
       this.selectedTimePeriod = this.timePeriodOrder[this.currentTimePeriodIndex];
       console.log('🔄 Previous period:', this.selectedTimePeriod);
+      this.updatePeriodFromTimeSelection();
       this.ensureChartReady();
       await this.loadConsumptionData();
+      this.updateExportData();
     } else {
       console.log('⚠️ Already at first time period');
     }
@@ -1165,8 +1223,10 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       this.currentTimePeriodIndex++;
       this.selectedTimePeriod = this.timePeriodOrder[this.currentTimePeriodIndex];
       console.log('🔄 Next period:', this.selectedTimePeriod);
+      this.updatePeriodFromTimeSelection();
       this.ensureChartReady();
       await this.loadConsumptionData();
+      this.updateExportData();
     } else {
       console.log('⚠️ Already at last time period');
     }
@@ -1192,6 +1252,18 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     };
     return periodNames[this.selectedTimePeriod as keyof typeof periodNames] || 'Device Consumption';
   }
+
+  // Handle user changes to period dates
+  onPeriodFromChange() {
+    this.userModifiedPeriod = true;
+    this.updateExportData();
+  }
+
+  onPeriodToChange() {
+    this.userModifiedPeriod = true;
+    this.updateExportData();
+  }
+
 
   // Reset period to default values
   resetPeriod() {
