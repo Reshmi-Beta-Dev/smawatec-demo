@@ -97,7 +97,7 @@
                             <th>Message</th>
                             <th>Action</th>
                             <th class="action-header">
-                                <button class="pill outline" (click)="unhideAllAlarms()">Unhide Alarm</button>
+                                <button class="pill outline" (click)="showHiddenAlarms()" *ngIf="hiddenAlarmIds.size > 0">Show Hidden Alarms</button>
                             </th>
                         </tr>
                     </thead>
@@ -127,10 +127,10 @@
                             </td>
                             <td>{{ alarm.message || 'N/A' }}</td>
                             <td>{{ alarm.action_taken || 'None' }}</td>
-                            <td class="actions">
-                                <button class="pill" (click)="showDetails($event)">Details</button>
-                                <button class="pill outline" (click)="hideAlarm($event)">Hide Alarm</button>
-                            </td>
+        <td class="actions" (click)="$event.stopPropagation()">
+          <button class="pill" (click)="showDetails($event, alarm)">Details</button>
+          <button class="pill outline" (click)="hideAlarm($event, alarm.id)">Hide Alarm</button>
+        </td>
                         </tr>
                     </tbody>
                 </table>
@@ -162,4 +162,109 @@
             </div>
         </div>
     </main>
+</div>
+
+<!-- Alarm Details Modal -->
+<div class="modal-overlay" *ngIf="showDetailsModal" (click)="closeDetailsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+        <div class="modal-header">
+            <h3>Alarm Details</h3>
+            <button class="close-button" (click)="closeDetailsModal()">&times;</button>
+        </div>
+        
+        <div class="modal-body" *ngIf="selectedAlarmForDetails">
+            <div class="details-grid">
+                <!-- Alarm Information -->
+                <div class="detail-section">
+                    <h4>Alarm Information</h4>
+                    <div class="detail-row">
+                        <span class="detail-label">Alarm Type:</span>
+                        <span class="detail-value alarm-type" [class.high]="selectedAlarmForDetails.alarm_severity === 'high'">
+                            {{ selectedAlarmForDetails.alarm_type_name || 'Unknown' }}
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Severity:</span>
+                        <span class="detail-value alarm-severity" [class.high]="selectedAlarmForDetails.alarm_severity === 'high'">
+                            {{ selectedAlarmForDetails.alarm_severity || 'Unknown' }}
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Status:</span>
+                        <span class="detail-value alarm-status" [class.active]="selectedAlarmForDetails.status === 'active'">
+                            {{ selectedAlarmForDetails.status || 'Unknown' }}
+                        </span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Message:</span>
+                        <span class="detail-value">{{ selectedAlarmForDetails.message || 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Action Taken:</span>
+                        <span class="detail-value">{{ selectedAlarmForDetails.action_taken || 'None' }}</span>
+                    </div>
+                </div>
+
+                <!-- Location Information -->
+                <div class="detail-section">
+                    <h4>Location Information</h4>
+                    <div class="detail-row">
+                        <span class="detail-label">Address:</span>
+                        <span class="detail-value">{{ selectedAlarmForDetails.building_address || 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Apartment:</span>
+                        <span class="detail-value">{{ selectedAlarmForDetails.apartment_id || 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Floor:</span>
+                        <span class="detail-value">{{ selectedAlarmForDetails.floor_number || 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Room:</span>
+                        <span class="detail-value">{{ selectedAlarmForDetails.room_number || 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Tenant:</span>
+                        <span class="detail-value">{{ selectedAlarmForDetails.tenant || 'N/A' }}</span>
+                    </div>
+                </div>
+
+                <!-- Device Information -->
+                <div class="detail-section">
+                    <h4>Device Information</h4>
+                    <div class="detail-row">
+                        <span class="detail-label">Device Type:</span>
+                        <span class="detail-value">{{ selectedAlarmForDetails.device_type || 'N/A' }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Device ID:</span>
+                        <span class="detail-value">{{ selectedAlarmForDetails.device_id || 'N/A' }}</span>
+                    </div>
+                </div>
+
+                <!-- Timeline -->
+                <div class="detail-section">
+                    <h4>Timeline</h4>
+                    <div class="detail-row">
+                        <span class="detail-label">Created:</span>
+                        <span class="detail-value">{{ formatDate(selectedAlarmForDetails.created_at) }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Resolved:</span>
+                        <span class="detail-value">{{ formatDate(selectedAlarmForDetails.resolved_at || '') }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">Duration:</span>
+                        <span class="detail-value">{{ getAlarmDuration(selectedAlarmForDetails) }}</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="modal-footer">
+            <button class="pill outline" (click)="closeDetailsModal()">Close</button>
+            <button class="pill" (click)="hideAlarm($event, selectedAlarmForDetails?.id || '')" *ngIf="selectedAlarmForDetails">Hide Alarm</button>
+        </div>
+    </div>
 </div>

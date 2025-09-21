@@ -27,6 +27,11 @@ export class AlarmsComponent implements OnInit {
   // Math object for template
   Math = Math;
 
+  // Hide alarm functionality
+  hiddenAlarmIds: Set<string> = new Set();
+  selectedAlarmForDetails: AlarmMessage | null = null;
+  showDetailsModal: boolean = false;
+
   constructor(private mockDataService: MockDataService) {}
 
   async ngOnInit() {
@@ -38,14 +43,17 @@ export class AlarmsComponent implements OnInit {
     this.selectedRow = this.selectedRow === index ? null : index;
   }
 
-  showDetails(event: Event) {
+  showDetails(event: Event, alarm: AlarmMessage) {
     event.stopPropagation();
-    this.showNotification('Details functionality would show alarm details');
+    this.selectedAlarmForDetails = alarm;
+    this.showDetailsModal = true;
   }
 
-  hideAlarm(event: Event) {
+  hideAlarm(event: Event, alarmId: string) {
     event.stopPropagation();
-    this.showNotification('Hide alarm functionality would hide this alarm');
+    this.hiddenAlarmIds.add(alarmId);
+    this.loadAlarmMessages();
+    this.showNotification('Alarm hidden successfully');
   }
 
   // Alarm Categories
@@ -67,13 +75,17 @@ export class AlarmsComponent implements OnInit {
       this.loading = true;
       // Generate more data for pagination - request 100 items to ensure we have enough data
       const response = await this.mockDataService.getAlarmMessages(1, 100);
-      this.totalItems = response.totalCount;
+      
+      // Filter out hidden alarms
+      const visibleAlarms = response.alarms.filter(alarm => !this.hiddenAlarmIds.has(alarm.id));
+      
+      this.totalItems = visibleAlarms.length;
       this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
       
       // Get the current page data
       const startIndex = (this.currentPage - 1) * this.itemsPerPage;
       const endIndex = startIndex + this.itemsPerPage;
-      this.alarmMessages = response.alarms.slice(startIndex, endIndex);
+      this.alarmMessages = visibleAlarms.slice(startIndex, endIndex);
     } catch (error) {
       console.error('Error loading alarm messages:', error);
       this.error = 'Failed to load alarm messages';
@@ -141,7 +153,47 @@ export class AlarmsComponent implements OnInit {
   }
 
   unhideAllAlarms() {
-    this.showNotification('Unhide all alarms functionality');
+    this.hiddenAlarmIds.clear();
+    this.loadAlarmMessages();
+    this.showNotification('All hidden alarms restored');
+  }
+
+  showHiddenAlarms() {
+    this.hiddenAlarmIds.clear();
+    this.loadAlarmMessages();
+  }
+
+  closeDetailsModal() {
+    this.showDetailsModal = false;
+    this.selectedAlarmForDetails = null;
+  }
+
+  formatDate(dateString: string): string {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+  }
+
+  getAlarmDuration(alarm: AlarmMessage): string {
+    if (!alarm.resolved_at) return 'Ongoing';
+    
+    const created = new Date(alarm.created_at);
+    const resolved = new Date(alarm.resolved_at);
+    const diffMs = resolved.getTime() - created.getTime();
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    
+    if (diffHours > 0) {
+      return `${diffHours}h ${diffMinutes}m`;
+    } else {
+      return `${diffMinutes}m`;
+    }
   }
 
   // Alias for template compatibility
