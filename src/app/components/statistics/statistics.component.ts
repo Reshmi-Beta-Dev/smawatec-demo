@@ -32,6 +32,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   // Loading and error states
   loading = false;
   error: string | null = null;
+  processingData = false;
+  processingMessage = 'Processing data...';
 
   // Pagination properties for Building Groups
   currentGroupPage = 1;
@@ -84,24 +86,30 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async loadData() {
-    // Load building groups first
-    await this.loadBuildingGroups();
-    
-    // Set default selections after building groups are loaded
-    await this.setDefaultSelections();
-    
-    // Load other data in parallel
-    await Promise.all([
-      this.loadTenants(),
-      this.loadConsumptionData()
-    ]);
-    
-    // No default apartment selection - let user choose
-    
-    // Initialize chart after all data is loaded
-    setTimeout(() => {
-      this.initializeChart();
-    }, 100);
+    try {
+      this.showProcessing('System Initialization');
+      
+      // Load building groups first
+      await this.loadBuildingGroups();
+      
+      // Set default selections after building groups are loaded
+      await this.setDefaultSelections();
+      
+      // Load other data in parallel
+      await Promise.all([
+        this.loadTenants(),
+        this.loadConsumptionData()
+      ]);
+      
+      // No default apartment selection - let user choose
+      
+      // Initialize chart after all data is loaded
+      setTimeout(() => {
+        this.initializeChart();
+      }, 200);
+    } finally {
+      this.hideProcessing();
+    }
   }
 
   async setDefaultSelections() {
@@ -119,6 +127,12 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log('🔍 Testing Chart.js availability...');
     console.log('Chart object:', typeof Chart);
     console.log('Chart constructor:', Chart);
+    
+    // Expose debug methods to window for console access
+    (window as any).debugChart = () => this.debugChart();
+    (window as any).forceChartUpdate = () => this.forceChartUpdate();
+    (window as any).recreateChart = () => this.recreateChart();
+    console.log('🔧 Debug methods available: window.debugChart(), window.forceChartUpdate(), window.recreateChart()');
     
     // Initialize chart after view is ready and data is loaded
     setTimeout(() => {
@@ -152,18 +166,25 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async onBuildingGroupRowClick(index: number) {
-    // Always select the clicked row (no unselect for building groups)
-    this.selectedBuildingGroupRow = index;
-    this.selectedBuildingRow = null;
-    this.selectedApartmentRow = null;
-    
-    const buildingGroup = this.paginatedBuildingGroups[index];
-    this.selectedBuildingGroupName = buildingGroup.name || null;
-    this.selectedBuildingId = null;
-    this.selectedApartmentId = null;
-    // Load buildings for this group
-    await this.loadBuildingsForGroup(buildingGroup.id);
-    this.loadConsumptionData();
+    try {
+      this.showProcessing('Loading Building Group Data');
+      
+      // Always select the clicked row (no unselect for building groups)
+      this.selectedBuildingGroupRow = index;
+      this.selectedBuildingRow = null;
+      this.selectedApartmentRow = null;
+      
+      const buildingGroup = this.paginatedBuildingGroups[index];
+      this.selectedBuildingGroupName = buildingGroup.name || null;
+      this.selectedBuildingId = null;
+      this.selectedApartmentId = null;
+      // Load buildings for this group
+      await this.loadBuildingsForGroup(buildingGroup.id);
+      this.ensureChartReady();
+      this.loadConsumptionData();
+    } finally {
+      this.hideProcessing();
+    }
   }
 
   onBuildingGroupPageChange(page: number) {
@@ -200,30 +221,38 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   async onBuildingRowClick(index: number) {
-    // Toggle selection - unselect if clicking the same row
-    if (this.selectedBuildingRow === index) {
-      this.selectedBuildingRow = null;
-      this.selectedBuildingId = null;
-      this.selectedApartmentId = null;
+    try {
+      this.showProcessing('Loading Building Data');
+      
+      // Toggle selection - unselect if clicking the same row
+      if (this.selectedBuildingRow === index) {
+        this.selectedBuildingRow = null;
+        this.selectedBuildingId = null;
+        this.selectedApartmentId = null;
+        this.selectedApartmentRow = null;
+        // Load all apartments from the selected building group
+        await this.loadAllApartmentsForBuildingGroup();
+        this.ensureChartReady();
+        this.loadConsumptionData();
+        return;
+      }
+      
+      // Select the clicked row
+      this.selectedBuildingRow = index;
       this.selectedApartmentRow = null;
-      // Load all apartments from the selected building group
-      await this.loadAllApartmentsForBuildingGroup();
+      
+      const building = this.paginatedBuildings[index];
+      this.selectedBuildingId = building.id?.toString() || null;
+      this.selectedApartmentId = null;
+      // Load apartments for this building
+      await this.loadApartmentsForBuilding(building.id?.toString() || '');
+      // Load apartment grid data based on building
+      await this.loadApartmentGridData(building);
+      this.ensureChartReady();
       this.loadConsumptionData();
-      return;
+    } finally {
+      this.hideProcessing();
     }
-    
-    // Select the clicked row
-    this.selectedBuildingRow = index;
-    this.selectedApartmentRow = null;
-    
-    const building = this.paginatedBuildings[index];
-    this.selectedBuildingId = building.id?.toString() || null;
-    this.selectedApartmentId = null;
-    // Load apartments for this building
-    await this.loadApartmentsForBuilding(building.id?.toString() || '');
-    // Load apartment grid data based on building
-    await this.loadApartmentGridData(building);
-    this.loadConsumptionData();
   }
 
   onBuildingPageChange(page: number) {
@@ -323,6 +352,17 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     } finally {
       this.loading = false;
     }
+  }
+
+  // Show processing indicator
+  showProcessing(message: string = 'Processing data...') {
+    this.processingData = true;
+    this.processingMessage = message;
+  }
+
+  // Hide processing indicator
+  hideProcessing() {
+    this.processingData = false;
   }
 
   // Load tenants
@@ -465,20 +505,28 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   onApartmentRowClick(index: number) {
-    // Toggle selection - unselect if clicking the same row
-    if (this.selectedApartmentRow === index) {
-      this.selectedApartmentRow = null;
-      this.selectedApartmentId = null;
+    try {
+      this.showProcessing('Loading Apartment Data');
+      
+      // Toggle selection - unselect if clicking the same row
+      if (this.selectedApartmentRow === index) {
+        this.selectedApartmentRow = null;
+        this.selectedApartmentId = null;
+        this.ensureChartReady();
+        this.loadConsumptionData();
+        return;
+      }
+      
+      // Select the clicked row
+      this.selectedApartmentRow = index;
+      
+      const apartment = this.apartmentGridData[index];
+      this.selectedApartmentId = apartment.id || null;
+      this.ensureChartReady();
       this.loadConsumptionData();
-      return;
+    } finally {
+      this.hideProcessing();
     }
-    
-    // Select the clicked row
-    this.selectedApartmentRow = index;
-    
-    const apartment = this.apartmentGridData[index];
-    this.selectedApartmentId = apartment.id || null;
-    this.loadConsumptionData();
   }
 
   getApartmentPageNumbers(): number[] {
@@ -510,6 +558,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadConsumptionData() {
     try {
+      this.showProcessing('Data Analysis');
       console.log('🔄 Loading consumption data...', {
         apartment: this.selectedApartmentId,
         building: this.selectedBuildingId,
@@ -559,6 +608,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch (error: any) {
       console.error('❌ Error loading consumption data:', error);
       this.error = `Failed to load consumption data: ${error.message}`;
+    } finally {
+      this.hideProcessing();
     }
   }
 
@@ -574,6 +625,47 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Chart methods
+  public ensureChartReady() {
+    if (!this.chart) {
+      console.log('🔄 Chart not ready, initializing...');
+      this.initializeChart();
+    }
+  }
+
+  public forceChartUpdate() {
+    console.log('🔄 Force chart update called');
+    if (this.chart) {
+      console.log('🔄 Forcing chart update...');
+      this.chart.update('active');
+      this.chart.render();
+      console.log('✅ Chart force update completed');
+    } else {
+      console.log('⚠️ No chart to update');
+    }
+  }
+
+  public recreateChart() {
+    console.log('🔄 Recreating chart...');
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    this.chart = null;
+    this.initializeChart();
+  }
+
+  // Debug method - can be called from browser console
+  public debugChart() {
+    console.log('🔍 Chart Debug Info:');
+    console.log('Chart object:', this.chart);
+    console.log('Chart data:', this.chart?.data);
+    console.log('Chart options:', this.chart?.options);
+    console.log('Canvas element:', document.getElementById('waterChart'));
+    console.log('Canvas visible:', document.getElementById('waterChart')?.offsetParent !== null);
+    console.log('Consumption data:', this.consumptionData);
+    console.log('Loading state:', this.loading);
+    console.log('Error state:', this.error);
+  }
+
   private initializeChart() {
     console.log('🔄 Initializing chart...');
     
@@ -601,9 +693,18 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
     console.log('✅ Canvas element is visible');
+    console.log('📐 Canvas dimensions:', {
+      width: canvas.width,
+      height: canvas.height,
+      clientWidth: canvas.clientWidth,
+      clientHeight: canvas.clientHeight,
+      offsetWidth: canvas.offsetWidth,
+      offsetHeight: canvas.offsetHeight
+    });
 
     // Destroy existing chart if it exists
     if (this.chart) {
+      console.log('🗑️ Destroying existing chart');
       this.chart.destroy();
     }
 
@@ -723,9 +824,19 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
         }
       });
       console.log('✅ Chart created successfully');
+      console.log('📊 Chart after creation:', {
+        data: this.chart.data,
+        options: this.chart.options,
+        canvas: this.chart.canvas,
+        width: this.chart.width,
+        height: this.chart.height
+      });
       
-      // Load consumption data after chart is created
-      this.loadConsumptionData();
+      // Update chart with current consumption data if available
+      if (this.consumptionData && this.consumptionData.length > 0) {
+        console.log('🔄 Updating chart with existing consumption data...');
+        this.updateChart();
+      }
     } catch (error) {
       console.error('❌ Error creating chart:', error);
       return;
@@ -733,8 +844,27 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private updateChart() {
+    // If chart is not initialized, try to initialize it first
     if (!this.chart) {
-      console.log('❌ Chart not initialized, cannot update');
+      console.log('⚠️ Chart not initialized, attempting to initialize...');
+      this.initializeChart();
+      
+      // If still not initialized after attempt, wait a bit and try again
+      if (!this.chart) {
+        console.log('⚠️ Chart initialization failed, retrying in 200ms...');
+        setTimeout(() => {
+          this.updateChart();
+        }, 200);
+        return;
+      }
+    }
+
+    // Double-check that chart is ready
+    if (!this.chart || !this.chart.data || !this.chart.data.datasets) {
+      console.log('⚠️ Chart not ready, retrying in 100ms...');
+    setTimeout(() => {
+        this.updateChart();
+      }, 100);
       return;
     }
 
@@ -747,11 +877,130 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     console.log('🏷️ Labels:', labels);
     console.log('📈 Data values:', data);
 
-    this.chart.data.labels = labels;
-    this.chart.data.datasets[0].data = data;
-    this.chart.data.datasets[0].label = this.getChartLabel();
-    this.chart.options.scales.x.title.text = this.getTimeAxisLabel();
-    this.chart.update();
+    // Try a more aggressive approach - recreate the chart with new data
+    console.log('🔄 Attempting aggressive chart update...');
+    
+    // Store the current data
+    const chartData = {
+      labels: labels,
+      datasets: [{
+        label: this.getChartLabel(),
+        data: data,
+        backgroundColor: 'rgba(123, 97, 255, 0.8)',
+        borderColor: '#7b61ff',
+        borderWidth: 2,
+        borderRadius: 6,
+        borderSkipped: false,
+        hoverBackgroundColor: 'rgba(123, 97, 255, 1)',
+        hoverBorderColor: '#5a4fcf',
+        hoverBorderWidth: 2
+      }]
+    };
+    
+    // Destroy and recreate the chart
+    if (this.chart) {
+      this.chart.destroy();
+    }
+    
+    const canvas = document.getElementById('waterChart') as HTMLCanvasElement;
+    if (canvas) {
+      this.chart = new Chart(canvas, {
+        type: 'bar',
+        data: chartData,
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: this.getTimeAxisLabel(),
+                font: {
+                  size: 12,
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.1)'
+              }
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Water Consumption (m³)',
+                font: {
+                  size: 12,
+                  weight: 'bold'
+                }
+              },
+              grid: {
+                display: true,
+                color: 'rgba(0, 0, 0, 0.1)'
+              }
+            }
+          },
+          plugins: {
+            legend: {
+              display: true,
+              position: 'top',
+              labels: {
+                usePointStyle: true,
+                padding: 20,
+                font: {
+                  size: 12,
+                  weight: 'bold'
+                }
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0, 0, 0, 0.8)',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              borderColor: '#7b61ff',
+              borderWidth: 1,
+              cornerRadius: 6,
+              displayColors: true,
+              titleFont: {
+                size: 12,
+                weight: 'bold'
+              },
+              bodyFont: {
+                size: 11
+              }
+            }
+          }
+        }
+      });
+      
+      console.log('✅ Chart recreated with new data');
+    }
+    
+    // Check if chart actually rendered something
+    setTimeout(() => {
+      const canvas = document.getElementById('waterChart') as HTMLCanvasElement;
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const hasContent = imageData.data.some(pixel => pixel !== 0);
+          console.log('🎨 Canvas content check:', {
+            hasContent: hasContent,
+            imageDataLength: imageData.data.length,
+            canvasWidth: canvas.width,
+            canvasHeight: canvas.height
+          });
+          
+          // Test if canvas can be drawn on
+          if (!hasContent) {
+            console.log('🧪 Testing canvas drawing capability...');
+            ctx.fillStyle = 'red';
+            ctx.fillRect(10, 10, 50, 50);
+            console.log('✅ Test rectangle drawn on canvas');
+          }
+        }
+      }
+    }, 500);
     
     console.log('✅ Chart updated successfully');
     console.log('📊 Final chart data:', this.chart.data);
@@ -794,9 +1043,11 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   // Time period navigation methods
   async previousPeriod() {
     if (this.currentTimePeriodIndex > 0) {
+      this.showProcessing('Time Period Switch');
       this.currentTimePeriodIndex--;
       this.selectedTimePeriod = this.timePeriodOrder[this.currentTimePeriodIndex];
       console.log('🔄 Previous period:', this.selectedTimePeriod);
+      this.ensureChartReady();
       await this.loadConsumptionData();
     } else {
       console.log('⚠️ Already at first time period');
@@ -805,9 +1056,11 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     
   async nextPeriod() {
     if (this.currentTimePeriodIndex < this.timePeriodOrder.length - 1) {
+      this.showProcessing('Time Period Switch');
       this.currentTimePeriodIndex++;
       this.selectedTimePeriod = this.timePeriodOrder[this.currentTimePeriodIndex];
       console.log('🔄 Next period:', this.selectedTimePeriod);
+      this.ensureChartReady();
       await this.loadConsumptionData();
     } else {
       console.log('⚠️ Already at last time period');

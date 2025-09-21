@@ -1,4 +1,16 @@
 <div class="app">
+    <!-- Processing indicator -->
+    <div *ngIf="processingData" class="processing-indicator">
+        <div class="processing-content">
+            <div class="processing-spinner"></div>
+            <div class="processing-text">
+                <h3>{{ processingMessage }}</h3>
+                <p>System processing...</p>
+                <div class="processing-status">Status: Active</div>
+            </div>
+        </div>
+    </div>
+
     <main class="content">
         <div class="main-layout">
             <!-- Main Content -->
@@ -68,7 +80,7 @@
                             <div class="error-text">{{ error }}</div>
                         </div>
                         
-                        <div class="chart-container" *ngIf="!loading && !error">
+                        <div class="chart-container" *ngIf="!loading && !error && consumptionData && consumptionData.length > 0">
                             <canvas id="waterChart" width="600" height="250"></canvas>
                         </div>
                     </div>
