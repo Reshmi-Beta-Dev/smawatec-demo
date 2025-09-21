@@ -244,4 +244,33 @@
         (assign)="onFindDeviceAssign($event)"
         (cancel)="onFindDeviceCancel()">
     </app-find-device-modal>
+
+    <!-- Device Details Modal -->
+    <app-device-details-modal
+        [isVisible]="showDeviceDetailsModal"
+        [deviceDetails]="selectedDevice"
+        (close)="onDeviceDetailsClose()"
+        (edit)="onDeviceDetailsEdit()">
+    </app-device-details-modal>
+
+    <!-- Assign Location Modal -->
+    <app-assign-location-modal
+        [isVisible]="showAssignLocationModal"
+        [deviceName]="selectedDevice?.name || ''"
+        [deviceSerial]="selectedDevice?.serial || ''"
+        (close)="onAssignLocationClose()"
+        (assign)="onAssignLocation($event)">
+    </app-assign-location-modal>
+
+    <!-- Unassign Device Modal -->
+    <app-unassign-device-modal
+        [isVisible]="showUnassignDeviceModal"
+        [deviceName]="selectedDevice?.name || ''"
+        [deviceSerial]="selectedDevice?.serial || ''"
+        [currentLocation]="selectedDevice?.location || ''"
+        [currentApartment]="selectedDevice?.apartment || ''"
+        [currentTenant]="selectedDevice?.tenant || ''"
+        (close)="onUnassignDeviceClose()"
+        (unassign)="onUnassignDevice($event)">
+    </app-unassign-device-modal>
 </div>

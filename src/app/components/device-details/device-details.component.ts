@@ -3,11 +3,14 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService } from '../../services/mock-data.service';
 import { FindDeviceModalComponent } from './find-device-modal.component';
+import { DeviceDetailsModalComponent } from './device-details-modal.component';
+import { AssignLocationModalComponent } from './assign-location-modal.component';
+import { UnassignDeviceModalComponent } from './unassign-device-modal.component';
 
 @Component({
   selector: 'app-device-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, FindDeviceModalComponent],
+  imports: [CommonModule, FormsModule, FindDeviceModalComponent, DeviceDetailsModalComponent, AssignLocationModalComponent, UnassignDeviceModalComponent],
   templateUrl: './device-details.component.html',
   styleUrls: ['./device-details.component.css']
 })
@@ -24,6 +27,11 @@ export class DeviceDetailsComponent implements OnInit {
   // Find Device Modal properties
   showFindDeviceModal: boolean = false;
   findDeviceLoading: boolean = false;
+  
+  // Additional Modal properties
+  showDeviceDetailsModal = false;
+  showAssignLocationModal = false;
+  showUnassignDeviceModal = false;
   
   // Data properties
   devices: any[] = [];
@@ -121,15 +129,18 @@ export class DeviceDetailsComponent implements OnInit {
 
   showDetails(event: Event) {
     event.stopPropagation();
-    this.showNotification('Device details functionality');
+    this.selectedDevice = this.deviceDetails;
+    this.showDeviceDetailsModal = true;
   }
 
   assignToNewLocation() {
-    this.showNotification('Assign to new location functionality');
+    this.selectedDevice = this.deviceDetails;
+    this.showAssignLocationModal = true;
   }
 
   unassignDevice() {
-    this.showNotification('Unassign device functionality');
+    this.selectedDevice = this.deviceDetails;
+    this.showUnassignDeviceModal = true;
   }
 
   findNewDevice() {
@@ -808,5 +819,39 @@ export class DeviceDetailsComponent implements OnInit {
 
     // Show search results notification
     this.showNotification(`Search completed: ${filteredBuildingGroups.length} groups, ${filteredBuildings.length} buildings, ${filteredUnassignedDevices.length} unassigned devices found`);
+  }
+
+  // Modal event handlers
+  onDeviceDetailsClose() {
+    this.showDeviceDetailsModal = false;
+    this.selectedDevice = null;
+  }
+
+  onDeviceDetailsEdit() {
+    this.showNotification('Edit device functionality');
+    this.showDeviceDetailsModal = false;
+  }
+
+  onAssignLocationClose() {
+    this.showAssignLocationModal = false;
+    this.selectedDevice = null;
+  }
+
+  onAssignLocation(data: {locationId: string, notes: string}) {
+    this.showNotification(`Device assigned to location ${data.locationId} with notes: ${data.notes}`);
+    this.showAssignLocationModal = false;
+    this.selectedDevice = null;
+  }
+
+  onUnassignDeviceClose() {
+    this.showUnassignDeviceModal = false;
+    this.selectedDevice = null;
+  }
+
+  onUnassignDevice(data: {reason: string, customReason?: string}) {
+    const reason = data.reason === 'other' ? data.customReason : data.reason;
+    this.showNotification(`Device unassigned. Reason: ${reason}`);
+    this.showUnassignDeviceModal = false;
+    this.selectedDevice = null;
   }
 }
