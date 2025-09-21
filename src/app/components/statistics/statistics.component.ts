@@ -2,6 +2,7 @@ import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService, DailyConsumption, BuildingGroup, Building, Apartment } from '../../services/mock-data.service';
+import { PdfExportService } from '../../services/pdf-export.service';
 
 declare var Chart: any;
 
@@ -91,7 +92,10 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   periodTo: string = '';
   userModifiedPeriod: boolean = false; // Track if user manually changed period dates
 
-  constructor(private mockDataService: MockDataService) {}
+  constructor(
+    private mockDataService: MockDataService,
+    private pdfExportService: PdfExportService
+  ) {}
 
   ngOnInit() {
     this.loadTimePeriods();
@@ -1272,9 +1276,49 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   // Export methods
-  exportPDF() {
-    const selectionInfo = this.getSelectionInfo();
-    this.showNotification(`PDF export for ${selectionInfo} - Period: ${this.periodFrom} to ${this.periodTo}`);
+  async exportPDF() {
+    try {
+      this.showProcessing('Generating Analytics PDF...');
+      
+      const selectionInfo = this.getSelectionInfo();
+      const selectionType = this.getSelectionType();
+      const selectionName = this.getSelectionName();
+      
+      // Prepare chart data
+      const chartData = this.chart ? {
+        labels: this.chart.data.labels,
+        datasets: this.chart.data.datasets
+      } : null;
+      
+      // Prepare data for PDF
+      const pdfData = {
+        title: 'Water Consumption Analytics Report',
+        period: {
+          from: this.periodFrom,
+          to: this.periodTo
+        },
+        selection: {
+          type: selectionType,
+          name: selectionName,
+          details: this.getSelectionDetails()
+        },
+        consumptionData: this.consumptionData || [],
+        chartData: chartData,
+        exportData: this.exportData,
+        buildingGroups: this.paginatedBuildingGroups || [],
+        buildings: this.paginatedBuildings || [],
+        apartments: this.apartmentGridData || []
+      };
+      
+      await this.pdfExportService.generateAnalyticsPDF(pdfData);
+      this.showNotification(`Analytics PDF exported successfully for ${selectionInfo}`);
+      
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      this.showNotification('Error generating PDF export. Please try again.');
+    } finally {
+      this.hideProcessing();
+    }
   }
 
   exportXLS() {
@@ -1294,5 +1338,58 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       return `Building Group: ${this.selectedBuildingGroupName}`;
     }
     return 'All Data';
+  }
+
+  // Get selection type for PDF
+  getSelectionType(): string {
+    if (this.selectedApartmentId) return 'Apartment';
+    if (this.selectedBuildingId) return 'Building';
+    if (this.selectedBuildingGroupName) return 'Building Group';
+    return 'System Overview';
+  }
+
+  // Get selection name for PDF
+  getSelectionName(): string {
+    if (this.selectedApartmentId) {
+      const apartment = this.apartmentGridData.find(apt => apt.id === this.selectedApartmentId);
+      return apartment?.apartment || 'Unknown Apartment';
+    } else if (this.selectedBuildingId) {
+      const building = this.paginatedBuildings.find(b => b.id === this.selectedBuildingId);
+      return building?.name || 'Unknown Building';
+    } else if (this.selectedBuildingGroupName) {
+      return this.selectedBuildingGroupName;
+    } else {
+      return 'All Building Groups';
+    }
+  }
+
+  // Get selection details for PDF
+  getSelectionDetails(): any {
+    if (this.selectedApartmentId) {
+      const apartment = this.apartmentGridData.find(apt => apt.id === this.selectedApartmentId);
+      return {
+        apartment: apartment?.apartment,
+        tenant: apartment?.tenant,
+        type: apartment?.type,
+        building: apartment?.building
+      };
+    } else if (this.selectedBuildingId) {
+      const building = this.paginatedBuildings.find(b => b.id === this.selectedBuildingId);
+      return {
+        name: building?.name,
+        apartmentCount: building?.apartmentCount,
+        deviceCount: building?.deviceCount,
+        city: building?.city
+      };
+    } else if (this.selectedBuildingGroupName) {
+      const group = this.paginatedBuildingGroups.find(g => g.name === this.selectedBuildingGroupName);
+      return {
+        name: group?.name,
+        buildingCount: group?.buildingCount,
+        apartmentCount: group?.apartmentCount,
+        deviceCount: group?.deviceCount
+      };
+    }
+    return {};
   }
 }
