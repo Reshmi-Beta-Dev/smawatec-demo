@@ -1,55 +1,61 @@
 {
-  "hash": "3463b16c",
-  "configHash": "375bc635",
-  "lockfileHash": "a15c0f85",
-  "browserHash": "1bf1c6a5",
+  "hash": "2c809e53",
+  "configHash": "79cc8852",
+  "lockfileHash": "3f80d309",
+  "browserHash": "c5162a41",
   "optimized": {
     "@angular/common": {
       "src": "../../../../../../node_modules/@angular/common/fesm2022/common.mjs",
       "file": "@angular_common.js",
-      "fileHash": "29969d1c",
+      "fileHash": "556553db",
       "needsInterop": false
     },
     "@angular/core": {
       "src": "../../../../../../node_modules/@angular/core/fesm2022/core.mjs",
       "file": "@angular_core.js",
-      "fileHash": "1d2c9d57",
+      "fileHash": "e2a27cb2",
       "needsInterop": false
     },
     "@angular/forms": {
       "src": "../../../../../../node_modules/@angular/forms/fesm2022/forms.mjs",
       "file": "@angular_forms.js",
-      "fileHash": "cb27f5f1",
+      "fileHash": "6eb9cdce",
       "needsInterop": false
     },
     "@angular/platform-browser": {
       "src": "../../../../../../node_modules/@angular/platform-browser/fesm2022/platform-browser.mjs",
       "file": "@angular_platform-browser.js",
-      "fileHash": "5b09ce62",
+      "fileHash": "35577ed0",
       "needsInterop": false
     },
     "@angular/router": {
       "src": "../../../../../../node_modules/@angular/router/fesm2022/router.mjs",
       "file": "@angular_router.js",
-      "fileHash": "e2121f12",
+      "fileHash": "a6a63537",
       "needsInterop": false
     },
     "zone.js": {
       "src": "../../../../../../node_modules/zone.js/fesm2015/zone.js",
       "file": "zone__js.js",
-      "fileHash": "49a4b9a8",
+      "fileHash": "31322333",
       "needsInterop": true
     },
     "tslib": {
       "src": "../../../../../../node_modules/tslib/tslib.es6.mjs",
       "file": "tslib.js",
-      "fileHash": "6e26d8eb",
+      "fileHash": "ffacf562",
       "needsInterop": false
     },
     "jspdf": {
       "src": "../../../../../../node_modules/jspdf/dist/jspdf.es.min.js",
       "file": "jspdf.js",
-      "fileHash": "95e00be6",
+      "fileHash": "32fda5ec",
+      "needsInterop": false
+    },
+    "xlsx": {
+      "src": "../../../../../../node_modules/xlsx/xlsx.mjs",
+      "file": "xlsx.js",
+      "fileHash": "ad1c7d6e",
       "needsInterop": false
     }
   },

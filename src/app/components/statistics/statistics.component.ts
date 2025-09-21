@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { MockDataService, DailyConsumption, BuildingGroup, Building, Apartment } from '../../services/mock-data.service';
 import { PdfExportService } from '../../services/pdf-export.service';
+import { ExcelExportService } from '../../services/excel-export.service';
 
 declare var Chart: any;
 
@@ -94,7 +95,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(
     private mockDataService: MockDataService,
-    private pdfExportService: PdfExportService
+    private pdfExportService: PdfExportService,
+    private excelExportService: ExcelExportService
   ) {}
 
   ngOnInit() {
@@ -1321,9 +1323,49 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
-  exportXLS() {
-    const selectionInfo = this.getSelectionInfo();
-    this.showNotification(`Excel export for ${selectionInfo} - Period: ${this.periodFrom} to ${this.periodTo}`);
+  async exportXLS() {
+    try {
+      this.showProcessing('Generating Analytics Excel...');
+      
+      const selectionInfo = this.getSelectionInfo();
+      const selectionType = this.getSelectionType();
+      const selectionName = this.getSelectionName();
+      
+      // Prepare chart data
+      const chartData = this.chart ? {
+        labels: this.chart.data.labels,
+        datasets: this.chart.data.datasets
+      } : null;
+      
+      // Prepare data for Excel
+      const excelData = {
+        title: 'Water Consumption Analytics Report',
+        period: {
+          from: this.periodFrom,
+          to: this.periodTo
+        },
+        selection: {
+          type: selectionType,
+          name: selectionName,
+          details: this.getSelectionDetails()
+        },
+        consumptionData: this.consumptionData || [],
+        chartData: chartData,
+        exportData: this.exportData,
+        buildingGroups: this.paginatedBuildingGroups || [],
+        buildings: this.paginatedBuildings || [],
+        apartments: this.apartmentGridData || []
+      };
+      
+      await this.excelExportService.generateAnalyticsExcel(excelData);
+      this.showNotification(`Analytics Excel exported successfully for ${selectionInfo}`);
+      
+    } catch (error) {
+      console.error('Error exporting Excel:', error);
+      this.showNotification('Error generating Excel export. Please try again.');
+    } finally {
+      this.hideProcessing();
+    }
   }
 
   // Get current selection info for export
