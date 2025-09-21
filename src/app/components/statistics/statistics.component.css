@@ -144,7 +144,9 @@
     box-shadow: none;
     overflow: auto;
     margin-bottom: 16px; /* Add space between table and pagination */
-    flex: 0 0 auto; /* Don't grow to fill space */
+    flex: 1; /* Allow table container to grow and fill available space */
+    display: flex;
+    flex-direction: column;
 }
 
 .data-table {
@@ -153,6 +155,7 @@
     border-spacing: 0 1px;
     font-size: 12px;
     background: transparent;
+    flex: 1; /* Allow table to grow and fill available space */
 }
 
 .data-table thead th {
@@ -214,10 +217,20 @@
     margin-top: 20px;
 }
 
+/* Building and Apartment Grids Section */
+.building-apartment-grids-section {
+    display: grid;
+    grid-template-columns: 3fr 2fr; /* 60/40 split */
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
 .building-section,
 .apartment-section {
     flex: 1;
     margin-bottom: 0;
+    display: flex;
+    flex-direction: column;
 }
 
 .apartment-section {
@@ -546,6 +559,10 @@
 
     .apartment-section {
         max-width: none;
+    }
+    
+    .building-apartment-grids-section {
+        grid-template-columns: 1fr; /* Stack vertically on mobile */
     }
 }
 

@@ -82,20 +82,20 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Group</th>
-                                            <th>Building</th>
-                                            <th>Zip Code</th>
-                                            <th>Address</th>
+                                            <th>Buildings</th>
+                                            <th>Apartments</th>
+                                            <th>Devices</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let group of paginatedBuildingGroups; let i = index" 
                                             (click)="onBuildingGroupRowClick(i)" 
                                             [class.selected]="selectedBuildingGroupRow === i">
-                                            <td>{{ (buildingGroupCurrentPage - 1) * buildingGroupItemsPerPage + i + 1 }}</td>
-                                            <td>{{ group.name || 'Groupe Immobilier Paris Centre' }}</td>
-                                            <td>{{ group.address || 'Résidence Vendôme' }}</td>
-                                            <td>{{ (group.address && group.address.split(',')[1]) ? group.address.split(',')[1].trim() : '75001' }}</td>
-                                            <td>{{ group.address || '15 Place Vendôme, 75001 Paris' }}</td>
+                                            <td>{{ (currentGroupPage - 1) * itemsPerPage + i + 1 }}</td>
+                                            <td>{{ group.name }}</td>
+                                            <td>{{ group.buildingCount }}</td>
+                                            <td>{{ group.apartmentCount }}</td>
+                                            <td>{{ group.deviceCount }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -104,23 +104,23 @@
                             <!-- Building Groups Pagination - moved to bottom -->
                             <div class="pagination-inline" *ngIf="buildingGroupTotalPages > 1">
                                 <div class="pagination-info">
-                                    Showing {{ (buildingGroupCurrentPage - 1) * buildingGroupItemsPerPage + 1 }}-{{ Math.min(buildingGroupCurrentPage * buildingGroupItemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }} groups
+                                    Showing {{ (currentGroupPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentGroupPage * itemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }} groups
                                 </div>
                                 <div class="pagination-controls">
                                     <button class="pagination-btn" 
-                                            [disabled]="buildingGroupCurrentPage === 1" 
-                                            (click)="onBuildingGroupPageChange(buildingGroupCurrentPage - 1)">
+                                            [disabled]="currentGroupPage === 1" 
+                                            (click)="onBuildingGroupPageChange(currentGroupPage - 1)">
                                         ‹
                                     </button>
                                     <button *ngFor="let page of getBuildingGroupPageNumbers()" 
                                             class="pagination-btn" 
-                                            [class.active]="page === buildingGroupCurrentPage"
+                                            [class.active]="page === currentGroupPage"
                                             (click)="onBuildingGroupPageChange(page)">
                                         {{ page }}
                                     </button>
                                     <button class="pagination-btn" 
-                                            [disabled]="buildingGroupCurrentPage === buildingGroupTotalPages" 
-                                            (click)="onBuildingGroupPageChange(buildingGroupCurrentPage + 1)">
+                                            [disabled]="currentGroupPage === buildingGroupTotalPages" 
+                                            (click)="onBuildingGroupPageChange(currentGroupPage + 1)">
                                         ›
                                     </button>
                                 </div>
@@ -203,22 +203,20 @@
                                         <tr>
                                             <th>#</th>
                                             <th>Building</th>
-                                            <th>Zip Code</th>
+                                            <th>Apartments</th>
+                                            <th>Devices</th>
                                             <th>Address</th>
-                                            <th>Apartment</th>
-                                            <th>Tenant</th>
                                         </tr>
                                     </thead>
                                     <tbody>
                                         <tr *ngFor="let building of paginatedBuildings; let i = index" 
                                             (click)="onBuildingRowClick(i)" 
                                             [class.selected]="selectedBuildingRow === i">
-                                            <td>{{ (buildingCurrentPage - 1) * buildingItemsPerPage + i + 1 }}</td>
-                                            <td>{{ building.name || 'N/A' }}</td>
-                                            <td>{{ (building.address && building.address.split(',')[1]) ? building.address.split(',')[1].trim() : 'N/A' }}</td>
-                                            <td>{{ building.address || 'N/A' }}</td>
-                                            <td>{{ building.apartmentCount || 'N/A' }}</td>
-                                            <td>{{ building.buildingGroup || 'N/A' }}</td>
+                                            <td>{{ (currentBuildingPage - 1) * itemsPerPage + i + 1 }}</td>
+                                            <td>{{ building.name }}</td>
+                                            <td>{{ building.apartmentCount }}</td>
+                                            <td>{{ building.deviceCount }}</td>
+                                            <td>{{ building.address }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -226,23 +224,23 @@
                                 <!-- Building Pagination -->
                                 <div class="pagination-inline" *ngIf="buildingTotalPages > 1">
                                     <div class="pagination-info">
-                                        Showing {{ (buildingCurrentPage - 1) * buildingItemsPerPage + 1 }}-{{ Math.min(buildingCurrentPage * buildingItemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }} buildings
+                                        Showing {{ (currentBuildingPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentBuildingPage * itemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }} buildings
                                     </div>
                                     <div class="pagination-controls">
                                         <button class="pagination-btn" 
-                                                [disabled]="buildingCurrentPage === 1" 
-                                                (click)="onBuildingPageChange(buildingCurrentPage - 1)">
+                                                [disabled]="currentBuildingPage === 1" 
+                                                (click)="onBuildingPageChange(currentBuildingPage - 1)">
                                             ‹
                                         </button>
                                         <button *ngFor="let page of getBuildingPageNumbers()" 
                                                 class="pagination-btn" 
-                                                [class.active]="page === buildingCurrentPage"
+                                                [class.active]="page === currentBuildingPage"
                                                 (click)="onBuildingPageChange(page)">
                                             {{ page }}
                                         </button>
                                         <button class="pagination-btn" 
-                                                [disabled]="buildingCurrentPage === buildingTotalPages" 
-                                                (click)="onBuildingPageChange(buildingCurrentPage + 1)">
+                                                [disabled]="currentBuildingPage === buildingTotalPages" 
+                                                (click)="onBuildingPageChange(currentBuildingPage + 1)">
                                             ›
                                         </button>
                                     </div>
@@ -265,12 +263,12 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr *ngFor="let apartment of paginatedApartments; let i = index" 
+                                        <tr *ngFor="let apartment of apartmentGridData; let i = index" 
                                             (click)="onApartmentRowClick(i)" 
                                             [class.selected]="selectedApartmentRow === i">
-                                            <td>{{ (apartmentCurrentPage - 1) * apartmentItemsPerPage + i + 1 }}</td>
-                                            <td>{{ apartment.number || 'N/A' }}</td>
-                                            <td>{{ apartment.tenant || 'N/A' }}</td>
+                                            <td>{{ (apartmentCurrentPage - 1) * itemsPerPage + i + 1 }}</td>
+                                            <td>{{ apartment.apartment }}</td>
+                                            <td>{{ apartment.tenant }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
@@ -278,7 +276,7 @@
                                 <!-- Apartment Pagination -->
                                 <div class="pagination-inline" *ngIf="apartmentTotalPages > 1">
                                     <div class="pagination-info">
-                                        Showing {{ (apartmentCurrentPage - 1) * apartmentItemsPerPage + 1 }}-{{ Math.min(apartmentCurrentPage * apartmentItemsPerPage, apartmentTotalItems) }} of {{ apartmentTotalItems }} apartments
+                                        Showing {{ (apartmentCurrentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(apartmentCurrentPage * itemsPerPage, apartmentTotalItems) }} of {{ apartmentTotalItems }} apartments
                                     </div>
                                     <div class="pagination-controls">
                                         <button class="pagination-btn" 
