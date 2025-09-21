@@ -93,12 +93,16 @@
     margin-bottom: 24px;
 }
 
-.message-board-section h2 {
+.section-header {
+    margin-bottom: 16px;
+    padding-left: 22px;
+}
+
+.section-header h2 {
     font-size: 18px;
     font-weight: 600;
-    margin: 0 0 16px 0;
+    margin: 0;
     color: #333;
-    padding-left: 22px;
 }
 
 .table-container {
@@ -225,6 +229,102 @@
     text-align: center;
 }
 
+/* Pagination Styles */
+.pagination-inline {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 12px;
+    padding: 12px 16px;
+    border-top: 1px solid #d1d5db;
+    border-radius: 0 0 18px 18px;
+}
+
+.pagination-info {
+    font-size: 12px;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+
+.pagination-btn {
+    appearance: none;
+    border: 1px solid #d1d5db;
+    border-radius: 4px;
+    background: #fff;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: 500;
+    color: #374151;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 28px;
+    text-align: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.pagination-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    background: #f9fafb;
+}
+
+.pagination-btn.active {
+    background: #6c5ce7;
+    border-color: #6c5ce7;
+    color: #fff;
+}
+
+.pagination-btn.active:hover {
+    background: #5b4ce6;
+    border-color: #5b4ce6;
+}
+
+/* Loading and Error States */
+.loading-state, .error-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    text-align: center;
+}
+
+.loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #6c5ce7;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 16px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.loading-state p, .error-state p {
+    margin: 0;
+    color: #666;
+    font-size: 14px;
+}
+
+.error-state p {
+    color: #dc3545;
+    margin-bottom: 16px;
+}
+
 /* Button Styles */
 .pill {
     appearance: none;
@@ -278,6 +378,28 @@
     
     .alarm-summary {
         grid-template-columns: 1fr;
+    }
+    
+    .section-header {
+        padding-left: 0;
+    }
+    
+    .pagination-inline {
+        flex-direction: column;
+        gap: 8px;
+        align-items: center;
+        padding: 8px 12px;
+        margin-top: 8px;
+    }
+    
+    .pagination-controls {
+        gap: 4px;
+    }
+    
+    .pagination-btn {
+        padding: 3px 6px;
+        font-size: 10px;
+        min-width: 24px;
     }
     
     .actions {

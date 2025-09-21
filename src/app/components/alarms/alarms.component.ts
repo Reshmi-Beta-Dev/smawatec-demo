@@ -20,7 +20,7 @@ export class AlarmsComponent implements OnInit {
 
   // Pagination properties
   currentPage = 1;
-  itemsPerPage = 10;
+  itemsPerPage = 8; // Show 8 rows per page
   totalItems = 0;
   totalPages = 0;
 
@@ -65,10 +65,15 @@ export class AlarmsComponent implements OnInit {
   async loadAlarmMessages() {
     try {
       this.loading = true;
-      const response = await this.mockDataService.getAlarmMessages(this.currentPage, this.itemsPerPage);
-      this.alarmMessages = response.alarms;
+      // Generate more data for pagination - request 100 items to ensure we have enough data
+      const response = await this.mockDataService.getAlarmMessages(1, 100);
       this.totalItems = response.totalCount;
-      this.totalPages = response.totalPages;
+      this.totalPages = Math.ceil(this.totalItems / this.itemsPerPage);
+      
+      // Get the current page data
+      const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      this.alarmMessages = response.alarms.slice(startIndex, endIndex);
     } catch (error) {
       console.error('Error loading alarm messages:', error);
       this.error = 'Failed to load alarm messages';

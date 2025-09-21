@@ -68,9 +68,24 @@
 
         <!-- Message Board Section -->
         <div class="message-board-section">
-            <h2>Message Board</h2>
+            <div class="section-header">
+                <h2>Message Board</h2>
+            </div>
             <div class="table-container">
-                <table class="message-table">
+                <!-- Loading State -->
+                <div *ngIf="loading" class="loading-state">
+                    <div class="loading-spinner"></div>
+                    <p>Loading alarms...</p>
+                </div>
+                
+                <!-- Error State -->
+                <div *ngIf="error && !loading" class="error-state">
+                    <p>{{ error }}</p>
+                    <button class="pill" (click)="loadAlarmMessages()">Retry</button>
+                </div>
+                
+                <!-- Data Table -->
+                <table *ngIf="!loading && !error" class="message-table">
                     <thead>
                         <tr>
                             <th>#</th>
@@ -96,18 +111,18 @@
                             [class.low-temp]="alarm.alarm_type === 'low_temperature'"
                             (click)="onRowClick(i)" 
                             [class.selected]="selectedRow === i">
-                            <td>{{ i + 1 }}</td>
+                            <td>{{ (currentPage - 1) * itemsPerPage + i + 1 }}</td>
                             <td>{{ alarm.devices?.apartments?.buildings?.building_name || 'N/A' }}</td>
-                            <td>{{ (alarm.devices?.apartments?.buildings?.street_number || '') + ' ' + (alarm.devices?.apartments?.buildings?.additional_address || '') || 'N/A' }}</td>
+                            <td>{{ alarm.building_address || 'N/A' }}</td>
                             <td>{{ alarm.devices?.apartments?.apartment_number || 'N/A' }}</td>
                             <td>{{ getTenantName(alarm) }}</td>
                             <td>
                                 <span class="alarm-badge" 
-                                      [class.major]="alarm.alarm_type === 'major_leak'"
-                                      [class.medium]="alarm.alarm_type === 'medium_leak'"
-                                      [class.micro]="alarm.alarm_type === 'micro_leak'"
-                                      [class.low-temp]="alarm.alarm_type === 'low_temperature'">
-                                    {{ alarm.alarm_types?.type_name || 'Unknown' }}
+                                      [class.major]="alarm.alarm_severity === 'high'"
+                                      [class.medium]="alarm.alarm_severity === 'medium'"
+                                      [class.micro]="alarm.alarm_severity === 'low'"
+                                      [class.low-temp]="alarm.alarm_type_name && alarm.alarm_type_name.toLowerCase().includes('temperature')">
+                                    {{ alarm.alarm_type_name || 'Unknown' }}
                                 </span>
                             </td>
                             <td>{{ alarm.message || 'N/A' }}</td>
@@ -119,6 +134,31 @@
                         </tr>
                     </tbody>
                 </table>
+                
+                <!-- Pagination Controls Inside Grid -->
+                <div class="pagination-inline" *ngIf="totalPages > 1 && !loading && !error">
+                    <div class="pagination-info">
+                        Showing {{ (currentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentPage * itemsPerPage, totalItems) }} of {{ totalItems }} alarms
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" 
+                                [disabled]="currentPage === 1" 
+                                (click)="onPageChange(currentPage - 1)">
+                            ‹
+                        </button>
+                        <button *ngFor="let page of getPageNumbers()" 
+                                class="pagination-btn" 
+                                [class.active]="page === currentPage"
+                                (click)="onPageChange(page)">
+                            {{ page }}
+                        </button>
+                        <button class="pagination-btn" 
+                                [disabled]="currentPage === totalPages" 
+                                (click)="onPageChange(currentPage + 1)">
+                            ›
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
