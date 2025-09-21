@@ -87,6 +87,8 @@ export class BuildingComponent implements OnInit {
     // Load apartment grid data based on default selected building
     if (this.paginatedBuildings.length > 0) {
       await this.loadApartmentGridData(this.paginatedBuildings[0]);
+      // Select first apartment by default
+      this.selectedApartmentRow = 0;
     }
   }
 
@@ -118,16 +120,14 @@ export class BuildingComponent implements OnInit {
   }
 
   async onGroupRowClick(index: number) {
-    // Only select if not already selected
-    if (this.selectedGroupRow !== index) {
-      this.selectedGroupRow = index;
-      this.selectedBuildingRow = null;
-      this.selectedRow = null;
-      
-      const buildingGroup = this.paginatedBuildingGroups[index];
-      // Load buildings for this group
-      await this.loadBuildingsForGroup(buildingGroup.id);
-    }
+    // Always select the clicked row (no unselect)
+    this.selectedGroupRow = index;
+    this.selectedBuildingRow = null;
+    this.selectedRow = null;
+    
+    const buildingGroup = this.paginatedBuildingGroups[index];
+    // Load buildings for this group
+    await this.loadBuildingsForGroup(buildingGroup.id);
   }
 
   onGroupPageChange(page: number) {
@@ -158,17 +158,15 @@ export class BuildingComponent implements OnInit {
   }
 
   async onBuildingRowClick(index: number) {
-    // Only select if not already selected
-    if (this.selectedBuildingRow !== index) {
-      this.selectedBuildingRow = index;
-      this.selectedRow = index;
-      
-      const building = this.paginatedBuildings[index];
-      // Load apartments for this building
-      await this.loadApartmentsForBuilding(building.id);
-      // Load apartment grid data based on building
-      await this.loadApartmentGridData(building);
-    }
+    // Always select the clicked row (no unselect)
+    this.selectedBuildingRow = index;
+    this.selectedRow = index;
+    
+    const building = this.paginatedBuildings[index];
+    // Load apartments for this building
+    await this.loadApartmentsForBuilding(building.id);
+    // Load apartment grid data based on building
+    await this.loadApartmentGridData(building);
   }
 
   onBuildingRowDoubleClick(building: any, index: number) {
@@ -195,6 +193,8 @@ export class BuildingComponent implements OnInit {
         await this.loadApartmentsForBuilding(buildings[0].id);
         // Load apartment grid data for the first building
         await this.loadApartmentGridData(buildings[0]);
+        // Select first apartment by default
+        this.selectedApartmentRow = 0;
       }
     } catch (error) {
       console.error('Error loading buildings for group:', error);
@@ -275,16 +275,24 @@ export class BuildingComponent implements OnInit {
   }
 
   getSelectedApartment(): any {
+    // Get selected apartment from apartment grid
+    if (this.selectedApartmentRow !== null && this.apartmentGridData[this.selectedApartmentRow]) {
+      const apartment = this.apartmentGridData[this.selectedApartmentRow];
+      return {
+        number: apartment.apartment,
+        water_price_per_m3: 3.45,
+        floor: 1,
+        surface_area: 45.5,
+        rooms: 2,
+        tenant: apartment.tenant,
+        buildingName: apartment.buildingName
+      };
+    }
+    
+    // Fallback to building-based apartment if no apartment selected
     if (this.selectedBuildingRow !== null && this.paginatedBuildings[this.selectedBuildingRow]) {
       const building = this.paginatedBuildings[this.selectedBuildingRow];
-      // Try to find apartment by building name or building ID
-      const apartment = this.apartments.find(apt => 
-        apt.building === building.name || 
-        apt.building_id === building.id ||
-        apt.buildingGroup === building.buildingGroup
-      );
-      
-      return apartment || {
+      return {
         number: `Apt ${building.name?.split(' ').pop() || '001'}`,
         water_price_per_m3: 3.45,
         floor: 1,
@@ -292,6 +300,7 @@ export class BuildingComponent implements OnInit {
         rooms: 2
       };
     }
+    
     return {
       number: 'Apt 001',
       water_price_per_m3: 3.45,
@@ -302,9 +311,27 @@ export class BuildingComponent implements OnInit {
   }
 
   getSelectedTenant(): any {
+    // Get tenant from selected apartment in apartment grid
+    if (this.selectedApartmentRow !== null && this.apartmentGridData[this.selectedApartmentRow]) {
+      const apartment = this.apartmentGridData[this.selectedApartmentRow];
+      // Parse tenant name from apartment data
+      const tenantName = apartment.tenant || 'Marie Dubois';
+      const nameParts = tenantName.split(' ');
+      const firstName = nameParts[0] || 'Marie';
+      const lastName = nameParts.slice(1).join(' ') || 'Dubois';
+      
+      return {
+        first_name: firstName,
+        last_name: lastName,
+        phone: '+33 1 42 36 78 90',
+        mobile_phone: '+33 6 12 34 56 78',
+        email: `${firstName.toLowerCase()}.${lastName.toLowerCase()}@email.fr`
+      };
+    }
+    
+    // Fallback to building-based tenant if no apartment selected
     if (this.selectedBuildingRow !== null && this.paginatedBuildings[this.selectedBuildingRow]) {
       const building = this.paginatedBuildings[this.selectedBuildingRow];
-      // Try to find apartment by building name or building ID
       const apartment = this.apartments.find(apt => 
         apt.building === building.name || 
         apt.building_id === building.id ||
@@ -320,6 +347,7 @@ export class BuildingComponent implements OnInit {
         email: 'marie.dubois@email.fr'
       };
     }
+    
     return {
       first_name: 'Marie',
       last_name: 'Dubois',
@@ -595,7 +623,21 @@ export class BuildingComponent implements OnInit {
   }
 
   onApartmentRowClick(index: number) {
-    this.selectedApartmentRow = this.selectedApartmentRow === index ? null : index;
+    // Always select the clicked row (no unselect)
+    this.selectedApartmentRow = index;
+    
+    // Load apartment details for the selected apartment
+    const selectedApartment = this.apartmentGridData[index];
+    if (selectedApartment) {
+      this.loadApartmentDetails(selectedApartment);
+    }
+  }
+
+  loadApartmentDetails(apartment: any) {
+    // Load apartment details - this could populate a details panel or form
+    console.log('Selected apartment:', apartment);
+    // In a real app, this would load detailed apartment information
+    // For now, we'll just log the selection
   }
 
   addApartment() {

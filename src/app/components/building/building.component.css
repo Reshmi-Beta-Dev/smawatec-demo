@@ -823,7 +823,7 @@
 /* Building and Apartment Grids Layout */
 .building-apartment-grids-section {
     display: grid;
-    grid-template-columns: 1fr 1fr; /* 50% each */
+    grid-template-columns: 3fr 2fr; /* 60% building, 40% apartment */
     gap: 16px;
     margin-bottom: var(--spacing-md);
 }
@@ -897,14 +897,15 @@
 }
 
 .apartment-grid-panel .pill.outline.danger {
-    color: #ef4444;
-    border-color: #ef4444;
+    color: #ef4444 !important;
+    border-color: #ef4444 !important;
+    background: transparent !important;
 }
 
 .apartment-grid-panel .pill.outline.danger:hover {
-    background: #fef2f2;
-    color: #dc2626;
-    border-color: #dc2626;
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+    border-color: #dc2626 !important;
 }
 
 /* Responsive Building and Apartment Grids */
