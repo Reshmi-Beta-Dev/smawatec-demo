@@ -116,11 +116,12 @@
     border-spacing: 0 2px; /* Reduced from 4px to match overview page */
     font-size: 12px; /* Reduced from 13px to match overview page */
     background: transparent;
+    text-align: left;
 }
 
 .message-table thead th {
     font-size: 12px; /* Reduced from 13px to match overview page */
-    text-align: right;
+    text-align: left;
     color: #3e424c;
     padding: var(--spacing-sm) var(--spacing-sm); /* 8px - using standard spacing */
     border: 0;
@@ -160,6 +161,7 @@
     padding: 3px 4px; /* Reduced to match overview page */
     border: 0;
     white-space: nowrap;
+    text-align: left;
 }
 
 .message-table tbody tr td:first-child {
