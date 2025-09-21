@@ -39,6 +39,13 @@ export class BuildingComponent implements OnInit {
   paginatedBuildings: any[] = [];
   paginatedBuildingGroups: any[] = [];
 
+  // Apartment grid properties
+  apartmentGridData: any[] = [];
+  selectedApartmentRow: number | null = null;
+  apartmentCurrentPage = 1;
+  apartmentTotalPages = 1;
+  apartmentTotalItems = 0;
+
   // Modal properties
   showAddGroupModal = false;
   showAddBuildingModal = false;
@@ -74,7 +81,8 @@ export class BuildingComponent implements OnInit {
     // Load other data in parallel (but don't load buildings again as it's already loaded by setDefaultSelections)
     await Promise.all([
       this.loadApartments(),
-      this.loadTenants()
+      this.loadTenants(),
+      this.loadApartmentGridData()
     ]);
   }
 
@@ -348,9 +356,6 @@ export class BuildingComponent implements OnInit {
     }
   }
 
-  addApartment() {
-    this.showNotification('Add apartment functionality');
-  }
 
   saveDetails() {
     this.showNotification('Save details functionality');
@@ -470,6 +475,118 @@ export class BuildingComponent implements OnInit {
   showNotification(message: string): void {
     console.log('Notification:', message);
     // In a real app, this would show a toast notification
+  }
+
+  // Apartment grid methods
+  async loadApartmentGridData() {
+    // Mock apartment grid data based on the image - create more data for pagination
+    const allApartmentData = [
+      {
+        id: 1,
+        apartment: 'Block 1, L2, APT 12',
+        tenant: 'Mr. Francois Duc de la Roche Focault'
+      },
+      {
+        id: 2,
+        apartment: 'L23, APT 3',
+        tenant: 'Mr. Napoleon Bonaparte'
+      },
+      {
+        id: 3,
+        apartment: 'Block 3, L45, APT 23',
+        tenant: 'Mr. Gerard Depardieu'
+      },
+      {
+        id: 4,
+        apartment: 'Block, 32 L1, APT1',
+        tenant: 'Mr. Luis Vuitton'
+      },
+      {
+        id: 5,
+        apartment: 'Block 2, L5, APT 15',
+        tenant: 'Ms. Marie Curie'
+      },
+      {
+        id: 6,
+        apartment: 'L12, APT 8',
+        tenant: 'Mr. Victor Hugo'
+      },
+      {
+        id: 7,
+        apartment: 'Block 4, L8, APT 32',
+        tenant: 'Ms. Coco Chanel'
+      },
+      {
+        id: 8,
+        apartment: 'L45, APT 12',
+        tenant: 'Mr. Albert Einstein'
+      },
+      {
+        id: 9,
+        apartment: 'Block 5, L15, APT 45',
+        tenant: 'Ms. Edith Piaf'
+      },
+      {
+        id: 10,
+        apartment: 'L67, APT 23',
+        tenant: 'Mr. Claude Monet'
+      },
+      {
+        id: 11,
+        apartment: 'Block 6, L22, APT 67',
+        tenant: 'Ms. Brigitte Bardot'
+      },
+      {
+        id: 12,
+        apartment: 'L89, APT 34',
+        tenant: 'Mr. Jean-Paul Sartre'
+      }
+    ];
+    
+    // Set up pagination
+    this.apartmentTotalItems = allApartmentData.length;
+    this.apartmentTotalPages = Math.ceil(allApartmentData.length / this.itemsPerPage);
+    this.apartmentCurrentPage = 1;
+    
+    // Get paginated data
+    const startIndex = (this.apartmentCurrentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.apartmentGridData = allApartmentData.slice(startIndex, endIndex);
+  }
+
+  onApartmentRowClick(index: number) {
+    this.selectedApartmentRow = this.selectedApartmentRow === index ? null : index;
+  }
+
+  addApartment() {
+    this.showNotification('Add Apartment functionality');
+  }
+
+  removeApartment() {
+    if (this.selectedApartmentRow !== null) {
+      this.apartmentGridData.splice(this.selectedApartmentRow, 1);
+      this.selectedApartmentRow = null;
+      this.showNotification('Apartment removed successfully');
+    } else {
+      this.showNotification('Please select an apartment to remove');
+    }
+  }
+
+  // Apartment pagination methods
+  getApartmentPageNumbers(): number[] {
+    const pages: number[] = [];
+    const startPage = Math.max(1, this.apartmentCurrentPage - 2);
+    const endPage = Math.min(this.apartmentTotalPages, this.apartmentCurrentPage + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  onApartmentPageChange(page: number) {
+    this.apartmentCurrentPage = page;
+    this.loadApartmentGridData();
   }
 
   // Math object for template

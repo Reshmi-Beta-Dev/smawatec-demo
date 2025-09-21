@@ -88,64 +88,42 @@
                                         </tr>
                                     </thead>
                                     <tbody>
-                                        <tr (click)="onBuildingGroupRowClick(0)" [class.selected]="selectedBuildingGroupRow === 0">
-                                            <td>1</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(1)" [class.selected]="selectedBuildingGroupRow === 1">
-                                            <td>2</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23234</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(2)" [class.selected]="selectedBuildingGroupRow === 2">
-                                            <td>3</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(3)" [class.selected]="selectedBuildingGroupRow === 3">
-                                            <td>4</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(4)" [class.selected]="selectedBuildingGroupRow === 4">
-                                            <td>5</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(5)" [class.selected]="selectedBuildingGroupRow === 5">
-                                            <td>6</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(6)" [class.selected]="selectedBuildingGroupRow === 6">
-                                            <td>7</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        </tr>
-                                        <tr (click)="onBuildingGroupRowClick(7)" [class.selected]="selectedBuildingGroupRow === 7">
-                                            <td>8</td>
-                                            <td>PAR - GP1</td>
-                                            <td>PAR-GP1-B12012</td>
-                                            <td>23212</td>
-                                            <td>Paris, Champs Elysees, Rue de la Place</td>
+                                        <tr *ngFor="let group of paginatedBuildingGroups; let i = index" 
+                                            (click)="onBuildingGroupRowClick(i)" 
+                                            [class.selected]="selectedBuildingGroupRow === i">
+                                            <td>{{ (buildingGroupCurrentPage - 1) * buildingGroupItemsPerPage + i + 1 }}</td>
+                                            <td>{{ group.name || 'Groupe Immobilier Paris Centre' }}</td>
+                                            <td>{{ group.address || 'Résidence Vendôme' }}</td>
+                                            <td>{{ (group.address && group.address.split(',')[1]) ? group.address.split(',')[1].trim() : '75001' }}</td>
+                                            <td>{{ group.address || '15 Place Vendôme, 75001 Paris' }}</td>
                                         </tr>
                                     </tbody>
                                 </table>
+                                
+                                <!-- Building Groups Pagination -->
+                                <div class="pagination-inline" *ngIf="buildingGroupTotalPages > 1">
+                                    <div class="pagination-info">
+                                        Showing {{ (buildingGroupCurrentPage - 1) * buildingGroupItemsPerPage + 1 }}-{{ Math.min(buildingGroupCurrentPage * buildingGroupItemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }} groups
+                                    </div>
+                                    <div class="pagination-controls">
+                                        <button class="pagination-btn" 
+                                                [disabled]="buildingGroupCurrentPage === 1" 
+                                                (click)="onBuildingGroupPageChange(buildingGroupCurrentPage - 1)">
+                                            ‹
+                                        </button>
+                                        <button *ngFor="let page of getBuildingGroupPageNumbers()" 
+                                                class="pagination-btn" 
+                                                [class.active]="page === buildingGroupCurrentPage"
+                                                (click)="onBuildingGroupPageChange(page)">
+                                            {{ page }}
+                                        </button>
+                                        <button class="pagination-btn" 
+                                                [disabled]="buildingGroupCurrentPage === buildingGroupTotalPages" 
+                                                (click)="onBuildingGroupPageChange(buildingGroupCurrentPage + 1)">
+                                            ›
+                                        </button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>

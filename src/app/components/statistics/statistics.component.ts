@@ -98,6 +98,7 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   async loadBuildingGroups() {
     try {
       this.loading = true;
+      // Use the same data as Device Organizer
       const response = await this.mockDataService.getBuildingGroups(this.buildingGroupCurrentPage, this.buildingGroupItemsPerPage);
       this.paginatedBuildingGroups = response.buildingGroups;
       this.buildingGroupTotalItems = response.totalCount;
