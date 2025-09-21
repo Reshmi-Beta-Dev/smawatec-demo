@@ -52,19 +52,11 @@
                     <div class="device-details">
                         <div class="device-field">
                             <span class="device-label">Device Name:</span>
-                            <span class="device-value">{{ devices[0]?.name || 'Compteur Eau Principal' }}</span>
+                            <span class="device-value">{{ deviceDetails?.name || 'Compteur Eau Principal' }}</span>
                         </div>
                         <div class="device-field">
                             <span class="device-label">Serial Number:</span>
-                            <span class="device-value">{{ devices[0]?.serial || 'SM-001-001' }}</span>
-                        </div>
-                        <div class="device-field">
-                            <span class="device-label">Status:</span>
-                            <span class="device-value">{{ devices[0]?.status || 'Actif' }}</span>
-                        </div>
-                        <div class="device-field">
-                            <span class="device-label">Location:</span>
-                            <span class="device-value">{{ devices[0]?.location || 'Résidence Vendôme' }}</span>
+                            <span class="device-value">{{ deviceDetails?.serial || 'SM-001-001' }}</span>
                         </div>
                     </div>
                     <div class="device-actions">
@@ -105,7 +97,7 @@
                 <!-- Pagination for Building Groups -->
                 <div class="pagination-inline" *ngIf="buildingGroupTotalPages > 1">
                     <div class="pagination-info">
-                        {{ (currentGroupPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentGroupPage * itemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }}
+                        Showing {{ (currentGroupPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentGroupPage * itemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }} groups
                     </div>
                     <div class="pagination-controls">
                         <button class="pagination-btn" 
@@ -137,9 +129,9 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Building</th>
-                            <th>Zip Code</th>
+                            <th>Building Name</th>
                             <th>Address</th>
+                            <th>Zip Code</th>
                             <th>Apartment</th>
                             <th>Tenant</th>
                         </tr>
@@ -150,10 +142,10 @@
                             [class.selected]="selectedBuildingRow === i">
                             <td>{{ (currentBuildingPage - 1) * itemsPerPage + i + 1 }}</td>
                             <td>{{ building.name || 'Résidence Vendôme' }}</td>
-                            <td>{{ building.zip_code || building.address?.split(',')[1]?.trim() || '75001' }}</td>
                             <td>{{ building.address || '15 Place Vendôme, 75001 Paris' }}</td>
-                            <td>{{ building.apartmentCount || 'Apt 101' }}</td>
-                            <td>{{ building.buildingGroup || 'Marie Dubois' }}</td>
+                            <td>{{ building.zip_code || building.address?.split(',')[1]?.trim() || '75001' }}</td>
+                            <td>{{ building.apartmentAddress || 'Apt 101, 15 Place Vendôme' }}</td>
+                            <td>{{ building.tenantName || 'Marie Dubois' }}</td>
                         </tr>
                     </tbody>
                 </table>
@@ -161,7 +153,7 @@
                 <!-- Pagination for Buildings -->
                 <div class="pagination-inline" *ngIf="buildingTotalPages > 1">
                     <div class="pagination-info">
-                        {{ (currentBuildingPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentBuildingPage * itemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }}
+                        Showing {{ (currentBuildingPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentBuildingPage * itemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }} buildings
                     </div>
                     <div class="pagination-controls">
                         <button class="pagination-btn" 
@@ -196,10 +188,10 @@
                     <thead>
                         <tr>
                             <th>#</th>
-                            <th>Serial Nummer</th>
+                            <th>Serial Number</th>
                             <th>Last Device Name</th>
-                            <th>last address</th>
-                            <th>last Aptartment</th>
+                            <th>Last Address</th>
+                            <th>Last Apartment</th>
                             <th>Last Tenant</th>
                         </tr>
                     </thead>
@@ -207,7 +199,7 @@
                         <tr *ngFor="let device of unassignedDevices; let i = index" 
                             (click)="onUnassignedRowClick(i)" 
                             [class.selected]="selectedUnassignedRow === i">
-                            <td>{{ i + 1 }}</td>
+                            <td>{{ (currentUnassignedPage - 1) * itemsPerPage + i + 1 }}</td>
                             <td>{{ device.serial || 'SM-UN-001' }}</td>
                             <td>{{ device.lastDeviceName || 'Compteur Eau Ancien' }}</td>
                             <td>{{ device.lastAddress || '15 Place Vendôme, 75001 Paris' }}</td>
@@ -216,6 +208,31 @@
                         </tr>
                     </tbody>
                 </table>
+                
+                <!-- Pagination for Unassigned Devices -->
+                <div class="pagination-inline" *ngIf="unassignedTotalPages > 1">
+                    <div class="pagination-info">
+                        Showing {{ (currentUnassignedPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentUnassignedPage * itemsPerPage, unassignedTotalItems) }} of {{ unassignedTotalItems }} devices
+                    </div>
+                    <div class="pagination-controls">
+                        <button class="pagination-btn" 
+                                [disabled]="currentUnassignedPage === 1" 
+                                (click)="onUnassignedPageChange(currentUnassignedPage - 1)">
+                            ‹
+                        </button>
+                        <button *ngFor="let page of getUnassignedPageNumbers()" 
+                                class="pagination-btn" 
+                                [class.active]="page === currentUnassignedPage"
+                                (click)="onUnassignedPageChange(page)">
+                            {{ page }}
+                        </button>
+                        <button class="pagination-btn" 
+                                [disabled]="currentUnassignedPage === unassignedTotalPages" 
+                                (click)="onUnassignedPageChange(currentUnassignedPage + 1)">
+                            ›
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
