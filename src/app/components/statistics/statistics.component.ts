@@ -93,6 +93,11 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   periodTo: string = '';
   userModifiedPeriod: boolean = false; // Track if user manually changed period dates
 
+  private searchTimeout: any;
+  private originalBuildingGroups: any[] = [];
+  private originalBuildings: any[] = [];
+  private originalApartments: any[] = [];
+
   constructor(
     private mockDataService: MockDataService,
     private pdfExportService: PdfExportService,
@@ -282,11 +287,17 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   async loadBuildingGroups() {
     try {
       this.loading = true;
-      const response = await this.mockDataService.getBuildingGroups(this.currentGroupPage, this.itemsPerPage);
-      this.paginatedBuildingGroups = response.buildingGroups;
-      this.buildingGroups = response.buildingGroups;
-      this.buildingGroupTotalPages = response.totalPages;
-      this.buildingGroupTotalItems = response.totalCount;
+      // Load all building groups for search functionality
+      const allGroupsResponse = await this.mockDataService.getBuildingGroups(1, 1000);
+      this.originalBuildingGroups = allGroupsResponse.buildingGroups;
+      
+      // Paginate for display
+      const startIndex = (this.currentGroupPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      this.paginatedBuildingGroups = allGroupsResponse.buildingGroups.slice(startIndex, endIndex);
+      
+      this.buildingGroupTotalItems = allGroupsResponse.totalCount;
+      this.buildingGroupTotalPages = Math.ceil(allGroupsResponse.totalCount / this.itemsPerPage);
     } catch (error) {
       console.error('Error loading building groups:', error);
       this.error = 'Failed to load building groups';
@@ -338,11 +349,17 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
   async loadBuildings() {
     try {
       this.loading = true;
-      const response = await this.mockDataService.getBuildings(this.currentBuildingPage, this.itemsPerPage);
-      this.paginatedBuildings = response.buildings;
-      this.buildings = response.buildings;
-      this.buildingTotalPages = response.totalPages;
-      this.buildingTotalItems = response.totalCount;
+      // Load all buildings for search functionality
+      const allBuildingsResponse = await this.mockDataService.getBuildings(1, 1000);
+      this.originalBuildings = allBuildingsResponse.buildings;
+      
+      // Paginate for display
+      const startIndex = (this.currentBuildingPage - 1) * this.itemsPerPage;
+      const endIndex = startIndex + this.itemsPerPage;
+      this.paginatedBuildings = allBuildingsResponse.buildings.slice(startIndex, endIndex);
+      
+      this.buildingTotalItems = allBuildingsResponse.totalCount;
+      this.buildingTotalPages = Math.ceil(allBuildingsResponse.totalCount / this.itemsPerPage);
     } catch (error) {
       console.error('Error loading buildings:', error);
       this.error = 'Failed to load buildings';
@@ -535,8 +552,9 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     // Generate apartment data based on the building's apartment count
     const allApartmentData = this.generateApartmentData(apartmentCount, buildingName, selectedBuilding?.id);
     
-    // Store full data for pagination
+    // Store full data for pagination and search
     this.fullApartmentGridData = allApartmentData;
+    this.originalApartments = allApartmentData;
     
     // Set up pagination
     this.apartmentTotalItems = allApartmentData.length;
@@ -1433,5 +1451,197 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       };
     }
     return {};
+  }
+
+  // Search functionality
+  onSearch() {
+    // Clear existing timeout
+    if (this.searchTimeout) {
+      clearTimeout(this.searchTimeout);
+    }
+
+    // Set new timeout for debounced search
+    this.searchTimeout = setTimeout(() => {
+      this.performSearch();
+    }, 300);
+  }
+
+  onClearSearch() {
+    // Clear search data
+    this.searchData = {
+      keyword: '',
+      building: '',
+      buildingGroup: '',
+      deviceName: '',
+      city: '',
+      zipCode: '',
+      tenant: '',
+      tenantId: ''
+    };
+
+    // Reset to original data
+    this.resetToOriginalData();
+  }
+
+  private resetToOriginalData() {
+    // Reset building groups
+    this.paginatedBuildingGroups = [...this.originalBuildingGroups];
+    this.buildingGroupTotalItems = this.originalBuildingGroups.length;
+    this.buildingGroupTotalPages = Math.ceil(this.originalBuildingGroups.length / this.itemsPerPage);
+    this.currentGroupPage = 1;
+
+    // Reset buildings
+    this.paginatedBuildings = [...this.originalBuildings];
+    this.buildingTotalItems = this.originalBuildings.length;
+    this.buildingTotalPages = Math.ceil(this.originalBuildings.length / this.itemsPerPage);
+    this.currentBuildingPage = 1;
+
+    // Reset apartments
+    this.apartmentGridData = [...this.originalApartments];
+    this.apartmentTotalItems = this.originalApartments.length;
+    this.apartmentTotalPages = Math.ceil(this.originalApartments.length / this.itemsPerPage);
+    this.apartmentCurrentPage = 1;
+
+    // Update pagination
+    this.updateBuildingGroupPagination();
+    this.updateBuildingPagination();
+    this.updateApartmentPagination();
+  }
+
+  private performSearch() {
+    if (!this.hasSearchCriteria()) {
+      this.resetToOriginalData();
+      return;
+    }
+
+    // Filter building groups
+    const filteredBuildingGroups = this.originalBuildingGroups.filter(group => 
+      this.matchesSearchCriteria(group, 'buildingGroup')
+    );
+
+    // Filter buildings
+    const filteredBuildings = this.originalBuildings.filter(building => 
+      this.matchesSearchCriteria(building, 'building')
+    );
+
+    // Filter apartments
+    const filteredApartments = this.originalApartments.filter(apartment => 
+      this.matchesSearchCriteria(apartment, 'apartment')
+    );
+
+    // Update building groups
+    this.paginatedBuildingGroups = filteredBuildingGroups;
+    this.buildingGroupTotalItems = filteredBuildingGroups.length;
+    this.buildingGroupTotalPages = Math.ceil(filteredBuildingGroups.length / this.itemsPerPage);
+    this.currentGroupPage = 1;
+
+    // Update buildings
+    this.paginatedBuildings = filteredBuildings;
+    this.buildingTotalItems = filteredBuildings.length;
+    this.buildingTotalPages = Math.ceil(filteredBuildings.length / this.itemsPerPage);
+    this.currentBuildingPage = 1;
+
+    // Update apartments
+    this.apartmentGridData = filteredApartments;
+    this.apartmentTotalItems = filteredApartments.length;
+    this.apartmentTotalPages = Math.ceil(filteredApartments.length / this.itemsPerPage);
+    this.apartmentCurrentPage = 1;
+
+    // Update pagination
+    this.updateBuildingGroupPagination();
+    this.updateBuildingPagination();
+    this.updateApartmentPagination();
+  }
+
+  private hasSearchCriteria(): boolean {
+    return Object.values(this.searchData).some(value => value && typeof value === 'string' && value.trim() !== '');
+  }
+
+  private matchesSearchCriteria(item: any, type: 'buildingGroup' | 'building' | 'apartment'): boolean {
+    const searchFields = this.getSearchFieldsForType(type);
+    
+    return searchFields.some(field => {
+      const value = this.getFieldValue(item, field);
+      if (!value) return false;
+
+      const searchValue = this.getSearchValueForField(field);
+      if (!searchValue) return true; // If no search value for this field, include item
+
+      return value.toString().toLowerCase().includes(searchValue.toLowerCase());
+    });
+  }
+
+  private getSearchFieldsForType(type: 'buildingGroup' | 'building' | 'apartment'): string[] {
+    switch (type) {
+      case 'buildingGroup':
+        return ['name', 'city'];
+      case 'building':
+        return ['name', 'city', 'zipCode', 'buildingGroup'];
+      case 'apartment':
+        return ['apartment', 'tenant', 'type', 'building', 'buildingGroup'];
+      default:
+        return [];
+    }
+  }
+
+  private getFieldValue(item: any, field: string): any {
+    switch (field) {
+      case 'buildingGroup':
+        return item.buildingGroup || item.group?.name;
+      case 'building':
+        return item.building || item.name;
+      case 'apartment':
+        return item.apartment || item.number;
+      case 'tenant':
+        return item.tenant || item.tenant_name;
+      case 'type':
+        return item.type;
+      case 'city':
+        return item.city;
+      case 'zipCode':
+        return item.zipCode || item.zip_code;
+      default:
+        return item[field];
+    }
+  }
+
+  private getSearchValueForField(field: string): string {
+    switch (field) {
+      case 'name':
+      case 'buildingGroup':
+        return this.searchData.buildingGroup;
+      case 'building':
+        return this.searchData.building;
+      case 'apartment':
+        return this.searchData.keyword;
+      case 'tenant':
+        return this.searchData.tenant;
+      case 'type':
+        return this.searchData.keyword;
+      case 'city':
+        return this.searchData.city;
+      case 'zipCode':
+        return this.searchData.zipCode;
+      default:
+        return this.searchData.keyword;
+    }
+  }
+
+  private updateBuildingGroupPagination() {
+    const startIndex = (this.currentGroupPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedBuildingGroups = this.paginatedBuildingGroups.slice(startIndex, endIndex);
+  }
+
+  private updateBuildingPagination() {
+    const startIndex = (this.currentBuildingPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedBuildings = this.paginatedBuildings.slice(startIndex, endIndex);
+  }
+
+  private updateApartmentPagination() {
+    const startIndex = (this.apartmentCurrentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.apartmentGridData = this.apartmentGridData.slice(startIndex, endIndex);
   }
 }
