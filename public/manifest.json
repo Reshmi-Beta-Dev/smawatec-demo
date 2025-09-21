@@ -1,0 +1,21 @@
+{
+  "name": "Smawatec App",
+  "short_name": "Smawatec",
+  "description": "Water management and monitoring application",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#7b61ff",
+  "icons": [
+    {
+      "src": "favicon.png?v=2",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "favicon.png?v=2",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
