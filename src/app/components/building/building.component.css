@@ -1,82 +1,929 @@
-/* Building Component Styles - Optimized for Vercel */
+/* Building Component Styles - Consistent with Statistics Component */
 
-* { box-sizing: border-box; }
+/* Ensure all elements respect container boundaries */
+* {
+    box-sizing: border-box;
+}
 
 .app {
     max-width: 100%;
     width: 100%;
     font-size: 14px;
-    padding: 20px 24px 12px;
+    padding: 20px 24px 12px; /* 20px top padding for chart spacing */
     position: relative;
-    overflow-x: hidden;
-    background: transparent;
+    overflow-x: hidden; /* Prevent horizontal overflow */
+    background: transparent; /* Ensure clean background */
 }
 
-.content { display: flex; flex-direction: column; gap: 8px; }
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-sm); /* Reduced from 12px to 8px */
+}
 
 /* Search Section */
-.search-section { margin-bottom: 12px; }
-.search-section h2 { font-size: 16px; font-weight: 600; margin: 0 0 16px 0; color: #333; padding-left: 18px; }
-.search-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: #f8f9fa; padding: 12px; border-radius: 12px; border: 1px solid #e9ecef; width: 60%; }
-.search-column { display: flex; flex-direction: column; gap: 12px; }
-.form-group { display: flex; flex-direction: column; gap: 4px; }
-.form-group label { font-size: 12px; font-weight: 500; color: #555; }
-.form-group input { padding: 8px 12px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; }
-.form-group input:focus { outline: none; border-color: #6c5ce7; box-shadow: 0 0 0 2px rgba(108, 92, 231, 0.1); }
+.search-section {
+    margin-bottom: var(--spacing-md); /* Reduced from 24px to 12px */
+}
 
-/* Building & Apartment Grids Section */
-.building-apartment-grids-section { display: grid; grid-template-columns: 3fr 2fr; gap: 16px; margin-bottom: 16px; }
-.building-section, .apartment-grid-section { flex: 1; display: flex; flex-direction: column; }
-.building-panel, .apartment-grid-panel { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; min-height: 400px; display: flex; flex-direction: column; }
-.panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
-.panel-header h3 { font-size: 16px; font-weight: 600; margin: 0; color: #333; }
-.action-buttons { display: flex; justify-content: space-between; align-items: center; margin-top: auto; min-height: 60px; }
-.action-buttons-left { display: flex; gap: 8px; }
-.action-buttons-right { display: flex; gap: 8px; }
+.search-section h2 {
+    font-size: 16px; /* Reduced from 18px to match statistics */
+    font-weight: 600;
+    margin: 0 0 var(--spacing-lg) 0; /* 16px - using standard spacing */
+    color: #333;
+    padding-left: 18px; /* Reduced from 22px to match statistics */
+}
 
-/* Data Table */
-.data-table { flex: 1; width: 100%; border-collapse: collapse; font-size: 12px; }
-.data-table th, .data-table td { padding: 8px; text-align: left; border-bottom: 1px solid #e5e7eb; }
-.data-table th { background: #f9fafb; font-weight: 600; color: #374151; }
-.data-table tbody tr { cursor: pointer; transition: background-color 0.2s; }
-.data-table tbody tr:hover { background: #f3f4f6; }
-.data-table tbody tr.selected { background: #e0e7ff; color: #3730a3; }
+.search-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    background: #f8f9fa; /* Exact match with statistics */
+    padding: 12px; /* Exact match with statistics */
+    border-radius: 12px;
+    border: 1px solid #e9ecef; /* Exact match with statistics */
+    width: 60%; /* Set width to 60% */
+}
 
-/* Pagination */
-.pagination-inline { display: flex; justify-content: space-between; align-items: center; margin-top: 16px; }
-.pagination-info { font-size: 12px; color: #6b7280; }
-.pagination-controls { display: flex; gap: 4px; }
-.pagination-btn { appearance: none; border: 1px solid #d1d5db; border-radius: 4px; background: #fff; padding: 4px 8px; font-size: 11px; font-weight: 500; color: #374151; cursor: pointer; transition: all 0.2s; min-width: 28px; text-align: center; }
-.pagination-btn:hover:not(:disabled) { background: #f9fafb; border-color: #9ca3af; }
-.pagination-btn:disabled { opacity: 0.5; cursor: not-allowed; background: #f9fafb; }
-.pagination-btn.active { background: #6c5ce7; border-color: #6c5ce7; color: #fff; }
-.pagination-btn.active:hover { background: #5b4ce6; border-color: #5b4ce6; }
+.search-column {
+    display: flex;
+    flex-direction: column;
+    gap: 10px; /* Exact match with statistics */
+}
 
-/* Buttons */
-.pill { display: inline-flex; align-items: center; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 500; text-decoration: none; cursor: pointer; transition: all 0.2s; border: none; }
-.pill.primary { background: #6c5ce7; color: #fff; }
-.pill.primary:hover { background: #5b4ce6; }
-.pill.outline { background: transparent; border: 1px solid #d1d5db; color: #374151; }
-.pill.outline:hover { background: #f9fafb; border-color: #9ca3af; }
-.pill.outline.danger { background: transparent; color: #ef4444; border: 1px solid #ef4444; }
-.pill.outline.danger:hover { background: #fef2f2; color: #dc2626; border-color: #dc2626; }
+.form-group {
+    display: grid;
+    grid-template-columns: 100px 1fr; /* Exact match with statistics */
+    gap: 8px; /* Exact match with statistics */
+    align-items: center;
+    position: relative;
+    transition: all 0.2s ease;
+}
 
-/* Details Panel */
-.details-panel { background: #fff; border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; margin-top: 16px; }
-.details-panel h3 { font-size: 16px; font-weight: 600; margin: 0 0 12px 0; color: #333; }
-.details-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.detail-item { display: flex; flex-direction: column; gap: 4px; }
-.detail-label { font-size: 12px; font-weight: 500; color: #6b7280; }
-.detail-value { font-size: 14px; color: #111827; }
+.form-group.focused {
+    transform: translateY(-1px);
+}
+
+.form-group label {
+    font-size: 12px; /* Exact match with statistics */
+    font-weight: 600;
+    color: #555;
+    margin-bottom: 0;
+    text-align: left;
+}
+
+.form-group input {
+    padding: 6px 8px; /* Exact match with statistics */
+    border: 1px solid #d1d5db; /* Exact match with statistics */
+    border-radius: 6px;
+    font-size: 13px;
+    background: white;
+    transition: all 0.2s ease;
+    outline: none;
+}
+
+.form-group input:focus {
+    border-color: #7b61ff;
+    box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.1); /* Exact match with statistics */
+}
+
+
+/* Middle Section */
+.middle-section {
+    display: grid;
+    grid-template-columns: 3fr 2fr; /* 60% and 40% split */
+    gap: 12px; /* Reduced from 16px to 12px */
+    margin-bottom: 16px; /* Reduced from 24px to 16px */
+    align-items: start;
+}
+
+/* Building Groups Section */
+.building-groups-section {
+    margin-bottom: 0;
+}
+
+.building-groups-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.groups-panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    border: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    height: 400px; /* Fixed height to match apartment panel */
+}
+
+/* Building / Apartment Section */
+.building-apartment-section {
+    margin-bottom: 0;
+}
+
+.building-apartment-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.apartment-panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    border: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    height: 400px; /* Fixed height to match groups panel */
+}
+
+.kv-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 2px; /* Further reduced spacing for equal height boxes */
+    margin-bottom: 16px;
+}
+
+.kv-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2px 4px; /* Further reduced padding for equal height boxes */
+    background: transparent; /* Removed background for consistency */
+    border-radius: 0; /* Removed border radius for consistency */
+    font-size: 13px;
+}
+
+.kv-label {
+    color: #555;
+    font-weight: 600; /* Made bold like other components */
+    flex: 0 0 auto; /* Don't take all space */
+}
+
+.kv-value {
+    color: #000000; /* Black color for values */
+    font-weight: 600;
+    text-align: right;
+}
+
+/* Building Section */
+.building-section {
+    margin-bottom: 0;
+    width: 100%; /* Ensure full width */
+}
+
+.building-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.building-panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    border: 0;
+    box-shadow: none;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px; /* Match apartment grid height */
+}
+
+/* Data Tables */
+.data-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 1px; /* Further reduced spacing between rows */
+    font-size: 12px; /* Reduced from 13px to match overview page */
+    background: transparent;
+    margin-bottom: 16px;
+    flex: 1; /* Take remaining space */
+}
+
+.data-table thead th {
+    font-size: 12px; /* Reduced from 13px to match overview page */
+    text-align: left;
+    color: #3e424c;
+    padding: var(--spacing-sm); /* 8px - using standard spacing */
+    border: 0;
+    white-space: nowrap;
+    position: sticky;
+    top: 0;
+    background: #eeeeef;
+    z-index: 1;
+}
+
+.data-table tbody tr {
+    background: transparent;
+    border-radius: 8px; /* Reduced from 12px to match overview page */
+    box-shadow: none;
+    height: 28px; /* Further reduced height for more compact rows */
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.data-table tbody tr:hover td {
+    background: #f4dfe3;
+}
+
+.data-table tbody tr.selected td {
+    background: #f4dfe3;
+}
+
+.data-table tbody td {
+    padding: 3px 4px; /* Reduced to match overview page */
+    border: 0;
+    white-space: nowrap;
+}
+
+.data-table tbody tr td:first-child {
+    border-left: 0;
+    border-top-left-radius: 8px; /* Reduced to match overview page */
+    border-bottom-left-radius: 8px; /* Reduced to match overview page */
+    width: 24px; /* Reduced from 28px to match overview page */
+    color: #666;
+}
+
+.data-table tbody tr td:last-child {
+    border-right: 0;
+    border-top-right-radius: 8px; /* Reduced to match overview page */
+    border-bottom-right-radius: 8px; /* Reduced to match overview page */
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    margin-top: auto;
+}
+
+/* Button Styles */
+.pill {
+    appearance: none;
+    border: 0;
+    border-radius: 999px;
+    background: #6c5ce7;
+    padding: 8px 14px;
+    font-weight: 600;
+    color: #fff;
+    cursor: pointer;
+    position: relative;
+    font-size: 12px;
+    transition: all 0.2s ease;
+}
+
+.pill:hover {
+    background: #5b4ce6;
+    transform: scale(1.05);
+}
+
+.pill:active {
+    transform: scale(0.95);
+}
+
+.pill.outline {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    color: #4b4f58;
+}
+
+.pill.outline:hover {
+    background: #f9fafb;
+    border-color: #d1d5db;
+}
+
+.pill.outline.danger {
+    color: #ef4444;
+    border-color: #ef4444;
+}
+.pill.outline.danger:hover {
+    background: #fef2f2;
+    color: #dc2626;
+    border-color: #dc2626;
+}
+
+/* Action Buttons Layout */
+.action-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; /* Push to bottom */
+    padding: 12px 0;
+    border-top: 1px solid #e5e7eb;
+    min-height: 60px; /* Fixed height for action area */
+}
+
+.action-buttons-left {
+    display: flex;
+    gap: 8px;
+}
+
+/* Inline Pagination Styles */
+.pagination-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pagination-info {
+    font-size: 13px;
+    color: #6b7280;
+    font-weight: 500;
+    white-space: nowrap;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 2px;
+    align-items: center;
+}
+
+.pagination-btn {
+    padding: 4px 8px;
+    border: 1px solid #d1d5db;
+    background: white;
+    color: #374151;
+    border-radius: 4px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    min-width: 28px;
+    text-align: center;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.pagination-btn:hover:not(:disabled) {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.pagination-btn.active {
+    background: #7b61ff;
+    color: white;
+    border-color: #7b61ff;
+}
+
+.pagination-btn:disabled {
+    background: #f9fafb;
+    color: #9ca3af;
+    border-color: #e5e7eb;
+    cursor: not-allowed;
+}
+
+/* Responsive Inline Pagination */
+@media (max-width: 768px) {
+    .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+    }
+    
+    .action-buttons-left {
+        justify-content: center;
+    }
+    
+    .pagination-inline {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+    
+    .pagination-btn {
+        min-width: 24px;
+        padding: 3px 6px;
+        font-size: 11px;
+        height: 24px;
+    }
+}
 
 /* Responsive Design */
+
+/* iPhone 13 and above (390px+) - Mobile First Approach */
+@media (max-width: 430px) {
+    .app {
+        padding: 12px 16px;
+        font-size: 13px;
+    }
+    
+    .content {
+        gap: 12px;
+    }
+    
+    /* Search Section Mobile */
+    .search-section h2 {
+        font-size: 15px;
+        padding-left: 0;
+        margin-bottom: 12px;
+    }
+    
+    .search-form {
+        width: 100%;
+        grid-template-columns: 1fr;
+        gap: 12px;
+        padding: 16px;
+        overflow: hidden; /* Prevent overflow */
+    }
+    
+    .search-column {
+        gap: 8px;
+    }
+    
+    .form-group {
+        grid-template-columns: 80px 1fr;
+        gap: 6px;
+    }
+    
+    .form-group label {
+        font-size: 11px;
+    }
+    
+    .form-group input {
+        padding: 8px 10px;
+        font-size: 12px;
+    }
+    
+    /* Middle Section Mobile - Stack vertically */
+    .middle-section {
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-bottom: 16px;
+    }
+    
+    /* Building Groups Section Mobile */
+    .building-groups-section h3 {
+        font-size: 15px;
+        padding-left: 0;
+        margin-bottom: 12px;
+    }
+    
+    .groups-panel {
+        height: auto;
+        min-height: 300px;
+        padding: 16px;
+        overflow-x: auto; /* Allow horizontal scrolling for tables */
+        overflow-y: visible; /* Allow vertical content to be visible */
+        box-sizing: border-box; /* Include padding in width calculation */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+    
+    /* Building/Apartment Section Mobile */
+    .building-apartment-section h3 {
+        font-size: 15px;
+        padding-left: 0;
+        margin-bottom: 12px;
+    }
+    
+    .apartment-panel {
+        height: auto;
+        min-height: 300px;
+        padding: 16px;
+        overflow-x: auto; /* Allow horizontal scrolling for tables */
+        overflow-y: visible; /* Allow vertical content to be visible */
+        box-sizing: border-box; /* Include padding in width calculation */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+    
+    .kv-grid {
+        gap: 6px;
+        margin-bottom: 12px;
+    }
+    
+    .kv-row {
+        padding: 6px 8px;
+        font-size: 12px;
+    }
+    
+    .kv-label {
+        font-size: 11px;
+    }
+    
+    .kv-value {
+        font-size: 12px;
+    }
+    
+    /* Building Section Mobile */
+    .building-section h3 {
+        font-size: 15px;
+        padding-left: 0;
+        margin-bottom: 12px;
+    }
+    
+    .building-panel {
+        padding: 16px;
+        overflow-x: auto; /* Allow horizontal scrolling for tables */
+        overflow-y: visible; /* Allow vertical content to be visible */
+        box-sizing: border-box; /* Include padding in width calculation */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        width: 100%; /* Ensure full width coverage */
+        background: #f1f1f3; /* Ensure background covers full area */
+        border-radius: 18px; /* Match other panels */
+    }
+    
+    /* Building section mobile background fix */
+    .building-section {
+        width: 100%;
+        background: transparent; /* Ensure no background conflicts */
+    }
+    
+    /* Data Tables Mobile */
+    .data-table {
+        font-size: 11px;
+        margin-bottom: 12px;
+    }
+    
+    .data-table thead th {
+        font-size: 11px;
+        padding: 8px 4px;
+    }
+    
+    .data-table tbody tr {
+        height: 32px;
+    }
+    
+    .data-table tbody td {
+        padding: 6px 4px;
+        font-size: 11px;
+    }
+    
+    .data-table tbody tr td:first-child {
+        width: 20px;
+    }
+    
+    /* Action Buttons Mobile */
+    .action-buttons {
+        flex-direction: row;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .pill {
+        padding: 8px 12px;
+        font-size: 11px;
+        flex: 1;
+        min-width: 0;
+    }
+    
+    .pill.outline {
+        flex: 1;
+        min-width: 0;
+    }
+    
+    /* Mobile Touch Improvements */
+    .data-table tbody tr {
+        min-height: 44px; /* Minimum touch target size */
+    }
+    
+    .pill {
+        min-height: 44px; /* Minimum touch target size */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+/* Mobile Table Horizontal Scroll - Handled at panel level above */
+
+.data-table {
+    min-width: 800px; /* Make table much wider to ensure horizontal scroll */
+    width: 100%;
+    table-layout: fixed; /* Fixed layout for consistent column widths */
+}
+    
+    /* Set specific column widths to ensure horizontal scroll */
+    .data-table th:nth-child(1),
+    .data-table td:nth-child(1) {
+        width: 40px; /* # column */
+    }
+    
+    .data-table th:nth-child(2),
+    .data-table td:nth-child(2) {
+        width: 120px; /* Group column */
+    }
+    
+    .data-table th:nth-child(3),
+    .data-table td:nth-child(3) {
+        width: 150px; /* Building column */
+    }
+    
+    .data-table th:nth-child(4),
+    .data-table td:nth-child(4) {
+        width: 100px; /* Zip Code column */
+    }
+    
+    .data-table th:nth-child(5),
+    .data-table td:nth-child(5) {
+        width: 300px; /* Address column - wide to trigger scroll */
+    }
+    
+    /* Ensure table cells display properly */
+    .data-table tbody td {
+        word-wrap: break-word;
+        white-space: nowrap; /* Prevent text wrapping to maintain column widths */
+        overflow: visible; /* Allow content to be visible for scrolling */
+        text-overflow: ellipsis;
+    }
+    
+    /* Mobile Form Improvements */
+    .form-group input {
+        min-height: 44px; /* Better touch target */
+        border-radius: 8px;
+    }
+    
+    .form-group input:focus {
+        transform: scale(1.02);
+        box-shadow: 0 0 0 3px rgba(123, 97, 255, 0.15);
+    }
+}
+
+/* iPhone 14 Pro Max specific optimization */
+@media only screen and (device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3) {
+    .app {
+        padding: 16px 20px;
+        font-size: 14px;
+    }
+    
+    .search-form {
+        width: 100%;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        padding: 20px;
+        overflow: hidden; /* Prevent overflow */
+    }
+    
+    .middle-section {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .groups-panel,
+    .apartment-panel {
+        height: auto;
+        min-height: 380px;
+        padding: 20px;
+        overflow-x: auto; /* Allow horizontal scrolling for tables */
+        overflow-y: hidden; /* Prevent vertical overflow */
+        box-sizing: border-box; /* Include padding in width calculation */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+    }
+    
+    .data-table {
+        font-size: 12px;
+    }
+    
+    .data-table tbody tr {
+        height: 36px;
+    }
+    
+    .action-buttons {
+        flex-direction: row;
+        gap: 12px;
+    }
+    
+    .pill {
+        padding: 10px 16px;
+        font-size: 12px;
+    }
+    
+    /* iPhone 14 Pro Max specific table optimizations */
+    .data-table {
+        min-width: 650px; /* Slightly wider for better readability */
+    }
+    
+    .data-table thead th {
+        padding: 10px 6px;
+        font-size: 12px;
+    }
+    
+    .data-table tbody td {
+        padding: 8px 6px;
+        font-size: 12px;
+    }
+    
+    /* Better spacing for iPhone 14 Pro Max */
+    .kv-grid {
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    
+    .kv-row {
+        padding: 8px 10px;
+        font-size: 13px;
+    }
+    
+    .kv-label {
+        font-size: 12px;
+    }
+    
+    .kv-value {
+        font-size: 13px;
+    }
+}
+
+/* iPhone 14 Pro Max and larger (431px+) */
+@media (min-width: 431px) and (max-width: 768px) {
+    .app {
+        padding: 16px 20px;
+    }
+    
+    .search-form {
+        width: 100%;
+        grid-template-columns: 1fr 1fr;
+    }
+    
+    .middle-section {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .groups-panel,
+    .apartment-panel {
+        height: auto;
+        min-height: 350px;
+    }
+    
+    .data-table {
+        font-size: 12px;
+    }
+    
+    .action-buttons {
+        flex-direction: row;
+        gap: 10px;
+    }
+}
+
+/* iPad and Tablet (768px - 1024px) */
+@media (min-width: 768px) and (max-width: 1024px) {
+    .search-form {
+        width: 100%; /* Full width on iPad */
+        grid-template-columns: 1fr 1fr; /* Two columns on iPad */
+        padding: 20px; /* More padding for iPad */
+    }
+    
+    .middle-section {
+        grid-template-columns: 1fr; /* Stack on iPad */
+        gap: 20px;
+    }
+    
+    .groups-panel,
+    .apartment-panel {
+        height: auto;
+        min-height: 400px; /* Taller on iPad */
+        padding: 24px; /* More padding for iPad */
+    }
+    
+    .building-panel {
+        padding: 24px; /* More padding for iPad */
+    }
+}
+
+/* Surface Duo */
+@media (min-width: 540px) and (max-width: 720px) and (min-height: 720px) {
+    .search-form { grid-template-columns: 1fr; }
+    .middle-section { grid-template-columns: 1fr; }
+    .groups-panel, .apartment-panel, .building-panel { overflow-x: auto; }
+}
+@media (min-width: 1080px) and (max-width: 1440px) and (min-height: 720px) {
+    .search-form { grid-template-columns: 1fr 1fr; }
+    .middle-section { grid-template-columns: 1fr 1fr; }
+}
+
+/* Desktop - Keep existing layout */
+@media (min-width: 1025px) {
+    .middle-section {
+        grid-template-columns: 3fr 2fr;
+    }
+    
+    .search-form {
+        width: 60%;
+    }
+}
+
+/* Large Desktop - Keep existing layout */
+@media (min-width: 1200px) {
+    .middle-section {
+        grid-template-columns: 3fr 2fr;
+    }
+    
+    .search-form {
+        width: 60%;
+    }
+}
+
+/* Building and Apartment Grids Layout */
+.building-apartment-grids-section {
+    display: grid;
+    grid-template-columns: 3fr 2fr; /* 60% building, 40% apartment */
+    gap: 16px;
+    margin-bottom: var(--spacing-md);
+}
+
+/* Apartment Grid Section - Match Building Section */
+.apartment-grid-section {
+    margin-bottom: 0;
+    width: 100%; /* Ensure full width */
+}
+
+.apartment-grid-section h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin: 0 0 16px 0;
+    color: #333;
+    padding-left: 22px;
+}
+
+.apartment-grid-panel {
+    background: #f1f1f3;
+    border-radius: 18px;
+    padding: 20px;
+    border: 0;
+    box-shadow: none;
+    min-height: 400px; /* Match building grid height */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Action Buttons for Apartment Grid */
+.apartment-grid-panel .action-buttons {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: auto; /* Push to bottom */
+    flex-wrap: nowrap;
+    gap: 12px;
+    min-height: 60px; /* Fixed height for action area */
+}
+
+.apartment-grid-panel .action-buttons-left {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-shrink: 0;
+}
+
+.apartment-grid-panel .pagination-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* Apartment grid buttons will use general button styles */
+
+/* Responsive Building and Apartment Grids */
 @media (max-width: 768px) {
-    .building-apartment-grids-section { grid-template-columns: 1fr; gap: 16px; }
-    .search-form { width: 100%; grid-template-columns: 1fr; }
-    .data-table { min-width: 600px; table-layout: fixed; }
-    .building-section, .apartment-grid-section { min-width: 0; overflow-x: auto; }
-    .data-table { font-size: 11px; }
-    .action-buttons { flex-wrap: wrap; }
-    .pagination-inline { flex-direction: column; gap: 12px; align-items: center; }
-    .pagination-controls { flex-wrap: wrap; justify-content: center; }
+    .building-apartment-grids-section {
+        grid-template-columns: 1fr; /* Stack vertically on mobile */
+        gap: 12px;
+    }
+    
+    .apartment-grid-section {
+        margin-bottom: var(--spacing-md); /* Add margin back on mobile */
+    }
+    
+    /* Apartment Grid Section Mobile */
+    .apartment-grid-section h3 {
+        font-size: 15px;
+        padding-left: 0;
+        margin-bottom: 12px;
+    }
+    
+    .apartment-grid-panel {
+        padding: 16px;
+        overflow-x: auto; /* Allow horizontal scrolling for tables */
+        overflow-y: visible; /* Allow vertical content to be visible */
+        box-sizing: border-box; /* Include padding in width calculation */
+        -webkit-overflow-scrolling: touch; /* Smooth scrolling on iOS */
+        width: 100%; /* Ensure full width coverage */
+        background: #f1f1f3; /* Ensure background covers full area */
+        border-radius: 18px; /* Match other panels */
+        min-height: 300px; /* Reduced height for mobile */
+    }
+    
+    .apartment-grid-panel .action-buttons {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+    
+    .apartment-grid-panel .action-buttons-left {
+        justify-content: center;
+    }
+    
+    .apartment-grid-panel .pagination-inline {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
 }
