@@ -226,7 +226,7 @@
                                 <!-- Building Pagination -->
                                 <div class="pagination-inline" *ngIf="buildingTotalPages > 1">
                                     <div class="pagination-info">
-                                        {{ (buildingCurrentPage - 1) * buildingItemsPerPage + 1 }}-{{ Math.min(buildingCurrentPage * buildingItemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }}
+                                        Showing {{ (buildingCurrentPage - 1) * buildingItemsPerPage + 1 }}-{{ Math.min(buildingCurrentPage * buildingItemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }} buildings
                                     </div>
                                     <div class="pagination-controls">
                                         <button class="pagination-btn" 
@@ -278,7 +278,7 @@
                                 <!-- Apartment Pagination -->
                                 <div class="pagination-inline" *ngIf="apartmentTotalPages > 1">
                                     <div class="pagination-info">
-                                        {{ (apartmentCurrentPage - 1) * apartmentItemsPerPage + 1 }}-{{ Math.min(apartmentCurrentPage * apartmentItemsPerPage, apartmentTotalItems) }} of {{ apartmentTotalItems }}
+                                        Showing {{ (apartmentCurrentPage - 1) * apartmentItemsPerPage + 1 }}-{{ Math.min(apartmentCurrentPage * apartmentItemsPerPage, apartmentTotalItems) }} of {{ apartmentTotalItems }} apartments
                                     </div>
                                     <div class="pagination-controls">
                                         <button class="pagination-btn" 

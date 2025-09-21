@@ -27,7 +27,7 @@ export class BuildingComponent implements OnInit {
     tenant: '',
     tenantId: ''
   };
-  
+
 
   // Pagination properties
   currentBuildingPage = 1;
@@ -470,7 +470,7 @@ export class BuildingComponent implements OnInit {
           this.selectedBuildingRow = 0;
           this.selectedRow = 0;
           this.loadApartmentsForBuilding(this.paginatedBuildings[0].id);
-        } else {
+    } else {
           this.selectedBuildingRow = null;
           this.selectedRow = null;
         }
@@ -617,7 +617,7 @@ export class BuildingComponent implements OnInit {
   }
 
   // Apartment grid methods
-  async loadApartmentGridData(selectedBuilding?: any) {
+  async loadApartmentGridData(selectedBuilding?: any, resetPage: boolean = true) {
     // Generate apartment data based on selected building's apartment count
     // For demo purposes, ensure at least 8 apartments per building
     const originalCount = selectedBuilding?.apartmentCount || 4;
@@ -630,7 +630,11 @@ export class BuildingComponent implements OnInit {
     // Set up pagination
     this.apartmentTotalItems = allApartmentData.length;
     this.apartmentTotalPages = Math.ceil(allApartmentData.length / this.itemsPerPage);
-    this.apartmentCurrentPage = 1;
+    
+    // Only reset page if explicitly requested (for new building selection)
+    if (resetPage) {
+      this.apartmentCurrentPage = 1;
+    }
     
     // Get paginated data
     const startIndex = (this.apartmentCurrentPage - 1) * this.itemsPerPage;
@@ -771,7 +775,9 @@ export class BuildingComponent implements OnInit {
 
   onApartmentPageChange(page: number) {
     this.apartmentCurrentPage = page;
-    this.loadApartmentGridData();
+    // Get the currently selected building
+    const selectedBuilding = this.selectedBuildingRow !== null ? this.paginatedBuildings[this.selectedBuildingRow] : null;
+    this.loadApartmentGridData(selectedBuilding, false);
   }
 
   // Math object for template

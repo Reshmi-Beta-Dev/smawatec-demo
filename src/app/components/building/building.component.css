@@ -860,7 +860,7 @@
     justify-content: space-between;
     align-items: center;
     margin-top: auto; /* Push to bottom */
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     gap: 12px;
     min-height: 60px; /* Fixed height for action area */
 }
@@ -869,6 +869,14 @@
     display: flex;
     gap: 8px;
     align-items: center;
+    flex-shrink: 0;
+}
+
+.apartment-grid-panel .pagination-inline {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-shrink: 0;
 }
 
 /* Apartment grid buttons will use general button styles */
@@ -907,9 +915,15 @@
         flex-direction: column;
         align-items: stretch;
         gap: 8px;
+        flex-wrap: wrap;
     }
     
     .apartment-grid-panel .action-buttons-left {
         justify-content: center;
+    }
+    
+    .apartment-grid-panel .pagination-inline {
+        justify-content: center;
+        flex-wrap: wrap;
     }
 }

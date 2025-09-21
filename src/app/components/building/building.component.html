@@ -80,7 +80,7 @@
                     <!-- Pagination for Building Groups -->
                     <div class="pagination-inline" *ngIf="buildingGroupTotalPages > 1">
                         <div class="pagination-info">
-                            {{ (currentGroupPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentGroupPage * itemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }}
+                            Showing {{ (currentGroupPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentGroupPage * itemsPerPage, buildingGroupTotalItems) }} of {{ buildingGroupTotalItems }} groups
                         </div>
                         <div class="pagination-controls">
                             <button class="pagination-btn" 
@@ -202,7 +202,7 @@
                     <!-- Pagination for Buildings -->
                     <div class="pagination-inline" *ngIf="buildingTotalPages > 1">
                         <div class="pagination-info">
-                            {{ (currentBuildingPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentBuildingPage * itemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }}
+                            Showing {{ (currentBuildingPage - 1) * itemsPerPage + 1 }}-{{ Math.min(currentBuildingPage * itemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }} buildings
                         </div>
                         <div class="pagination-controls">
                             <button class="pagination-btn" 
@@ -255,11 +255,8 @@
                             <button class="pill outline danger" (click)="removeApartment()">Delete Apartment</button>
                         </div>
                         
-                        <!-- Pagination for Apartments -->
+                        <!-- Pagination for Apartments - on same line as buttons -->
                         <div class="pagination-inline" *ngIf="apartmentTotalPages > 1">
-                            <div class="pagination-info">
-                                {{ (apartmentCurrentPage - 1) * itemsPerPage + 1 }}-{{ Math.min(apartmentCurrentPage * itemsPerPage, apartmentTotalItems) }} of {{ apartmentTotalItems }}
-                            </div>
                             <div class="pagination-controls">
                                 <button class="pagination-btn" 
                                         [disabled]="apartmentCurrentPage === 1" 
