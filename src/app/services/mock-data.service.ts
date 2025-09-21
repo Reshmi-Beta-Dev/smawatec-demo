@@ -268,8 +268,45 @@ export class MockDataService {
       { id: 'at-009', name: 'Poor WiFi', severity: 'low', color: '#6c757d' }
     ];
 
-    const buildings = this.frenchData.buildings.slice(0, 15);
-    const tenants = this.frenchData.tenants;
+    // Generate unique addresses
+    const streetNames = [
+      'Rue de la Paix', 'Avenue des Champs-Élysées', 'Boulevard Saint-Germain', 'Rue de Rivoli',
+      'Place de la Concorde', 'Rue de la République', 'Avenue Montaigne', 'Rue du Faubourg Saint-Antoine',
+      'Boulevard Haussmann', 'Rue de la Roquette', 'Avenue des Ternes', 'Rue de Charonne',
+      'Boulevard de la Madeleine', 'Rue de la Butte aux Cailles', 'Avenue de la Grande Armée',
+      'Rue de la Goutte d\'Or', 'Boulevard de Belleville', 'Rue de la Villette', 'Avenue de la Porte de Clichy',
+      'Rue de la Chapelle', 'Boulevard de la Villette', 'Rue de Belleville', 'Avenue de la Porte de Montmartre',
+      'Rue de la Tour d\'Auvergne', 'Boulevard de Rochechouart', 'Rue de la Victoire', 'Avenue de la Porte de Bagnolet',
+      'Rue de la Folie-Méricourt', 'Boulevard de la Chapelle', 'Rue de la Grange aux Belles', 'Avenue de la Porte de Pantin',
+      'Rue de la Fontaine au Roi', 'Boulevard de la Villette', 'Rue de la Cour des Noues', 'Avenue de la Porte de Lilas',
+      'Rue de la Roquette', 'Boulevard de Belleville', 'Rue de la Butte aux Cailles', 'Avenue de la Porte de Vincennes',
+      'Rue de la Goutte d\'Or', 'Boulevard de la Chapelle', 'Rue de la Villette', 'Avenue de la Porte de Montreuil'
+    ];
+
+    // Generate unique apartment numbers
+    const apartmentNumbers = [];
+    for (let floor = 1; floor <= 20; floor++) {
+      for (let apt = 1; apt <= 6; apt++) {
+        apartmentNumbers.push(`${floor}${String.fromCharCode(64 + apt)}`); // 1A, 1B, 1C, etc.
+      }
+    }
+
+    // Generate unique tenant names
+    const firstNames = [
+      'Marie', 'Pierre', 'Jean', 'Sophie', 'Michel', 'Isabelle', 'Philippe', 'Catherine', 'Alain', 'Françoise',
+      'Bernard', 'Monique', 'André', 'Sylvie', 'Claude', 'Nicole', 'Daniel', 'Chantal', 'Robert', 'Brigitte',
+      'Paul', 'Martine', 'Jacques', 'Nathalie', 'Henri', 'Véronique', 'Louis', 'Pascale', 'Marc', 'Sandrine',
+      'François', 'Valérie', 'Gérard', 'Patricia', 'Maurice', 'Christine', 'Yves', 'Sylviane', 'Georges', 'Dominique',
+      'Antoine', 'Céline', 'Olivier', 'Émilie', 'Nicolas', 'Julie', 'Sébastien', 'Caroline', 'Fabrice', 'Laurence'
+    ];
+    const lastNames = [
+      'Martin', 'Bernard', 'Thomas', 'Petit', 'Robert', 'Richard', 'Durand', 'Dubois', 'Moreau', 'Laurent',
+      'Simon', 'Michel', 'Lefebvre', 'Leroy', 'Roux', 'David', 'Bertrand', 'Morel', 'Fournier', 'Girard',
+      'Bonnet', 'Dupont', 'Lambert', 'Fontaine', 'Rousseau', 'Vincent', 'Muller', 'Lefevre', 'Faure', 'Andre',
+      'Mercier', 'Blanc', 'Guerin', 'Boyer', 'Garnier', 'Chevalier', 'Francois', 'Legrand', 'Gauthier', 'Garcia',
+      'Perrin', 'Robin', 'Clement', 'Morin', 'Nicolas', 'Henry', 'Roussel', 'Mathieu', 'Gautier', 'Masson'
+    ];
+
     const statuses = ['active', 'resolved', 'acknowledged'];
     const actions = [
       'Vanne principale fermée automatiquement',
@@ -283,11 +320,38 @@ export class MockDataService {
 
     const additionalAlarms = [];
     const now = new Date();
+    const usedAddresses = new Set();
+    const usedApartments = new Set();
+    const usedTenants = new Set();
 
     for (let i = 4; i <= 100; i++) {
-      const building = buildings[i % buildings.length];
+      // Generate unique address
+      let address;
+      do {
+        const street = streetNames[Math.floor(Math.random() * streetNames.length)];
+        const number = Math.floor(Math.random() * 200) + 1;
+        const arrondissement = Math.floor(Math.random() * 20) + 1;
+        address = `${number} ${street}, ${arrondissement}ème arrondissement, Paris`;
+      } while (usedAddresses.has(address));
+      usedAddresses.add(address);
+
+      // Generate unique apartment
+      let apartment;
+      do {
+        apartment = apartmentNumbers[Math.floor(Math.random() * apartmentNumbers.length)];
+      } while (usedApartments.has(apartment));
+      usedApartments.add(apartment);
+
+      // Generate unique tenant
+      let tenant;
+      do {
+        const firstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+        const lastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+        tenant = `${firstName} ${lastName}`;
+      } while (usedTenants.has(tenant));
+      usedTenants.add(tenant);
+
       const alarmType = alarmTypes[Math.floor(Math.random() * alarmTypes.length)];
-      const tenant = tenants[Math.floor(Math.random() * tenants.length)];
       const status = statuses[Math.floor(Math.random() * statuses.length)];
       const action = actions[Math.floor(Math.random() * actions.length)];
       
@@ -298,10 +362,10 @@ export class MockDataService {
       const alarm = {
         id: `alarm-${String(i).padStart(3, '0')}`,
         device_id: `dev-${String(i).padStart(3, '0')}`,
-        apartment_id: `apt-${String(i).padStart(3, '0')}`,
-        building_id: building.id,
+        apartment_id: `apt-${apartment}`,
+        building_id: `building-${String(i).padStart(3, '0')}`,
         alarm_type_id: alarmType.id,
-        message: `${alarmType.name} détecté dans l'appartement ${String(i).padStart(3, '0')}`,
+        message: `${alarmType.name} détecté dans l'appartement ${apartment}`,
         status: status,
         severity: alarmType.severity,
         created_at: createdDate.toISOString(),
@@ -310,13 +374,16 @@ export class MockDataService {
         device_serial: `SMW-${String(i).padStart(3, '0')}-${String(i).padStart(3, '0')}-01`,
         device_name: 'Compteur d\'eau principal',
         device_status: 'active',
-        building_name: building.name,
-        building_address: building.address,
-        building_group_name: this.frenchData.buildingGroups.find(g => g.id === building.building_group_id)?.name || 'N/A',
+        building_name: `Résidence ${String.fromCharCode(65 + (i % 26))}${String.fromCharCode(65 + ((i + 1) % 26))}`,
+        building_address: address,
+        building_group_name: `Groupe ${String.fromCharCode(65 + (i % 8))}`,
         alarm_type_name: alarmType.name,
         alarm_severity: alarmType.severity,
         alarm_color: alarmType.color,
-        tenant: `${tenant.first_name} ${tenant.last_name}`
+        tenant: tenant,
+        floor_number: Math.floor(Math.random() * 20) + 1,
+        room_number: Math.floor(Math.random() * 6) + 1,
+        device_type: 'Water Meter'
       };
 
       additionalAlarms.push(alarm);
