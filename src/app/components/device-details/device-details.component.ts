@@ -1,20 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { SupabaseService, Device, BuildingGroup, Building } from '../../services/supabase.service';
+import { MockDataService } from '../../services/mock-data.service';
 
 @Component({
   selector: 'app-device-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './device-details.component.html',
   styleUrls: ['./device-details.component.css']
 })
 export class DeviceDetailsComponent implements OnInit {
+  selectedRow: number | null = null;
   selectedGroupRow: number | null = null;
   selectedBuildingRow: number | null = null;
   selectedUnassignedRow: number | null = null;
+  
+  // Mock data properties
+  devices: any[] = [];
   searchData: any = {
     keyword: '',
     building: '',
@@ -25,112 +28,69 @@ export class DeviceDetailsComponent implements OnInit {
     tenant: '',
     tenantId: ''
   };
-
-  // Supabase data properties
-  devices: Device[] = [];
-  buildingGroups: BuildingGroup[] = [];
-  buildings: Building[] = [];
-  unassignedDevices: Device[] = [];
   loading = false;
   error: string | null = null;
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private mockDataService: MockDataService) {}
 
   async ngOnInit() {
-    await this.loadData();
+    await this.loadDevices();
+  }
+
+  onRowClick(index: number) {
+    this.selectedRow = this.selectedRow === index ? null : index;
   }
 
   onGroupRowClick(index: number) {
     this.selectedGroupRow = this.selectedGroupRow === index ? null : index;
-    this.updateDeviceAssignmentContext('group', index);
   }
 
   onBuildingRowClick(index: number) {
     this.selectedBuildingRow = this.selectedBuildingRow === index ? null : index;
-    this.updateDeviceAssignmentContext('building', index);
   }
 
   onUnassignedRowClick(index: number) {
     this.selectedUnassignedRow = this.selectedUnassignedRow === index ? null : index;
-    this.updateDeviceAssignmentContext('unassigned', index);
   }
 
-  updateDeviceAssignmentContext(type: string, index: number) {
-    this.showNotification(`Selected ${type} ${index + 1} for device assignment`);
+  showDetails(event: Event) {
+    event.stopPropagation();
+    this.showNotification('Device details functionality');
   }
 
   assignToNewLocation() {
-    this.showNotification('Opening device assignment form...');
+    this.showNotification('Assign to new location functionality');
   }
 
   unassignDevice() {
-    this.showNotification('Device unassigned successfully');
+    this.showNotification('Unassign device functionality');
   }
 
   findNewDevice() {
-    this.showNotification('Searching for new devices...');
+    this.showNotification('Find new device functionality');
   }
 
-  private async loadData() {
-    this.loading = true;
-    this.error = null;
-
+  private async loadDevices() {
     try {
-      // Load all data in parallel
-      const [devicesData, buildingGroupsData, buildingsData] = await Promise.all([
-        this.supabaseService.getDevices(),
-        this.supabaseService.getBuildingGroups(),
-        this.supabaseService.getBuildings()
-      ]);
+      this.loading = true;
+      this.error = null;
 
-      this.devices = devicesData;
-      this.buildingGroups = buildingGroupsData;
-      this.buildings = buildingsData;
-      
-      // Filter unassigned devices (devices without apartment_id)
-      this.unassignedDevices = this.devices.filter(device => !device.apartment_id);
+      // Mock device data
+      this.devices = [
+        { id: 1, name: 'Water Meter 001', serial: 'WT-001-001', status: 'Active', location: 'Building A' },
+        { id: 2, name: 'Water Meter 002', serial: 'WT-002-001', status: 'Maintenance', location: 'Building B' },
+        { id: 3, name: 'Water Meter 003', serial: 'WT-003-001', status: 'Active', location: 'Building C' }
+      ];
+
     } catch (error) {
-      console.error('Error loading device details data:', error);
-      this.error = 'Failed to load data from server';
+      console.error('Error loading devices:', error);
+      this.error = 'Failed to load device data';
     } finally {
       this.loading = false;
     }
   }
 
-  private showNotification(message: string) {
-    // Create a simple notification
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #7b61ff;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 6px;
-      font-size: 14px;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-    `;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-      notification.style.transform = 'translateX(0)';
-    }, 10);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-      notification.style.transform = 'translateX(100%)';
-      setTimeout(() => {
-        if (document.body.contains(notification)) {
-          document.body.removeChild(notification);
-        }
-      }, 300);
-    }, 3000);
+  showNotification(message: string) {
+    console.log('Notification:', message);
   }
 }

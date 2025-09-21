@@ -203,12 +203,25 @@
     border-bottom-right-radius: 6px;
 }
 
-/* Building Section */
-.building-section {
+/* Building and Apartment Layout */
+.building-apartment-layout {
+    display: flex;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.building-section,
+.apartment-section {
+    flex: 1;
     margin-bottom: 0;
 }
 
-.building-section h3 {
+.apartment-section {
+    max-width: 400px;
+}
+
+.building-section h3,
+.apartment-section h3 {
     font-size: 16px;
     font-weight: 600;
     margin: 0 0 16px 0;
@@ -521,6 +534,14 @@
     .period-inputs .form-group {
         grid-template-columns: 80px 1fr;
         gap: 8px;
+    }
+
+    .building-apartment-layout {
+        flex-direction: column;
+    }
+
+    .apartment-section {
+        max-width: none;
     }
 }
 

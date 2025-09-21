@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { SupabaseService, MonthlyStats } from '../../services/supabase.service';
+import { MockDataService } from '../../services/mock-data.service';
 
 declare var Chart: any;
 
@@ -16,12 +16,12 @@ export class OverviewComponent implements OnInit, AfterViewInit, OnDestroy {
   selectedRow: number | null = null;
   private chart: any;
 
-  // Supabase data properties
-  monthlyStats: MonthlyStats[] = [];
+  // Mock data properties
+  monthlyStats: any[] = [];
   loading = false;
   error: string | null = null;
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private mockDataService: MockDataService) {}
 
   async ngOnInit() {
     await this.loadData();
@@ -31,7 +31,7 @@ export class OverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     // Initialize chart after view is ready
     setTimeout(() => {
       this.initializeChart();
-    }, 500);
+    }, 100);
   }
 
   ngOnDestroy() {
@@ -42,10 +42,34 @@ export class OverviewComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+  private async loadData() {
+    try {
+      this.loading = true;
+      this.error = null;
+
+      // Mock monthly stats data
+      this.monthlyStats = [
+        { month: 'January', consumption: 1200.5, alarms: 3 },
+        { month: 'February', consumption: 1350.2, alarms: 5 },
+        { month: 'March', consumption: 1180.8, alarms: 2 },
+        { month: 'April', consumption: 1420.9, alarms: 4 },
+        { month: 'May', consumption: 1280.3, alarms: 1 },
+        { month: 'June', consumption: 1550.7, alarms: 6 }
+      ];
+
+    } catch (error) {
+      console.error('Error loading data:', error);
+      this.error = 'Failed to load overview data';
+    } finally {
+      this.loading = false;
+    }
+  }
+
   onRowClick(index: number) {
     this.selectedRow = this.selectedRow === index ? null : index;
   }
 
+  // Chart methods
   private initializeChart() {
     // Check if Chart is available
     if (typeof Chart === 'undefined') {
@@ -53,15 +77,9 @@ export class OverviewComponent implements OnInit, AfterViewInit, OnDestroy {
       return;
     }
 
-    const canvas = document.getElementById('consumptionChart') as HTMLCanvasElement;
+    const canvas = document.getElementById('waterChart') as HTMLCanvasElement;
     if (!canvas) {
       console.error('Canvas element not found');
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      console.error('Could not get 2D context');
       return;
     }
 
@@ -70,99 +88,56 @@ export class OverviewComponent implements OnInit, AfterViewInit, OnDestroy {
       this.chart.destroy();
     }
 
-    // Process monthly data from Supabase
     const chartData = this.processMonthlyDataForChart();
 
-    try {
-      this.chart = new Chart(ctx, {
-        type: 'line',
-        data: chartData,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: {
-            duration: 0
-          },
-          plugins: {
-            legend: {
-              display: false
+    this.chart = new Chart(canvas, {
+      type: 'bar',
+      data: {
+        labels: chartData.labels,
+        datasets: [{
+          label: 'Monthly Water Consumption (L)',
+          data: chartData.data,
+          backgroundColor: 'rgba(123, 97, 255, 0.6)',
+          borderColor: '#7b61ff',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Consumption (Liters)'
             }
           },
-          scales: {
-            x: {
-              grid: {
-                display: false
-              },
-              ticks: {
-                color: '#666',
-                font: {
-                  size: 11
-                }
-              }
-            },
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: '#666',
-                font: {
-                  size: 11
-                },
-                callback: function(value: any) {
-                  return value + 'k';
-                }
-              },
-              grid: {
-                color: '#e0e0e0',
-                lineWidth: 1
-              }
+          x: {
+            title: {
+              display: true,
+              text: 'Month'
             }
           }
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          }
         }
-      });
-    } catch (error) {
-      console.error('Error initializing consumption chart:', error);
-    }
-  }
-
-  private async loadData() {
-    this.loading = true;
-    this.error = null;
-
-    try {
-      this.monthlyStats = await this.supabaseService.getMonthlyStats();
-    } catch (error) {
-      console.error('Error loading overview data:', error);
-      this.error = 'Failed to load data from server';
-    } finally {
-      this.loading = false;
-    }
+      }
+    });
   }
 
   private processMonthlyDataForChart() {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const currentYear = new Date().getFullYear();
-    const monthlyData = new Array(12).fill(0);
+    if (!this.monthlyStats || this.monthlyStats.length === 0) {
+      return { data: [], labels: [] };
+    }
 
-    // Process monthly stats data
-    this.monthlyStats.forEach(stat => {
-      const statDate = new Date(stat.month);
-      if (statDate.getFullYear() === currentYear) {
-        const monthIndex = statDate.getMonth();
-        monthlyData[monthIndex] = stat.total_consumption_m3 || 0;
-      }
-    });
+    const labels = this.monthlyStats.map(item => item.month);
+    const data = this.monthlyStats.map(item => item.consumption);
 
-    return {
-      labels: months,
-      datasets: [{
-        label: 'Water Consumption (m³)',
-        data: monthlyData,
-        backgroundColor: '#3b82f6',
-        borderColor: '#3b82f6',
-        borderWidth: 2,
-        fill: false,
-        tension: 0.4
-      }]
-    };
+    return { data, labels };
   }
 }

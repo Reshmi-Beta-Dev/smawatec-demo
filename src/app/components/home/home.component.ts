@@ -1,7 +1,7 @@
 import { Component, OnInit, AfterViewInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { SupabaseService, Alarm, DailyConsumption, DeviceStatus, MonthlyStats } from '../../services/supabase.service';
+import { MockDataService, DailyConsumption, AlarmMessage } from '../../services/mock-data.service';
 
 declare var Chart: any;
 
@@ -18,15 +18,15 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   private chart: any;
   private chartCheckInterval: any;
 
-  // Supabase data properties
-  alarms: Alarm[] = [];
+  // Mock data properties
+  alarms: AlarmMessage[] = [];
   consumptionData: DailyConsumption[] = [];
-  deviceStatus: DeviceStatus[] = [];
-  monthlyStats: MonthlyStats[] = [];
+  deviceStatus: any[] = [];
+  monthlyStats: any[] = [];
   loading = false;
   error: string | null = null;
 
-  constructor(private supabaseService: SupabaseService) {}
+  constructor(private mockDataService: MockDataService) {}
 
   async ngOnInit() {
     await this.loadData();
@@ -36,12 +36,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     // Initialize chart after view is ready
     setTimeout(() => {
       this.initializeChart();
-    }, 1000); // Increased timeout to ensure Chart.js is fully loaded
-    
-    // Check chart visibility every 2 seconds
-    this.chartCheckInterval = setInterval(() => {
-      this.checkChartVisibility();
-    }, 2000);
+    }, 100);
   }
 
   ngOnDestroy() {
@@ -50,152 +45,236 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       this.chart.destroy();
       this.chart = null;
     }
-    
-    // Clear interval
     if (this.chartCheckInterval) {
       clearInterval(this.chartCheckInterval);
     }
+  }
+
+  async loadData() {
+    try {
+      this.loading = true;
+      this.error = null;
+
+      // Load all data in parallel
+      const [alarms, consumption, deviceStatus, monthlyStats] = await Promise.all([
+        this.loadAlarms(),
+        this.loadConsumptionData(),
+        this.loadDeviceStatus(),
+        this.loadMonthlyStats()
+      ]);
+
+      this.alarms = alarms;
+      this.consumptionData = consumption;
+      this.deviceStatus = deviceStatus;
+      this.monthlyStats = monthlyStats;
+
+    } catch (error) {
+      console.error('Error loading data:', error);
+      this.error = 'Failed to load dashboard data';
+    } finally {
+      this.loading = false;
+    }
+  }
+
+  async loadAlarms(): Promise<AlarmMessage[]> {
+    try {
+      const response = await this.mockDataService.getAlarmMessages(1, 5);
+      return response.alarms;
+    } catch (error) {
+      console.error('Error loading alarms:', error);
+      return [];
+    }
+  }
+
+  async loadConsumptionData(): Promise<DailyConsumption[]> {
+    try {
+      return await this.mockDataService.getDailyConsumption();
+    } catch (error) {
+      console.error('Error loading consumption data:', error);
+      return [];
+    }
+  }
+
+  async loadDeviceStatus(): Promise<any[]> {
+    // Mock device status data
+    return Promise.resolve([
+      { device: 'WT-001-001', status: 'Active', location: 'Building A' },
+      { device: 'WT-002-001', status: 'Maintenance', location: 'Building B' },
+      { device: 'WT-003-001', status: 'Active', location: 'Building C' },
+      { device: 'WT-004-001', status: 'Inactive', location: 'Building D' }
+    ]);
+  }
+
+  async loadMonthlyStats(): Promise<any[]> {
+    // Mock monthly stats data
+    return Promise.resolve([
+      { month: 'January', consumption: 1200.5, alarms: 3 },
+      { month: 'February', consumption: 1350.2, alarms: 5 },
+      { month: 'March', consumption: 1180.8, alarms: 2 },
+      { month: 'April', consumption: 1420.9, alarms: 4 },
+      { month: 'May', consumption: 1280.3, alarms: 1 },
+      { month: 'June', consumption: 1550.7, alarms: 6 }
+    ]);
   }
 
   onRowClick(index: number) {
     this.selectedRow = this.selectedRow === index ? null : index;
   }
 
-  toggleView() {
-    this.showOverview = !this.showOverview;
-    // Reinitialize chart after view toggle
-    if (this.showOverview) {
-      setTimeout(() => {
-        this.initializeChart();
-      }, 100);
-    }
+  showDetails(event: Event) {
+    event.stopPropagation();
+    this.showNotification('Details functionality would show alarm details');
   }
 
+  hideAlarm(event: Event) {
+    event.stopPropagation();
+    this.showNotification('Hide alarm functionality would hide this alarm');
+  }
+
+  toggleOverview() {
+    this.showOverview = !this.showOverview;
+  }
+
+  // Chart methods
   private initializeChart() {
     // Check if Chart is available
     if (typeof Chart === 'undefined') {
-      console.error('Chart.js is not loaded, retrying in 500ms...');
-      setTimeout(() => {
-        this.initializeChart();
-      }, 500);
+      console.error('Chart.js is not loaded');
+      // Retry after a short delay
+      this.chartCheckInterval = setInterval(() => {
+        if (typeof Chart !== 'undefined') {
+          clearInterval(this.chartCheckInterval);
+          this.initializeChart();
+        }
+      }, 100);
       return;
     }
 
-    const canvas = document.getElementById('monthlyChart') as HTMLCanvasElement;
+    const canvas = document.getElementById('waterChart') as HTMLCanvasElement;
     if (!canvas) {
-      console.error('Canvas element not found, retrying in 500ms...');
-      setTimeout(() => {
-        this.initializeChart();
-      }, 500);
-      return;
-    }
-
-    const ctx = canvas.getContext('2d');
-    if (!ctx) {
-      console.error('Could not get 2D context');
+      console.error('Canvas element not found');
       return;
     }
 
     // Destroy existing chart if it exists
     if (this.chart) {
       this.chart.destroy();
-      this.chart = null;
     }
 
-    // Process monthly data from Supabase
-    const chartData = this.processMonthlyDataForChart();
+    const chartData = this.processConsumptionDataForChart();
 
-    try {
-      this.chart = new Chart(ctx, {
-        type: 'line',
-        data: chartData,
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          animation: {
-            duration: 0
-          },
-          interaction: {
-            intersect: false,
-            mode: 'index'
-          },
-          plugins: {
-            legend: {
-              display: false
+    this.chart = new Chart(canvas, {
+      type: 'line',
+      data: {
+        labels: chartData.labels,
+        datasets: [{
+          label: 'Daily Water Consumption (L)',
+          data: chartData.data,
+          borderColor: '#7b61ff',
+          backgroundColor: 'rgba(123, 97, 255, 0.1)',
+          borderWidth: 2,
+          fill: true,
+          tension: 0.4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Consumption (Liters)'
             }
           },
-          scales: {
-            x: {
-              grid: {
-                display: false
-              },
-              ticks: {
-                color: '#666',
-                font: {
-                  size: 11
-                }
-              }
-            },
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: '#666',
-                font: {
-                  size: 11
-                },
-                callback: function(value: any) {
-                  return value + 'k';
-                }
-              },
-              grid: {
-                color: '#e0e0e0',
-                lineWidth: 1
-              }
+          x: {
+            title: {
+              display: true,
+              text: 'Date'
             }
           }
+        },
+        plugins: {
+          legend: {
+            display: true,
+            position: 'top'
+          },
+          tooltip: {
+            mode: 'index',
+            intersect: false
+          }
         }
-      });
-    } catch (error) {
-      console.error('Error initializing monthly chart:', error);
-    }
-  }
-
-  private checkChartVisibility() {
-    const canvas = document.getElementById('monthlyChart') as HTMLCanvasElement;
-    if (canvas && this.showOverview) {
-      // Check if chart exists and canvas is visible
-      if (!this.chart || this.chart.canvas.width === 0 || this.chart.canvas.height === 0) {
-        this.initializeChart();
       }
+    });
+  }
+
+  private processConsumptionDataForChart() {
+    if (!this.consumptionData || this.consumptionData.length === 0) {
+      return { data: [], labels: [] };
+    }
+
+    const labels = this.consumptionData.map(item => item.date);
+    const data = this.consumptionData.map(item => item.consumption);
+
+    return { data, labels };
+  }
+
+  // Utility methods
+  showNotification(message: string) {
+    console.log('Notification:', message);
+    // You can implement a proper notification system here
+  }
+
+  getStatusClass(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return 'status-active';
+      case 'resolved':
+        return 'status-resolved';
+      case 'acknowledged':
+        return 'status-acknowledged';
+      default:
+        return 'status-unknown';
     }
   }
 
-  private async loadData() {
-    this.loading = true;
-    this.error = null;
-
-    try {
-      // Load all data in parallel
-      const [alarmsData, consumptionData, deviceStatusData, monthlyStatsData] = await Promise.all([
-        this.supabaseService.getAlarms(),
-        this.supabaseService.getConsumptionData(),
-        this.supabaseService.getDeviceStatus(),
-        this.supabaseService.getMonthlyStats()
-      ]);
-
-      this.alarms = alarmsData;
-      this.consumptionData = consumptionData;
-      this.deviceStatus = deviceStatusData;
-      this.monthlyStats = monthlyStatsData;
-    } catch (error) {
-      console.error('Error loading data:', error);
-      this.error = 'Failed to load data from server';
-    } finally {
-      this.loading = false;
+  getSeverityClass(severity: string): string {
+    switch (severity.toLowerCase()) {
+      case 'high':
+        return 'severity-high';
+      case 'medium':
+        return 'severity-medium';
+      case 'low':
+        return 'severity-low';
+      default:
+        return 'severity-unknown';
     }
   }
 
-  // Helper methods for template
+  // Template helper methods
+  getTenantName(alarm: any): string {
+    return alarm.tenant || 'N/A';
+  }
+
+  getAlarmCount(type: string): number {
+    return this.alarms.filter(alarm => alarm.alarm_type_name === type).length;
+  }
+
+  getTotalLeakageAlarms(): number {
+    return this.alarms.filter(alarm => 
+      alarm.alarm_type_name?.includes('leak') || alarm.alarm_type_name?.includes('Leak')
+    ).length;
+  }
+
+  getEstimatedLoss(): number {
+    return Math.floor(Math.random() * 100) + 50; // Mock data
+  }
+
+  getWaterSavings(): number {
+    return Math.floor(Math.random() * 200) + 100; // Mock data
+  }
+
   getCurrentYear(): number {
     return new Date().getFullYear();
   }
@@ -204,142 +283,18 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     return new Date().toLocaleString('default', { month: 'long' });
   }
 
-  getTenantName(alarm: Alarm): string {
-    return alarm.devices?.apartments?.tenants?.first_name + ' ' + alarm.devices?.apartments?.tenants?.last_name || 'N/A';
-  }
-
-  showDetails(event: Event) {
-    event.stopPropagation();
-    this.showNotification('Opening alarm details...');
-  }
-
-  hideAlarm(event: Event) {
-    event.stopPropagation();
-    this.showNotification('Alarm has been hidden');
-    
-    // Add visual feedback
-    const row = (event.target as HTMLElement).closest('tr');
-    if (row) {
-      (row as HTMLElement).style.opacity = '0.5';
-      (row as HTMLElement).style.textDecoration = 'line-through';
-    }
-  }
-
-  showNotification(message: string) {
-    // Create a simple notification
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #7b61ff;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 6px;
-      font-size: 14px;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-    `;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-      notification.style.transform = 'translateX(0)';
-    }, 10);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-      notification.style.transform = 'translateX(100%)';
-      setTimeout(() => {
-        if (document.body.contains(notification)) {
-          document.body.removeChild(notification);
-        }
-      }, 300);
-    }, 3000);
-  }
-
-  private processMonthlyDataForChart() {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    const currentYear = new Date().getFullYear();
-    const monthlyData = new Array(12).fill(0);
-
-    // Process monthly stats data
-    this.monthlyStats.forEach(stat => {
-      const statDate = new Date(stat.month);
-      if (statDate.getFullYear() === currentYear) {
-        const monthIndex = statDate.getMonth();
-        monthlyData[monthIndex] = stat.total_consumption_m3 || 0;
-      }
-    });
-
-    return {
-      labels: months,
-      datasets: [{
-        label: 'Water Consumption (m³)',
-        data: monthlyData,
-        backgroundColor: '#7b61ff',
-        borderColor: '#7b61ff',
-        borderWidth: 2,
-        fill: false,
-        tension: 0.4
-      }]
-    };
-  }
-
-  // Helper methods for statistics
-  getAlarmCount(type: string): number {
-    return this.alarms.filter(alarm => alarm.alarm_type === type).length;
-  }
-
-  getTotalLeakageAlarms(): number {
-    return this.alarms.filter(alarm => 
-      alarm.alarm_type === 'major_leak' || 
-      alarm.alarm_type === 'medium_leak' || 
-      alarm.alarm_type === 'micro_leak'
-    ).length;
-  }
-
-  getEstimatedLoss(): number {
-    // Calculate estimated loss based on alarm data
-    return this.alarms.reduce((total, alarm) => {
-      if (alarm.estimated_loss_m3) {
-        return total + alarm.estimated_loss_m3;
-      }
-      return total;
-    }, 0);
-  }
-
-  getWaterSavings(): number {
-    // Calculate water savings based on alarm data
-    return this.alarms.reduce((total, alarm) => {
-      if (alarm.water_savings_m3) {
-        return total + alarm.water_savings_m3;
-      }
-      return total;
-    }, 0);
-  }
-
   getCurrentYearConsumption(): number {
-    const currentYear = new Date().getFullYear();
-    return this.monthlyStats
-      .filter(stat => new Date(stat.month).getFullYear() === currentYear)
-      .reduce((total, stat) => total + (stat.total_consumption_m3 || 0), 0);
+    return Math.floor(Math.random() * 10000) + 5000; // Mock data
   }
 
   getPreviousYearConsumption(): number {
-    const previousYear = new Date().getFullYear() - 1;
-    return this.monthlyStats
-      .filter(stat => new Date(stat.month).getFullYear() === previousYear)
-      .reduce((total, stat) => total + (stat.total_consumption_m3 || 0), 0);
+    return Math.floor(Math.random() * 10000) + 5000; // Mock data
   }
 
   getYearlyConsumption(year: number): number {
-    return this.monthlyStats
-      .filter(stat => new Date(stat.month).getFullYear() === year)
-      .reduce((total, stat) => total + (stat.total_consumption_m3 || 0), 0);
+    return Math.floor(Math.random() * 10000) + 5000; // Mock data
   }
+
+  // Math object for template
+  Math = Math;
 }

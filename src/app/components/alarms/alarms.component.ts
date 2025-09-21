@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { SupabaseService, Alarm } from '../../services/supabase.service';
+import { MockDataService, AlarmCategory, AlarmMessage } from '../../services/mock-data.service';
 
 @Component({
   selector: 'app-alarms',
@@ -12,15 +12,26 @@ import { SupabaseService, Alarm } from '../../services/supabase.service';
 export class AlarmsComponent implements OnInit {
   selectedRow: number | null = null;
   
-  // Supabase data properties
-  alarms: Alarm[] = [];
+  // Alarm data properties
+  alarmCategories: AlarmCategory[] = [];
+  alarmMessages: AlarmMessage[] = [];
   loading = false;
   error: string | null = null;
 
-  constructor(private supabaseService: SupabaseService) {}
+  // Pagination properties
+  currentPage = 1;
+  itemsPerPage = 10;
+  totalItems = 0;
+  totalPages = 0;
+
+  // Math object for template
+  Math = Math;
+
+  constructor(private mockDataService: MockDataService) {}
 
   async ngOnInit() {
-    await this.loadAlarms();
+    await this.loadAlarmCategories();
+    await this.loadAlarmMessages();
   }
 
   onRowClick(index: number) {
@@ -29,96 +40,107 @@ export class AlarmsComponent implements OnInit {
 
   showDetails(event: Event) {
     event.stopPropagation();
-    this.showNotification('Opening alarm details...');
+    this.showNotification('Details functionality would show alarm details');
   }
 
   hideAlarm(event: Event) {
     event.stopPropagation();
-    this.showNotification('Alarm has been hidden');
-    
-    // Add visual feedback
-    const row = (event.target as HTMLElement).closest('tr');
-    if (row) {
-      (row as HTMLElement).style.opacity = '0.5';
-      (row as HTMLElement).style.textDecoration = 'line-through';
-    }
+    this.showNotification('Hide alarm functionality would hide this alarm');
   }
 
-  unhideAllAlarms() {
-    this.showNotification('Showing all hidden alarms');
-    
-    // Restore all hidden alarms
-    const hiddenRows = document.querySelectorAll('.message-table tbody tr');
-    hiddenRows.forEach(row => {
-      (row as HTMLElement).style.opacity = '1';
-      (row as HTMLElement).style.textDecoration = 'none';
-    });
-  }
-
-  private async loadAlarms() {
-    this.loading = true;
-    this.error = null;
-
+  // Alarm Categories
+  async loadAlarmCategories() {
     try {
-      this.alarms = await this.supabaseService.getAlarms();
+      this.loading = true;
+      this.alarmCategories = await this.mockDataService.getAlarmCategories();
     } catch (error) {
-      console.error('Error loading alarms:', error);
-      this.error = 'Failed to load alarms from server';
+      console.error('Error loading alarm categories:', error);
+      this.error = 'Failed to load alarm categories';
     } finally {
       this.loading = false;
     }
   }
 
-  getTenantName(alarm: Alarm): string {
-    return alarm.devices?.apartments?.tenants?.first_name + ' ' + alarm.devices?.apartments?.tenants?.last_name || 'N/A';
+  // Alarm Messages
+  async loadAlarmMessages() {
+    try {
+      this.loading = true;
+      const response = await this.mockDataService.getAlarmMessages(this.currentPage, this.itemsPerPage);
+      this.alarmMessages = response.alarms;
+      this.totalItems = response.totalCount;
+      this.totalPages = response.totalPages;
+    } catch (error) {
+      console.error('Error loading alarm messages:', error);
+      this.error = 'Failed to load alarm messages';
+    } finally {
+      this.loading = false;
+    }
   }
 
+  // Pagination methods
+  onPageChange(page: number) {
+    this.currentPage = page;
+    this.loadAlarmMessages();
+  }
+
+  getPageNumbers(): number[] {
+    const pages: number[] = [];
+    const startPage = Math.max(1, this.currentPage - 2);
+    const endPage = Math.min(this.totalPages, this.currentPage + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  // Utility methods
+  showNotification(message: string) {
+    console.log('Notification:', message);
+    // You can implement a proper notification system here
+  }
+
+  getStatusClass(status: string): string {
+    switch (status.toLowerCase()) {
+      case 'active':
+        return 'status-active';
+      case 'resolved':
+        return 'status-resolved';
+      case 'acknowledged':
+        return 'status-acknowledged';
+      default:
+        return 'status-unknown';
+    }
+  }
+
+  getSeverityClass(severity: string): string {
+    switch (severity.toLowerCase()) {
+      case 'high':
+        return 'severity-high';
+      case 'medium':
+        return 'severity-medium';
+      case 'low':
+        return 'severity-low';
+      default:
+        return 'severity-unknown';
+    }
+  }
+
+  // Template helper methods
   getAlarmCount(type: string): number {
-    return this.alarms.filter(alarm => alarm.alarm_type === type).length;
+    return this.alarmMessages.filter(alarm => alarm.alarm_type_name === type).length;
   }
 
-  getTotalLeakageAlarms(): number {
-    return this.alarms.filter(alarm => 
-      alarm.alarm_type === 'major_leak' || 
-      alarm.alarm_type === 'medium_leak' || 
-      alarm.alarm_type === 'micro_leak'
-    ).length;
+  getTenantName(alarm: any): string {
+    return alarm.tenant || 'N/A';
   }
 
-  private showNotification(message: string) {
-    // Create a simple notification
-    const notification = document.createElement('div');
-    notification.style.cssText = `
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: #7b61ff;
-      color: white;
-      padding: 12px 20px;
-      border-radius: 6px;
-      font-size: 14px;
-      z-index: 1000;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      transform: translateX(100%);
-      transition: transform 0.3s ease;
-    `;
-    notification.textContent = message;
-    
-    document.body.appendChild(notification);
-    
-    // Animate in
-    setTimeout(() => {
-      notification.style.transform = 'translateX(0)';
-    }, 10);
-    
-    // Remove after 3 seconds
-    setTimeout(() => {
-      notification.style.transform = 'translateX(100%)';
-      setTimeout(() => {
-        if (document.body.contains(notification)) {
-          document.body.removeChild(notification);
-        }
-      }, 300);
-    }, 3000);
+  unhideAllAlarms() {
+    this.showNotification('Unhide all alarms functionality');
+  }
+
+  // Alias for template compatibility
+  get alarms() {
+    return this.alarmMessages;
   }
 }

@@ -213,57 +213,115 @@
                     </div>
                 </div>
 
-                <!-- Building Table -->
-                <div class="building-section">
-                    <h3>Building</h3>
-                    <div class="box">
-                        <div class="table-container">
-                            <table class="data-table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Building</th>
-                                        <th>Zip Code</th>
-                                        <th>Address</th>
-                                        <th>Apartment</th>
-                                        <th>Tenant</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr (click)="onBuildingRowClick(0)" [class.selected]="selectedBuildingRow === 0">
-                                        <td>1</td>
-                                        <td>PAR-GP1-B12012</td>
-                                        <td>23212</td>
-                                        <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        <td>Block 1, L23, Ap12</td>
-                                        <td>Bonaparte, Napoleon</td>
-                                    </tr>
-                                    <tr (click)="onBuildingRowClick(1)" [class.selected]="selectedBuildingRow === 1">
-                                        <td>1</td>
-                                        <td>PAR-GP1-B12012</td>
-                                        <td>23212</td>
-                                        <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        <td>Block 1, L23, Ap12</td>
-                                        <td>Bonaparte, Napoleon</td>
-                                    </tr>
-                                    <tr (click)="onBuildingRowClick(2)" [class.selected]="selectedBuildingRow === 2">
-                                        <td>1</td>
-                                        <td>PAR-GP1-B12012</td>
-                                        <td>23212</td>
-                                        <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        <td>Block 1, L23, Ap12</td>
-                                        <td>Bonaparte, Napoleon</td>
-                                    </tr>
-                                    <tr (click)="onBuildingRowClick(3)" [class.selected]="selectedBuildingRow === 3">
-                                        <td>1</td>
-                                        <td>PAR-GP1-B12012</td>
-                                        <td>23212</td>
-                                        <td>Paris, Champs Elysees, Rue de la Place</td>
-                                        <td>Block 1, L23, Ap12</td>
-                                        <td>Bonaparte, Napoleon</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                <!-- Building and Apartment Tables -->
+                <div class="building-apartment-layout">
+                    <!-- Building Table -->
+                    <div class="building-section">
+                        <h3>Building</h3>
+                        <div class="box">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Building</th>
+                                            <th>Zip Code</th>
+                                            <th>Address</th>
+                                            <th>Apartment</th>
+                                            <th>Tenant</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let building of paginatedBuildings; let i = index" 
+                                            (click)="onBuildingRowClick(i)" 
+                                            [class.selected]="selectedBuildingRow === i">
+                                            <td>{{ (buildingCurrentPage - 1) * buildingItemsPerPage + i + 1 }}</td>
+                                            <td>{{ building.name || 'N/A' }}</td>
+                                            <td>{{ (building.address && building.address.split(',')[1]) ? building.address.split(',')[1].trim() : 'N/A' }}</td>
+                                            <td>{{ building.address || 'N/A' }}</td>
+                                            <td>{{ building.apartmentCount || 'N/A' }}</td>
+                                            <td>{{ building.buildingGroup || 'N/A' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                <!-- Building Pagination -->
+                                <div class="pagination-inline" *ngIf="buildingTotalPages > 1">
+                                    <div class="pagination-info">
+                                        {{ (buildingCurrentPage - 1) * buildingItemsPerPage + 1 }}-{{ Math.min(buildingCurrentPage * buildingItemsPerPage, buildingTotalItems) }} of {{ buildingTotalItems }}
+                                    </div>
+                                    <div class="pagination-controls">
+                                        <button class="pagination-btn" 
+                                                [disabled]="buildingCurrentPage === 1" 
+                                                (click)="onBuildingPageChange(buildingCurrentPage - 1)">
+                                            ‹
+                                        </button>
+                                        <button *ngFor="let page of getBuildingPageNumbers()" 
+                                                class="pagination-btn" 
+                                                [class.active]="page === buildingCurrentPage"
+                                                (click)="onBuildingPageChange(page)">
+                                            {{ page }}
+                                        </button>
+                                        <button class="pagination-btn" 
+                                                [disabled]="buildingCurrentPage === buildingTotalPages" 
+                                                (click)="onBuildingPageChange(buildingCurrentPage + 1)">
+                                            ›
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Apartment Table -->
+                    <div class="apartment-section">
+                        <h3>Apartment</h3>
+                        <div class="box">
+                            <div class="table-container">
+                                <table class="data-table">
+                                    <thead>
+                                        <tr>
+                                            <th>#</th>
+                                            <th>Apartment</th>
+                                            <th>Tenant</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let apartment of paginatedApartments; let i = index" 
+                                            (click)="onApartmentRowClick(i)" 
+                                            [class.selected]="selectedApartmentRow === i">
+                                            <td>{{ (apartmentCurrentPage - 1) * apartmentItemsPerPage + i + 1 }}</td>
+                                            <td>{{ apartment.number || 'N/A' }}</td>
+                                            <td>{{ apartment.tenant || 'N/A' }}</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                
+                                <!-- Apartment Pagination -->
+                                <div class="pagination-inline" *ngIf="apartmentTotalPages > 1">
+                                    <div class="pagination-info">
+                                        {{ (apartmentCurrentPage - 1) * apartmentItemsPerPage + 1 }}-{{ Math.min(apartmentCurrentPage * apartmentItemsPerPage, apartmentTotalItems) }} of {{ apartmentTotalItems }}
+                                    </div>
+                                    <div class="pagination-controls">
+                                        <button class="pagination-btn" 
+                                                [disabled]="apartmentCurrentPage === 1" 
+                                                (click)="onApartmentPageChange(apartmentCurrentPage - 1)">
+                                            ‹
+                                        </button>
+                                        <button *ngFor="let page of getApartmentPageNumbers()" 
+                                                class="pagination-btn" 
+                                                [class.active]="page === apartmentCurrentPage"
+                                                (click)="onApartmentPageChange(page)">
+                                            {{ page }}
+                                        </button>
+                                        <button class="pagination-btn" 
+                                                [disabled]="apartmentCurrentPage === apartmentTotalPages" 
+                                                (click)="onApartmentPageChange(apartmentCurrentPage + 1)">
+                                            ›
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
