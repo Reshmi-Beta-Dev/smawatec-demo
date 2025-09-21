@@ -506,15 +506,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getCurrentYearConsumption(): number {
-    return Math.floor(Math.random() * 10000) + 5000; // Mock data
+    return 8750; // Static mock data - won't change on mouse hover
   }
 
   getPreviousYearConsumption(): number {
-    return Math.floor(Math.random() * 10000) + 5000; // Mock data
+    return 9200; // Static mock data - won't change on mouse hover
   }
 
   getYearlyConsumption(year: number): number {
-    return Math.floor(Math.random() * 10000) + 5000; // Mock data
+    // Static mock data based on year - won't change on mouse hover
+    const baseValues: { [key: number]: number } = {
+      2021: 7800,
+      2022: 8500,
+      2023: 9200,
+      2024: 8750
+    };
+    return baseValues[year] || 8000;
   }
 
   // Math object for template
