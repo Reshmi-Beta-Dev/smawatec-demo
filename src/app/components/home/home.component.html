@@ -52,13 +52,30 @@
                         </tbody>
                     </table>
                 </div>
+
+                <!-- Virtual Scroll Info for View All Alarms -->
+                <div class="virtual-scroll-info" *ngIf="showAllAlarms">
+                    <div class="scroll-info">
+                        Showing all {{ allAlarms.length }} alarms (scroll to view more)
+                    </div>
+                </div>
+
                 <div class="table-actions">
                     <button class="pill" 
                             [class.active]="sortByImportance"
                             (click)="toggleSortByImportance()">
                         {{ sortByImportance ? 'Sort by Date' : 'Sort by Importance' }}
                     </button>
-                    <button class="pill outline">View all alarms</button>
+                    <button class="pill outline" 
+                            *ngIf="!showAllAlarms"
+                            (click)="viewAllAlarms()">
+                        View all alarms
+                    </button>
+                    <button class="pill outline" 
+                            *ngIf="showAllAlarms"
+                            (click)="revertToLimitedView()">
+                        Back to limited view
+                    </button>
                 </div>
             </div>
 

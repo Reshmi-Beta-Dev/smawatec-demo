@@ -30,6 +30,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   sortByImportance: boolean = false;
   sortedAlarms: AlarmMessage[] = [];
 
+  // View all alarms functionality
+  showAllAlarms: boolean = false;
+  allAlarms: AlarmMessage[] = [];
+  pageSize: number = 10; // Default to 10 alarms
+
   constructor(private mockDataService: MockDataService) {}
 
   async ngOnInit() {
@@ -68,6 +73,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
       ]);
 
       this.alarms = alarms;
+      this.allAlarms = [...alarms]; // Store all alarms for "View all" functionality
       this.sortedAlarms = [...alarms]; // Initialize sorted alarms
       this.applySorting(); // Apply initial sorting
       this.consumptionData = consumption;
@@ -84,7 +90,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
 
   async loadAlarms(): Promise<AlarmMessage[]> {
     try {
-      const response = await this.mockDataService.getAlarmMessages(1, 15);
+      const response = await this.mockDataService.getAlarmMessages(1, 100); // Load more alarms for virtual scrolling
       return response.alarms;
     } catch (error) {
       console.error('Error loading alarms:', error);
@@ -148,9 +154,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private applySorting() {
+    const sourceAlarms = this.showAllAlarms ? this.allAlarms : this.alarms;
+    
     if (this.sortByImportance) {
       // Sort by priority: high -> medium -> low, then by creation date
-      this.sortedAlarms = [...this.alarms].sort((a, b) => {
+      const sorted = [...sourceAlarms].sort((a, b) => {
         const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
         const aPriority = priorityOrder[a.alarm_severity as keyof typeof priorityOrder] || 0;
         const bPriority = priorityOrder[b.alarm_severity as keyof typeof priorityOrder] || 0;
@@ -162,16 +170,41 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
         // If same priority, sort by creation date (newest first)
         return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
       });
+      
+      if (this.showAllAlarms) {
+        this.allAlarms = sorted;
+      } else {
+        this.sortedAlarms = sorted;
+      }
     } else {
       // Default sort by creation date (newest first)
-      this.sortedAlarms = [...this.alarms].sort((a, b) => 
+      const sorted = [...sourceAlarms].sort((a, b) => 
         new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
       );
+      
+      if (this.showAllAlarms) {
+        this.allAlarms = sorted;
+      } else {
+        this.sortedAlarms = sorted;
+      }
     }
   }
 
   getDisplayAlarms(): AlarmMessage[] {
-    return this.sortedAlarms;
+    if (this.showAllAlarms) {
+      return this.allAlarms; // Show all alarms with virtual scrolling
+    }
+    return this.sortedAlarms.slice(0, this.pageSize);
+  }
+
+  // View all alarms functionality
+  viewAllAlarms() {
+    this.showAllAlarms = true;
+    this.applySorting(); // Apply current sorting to all alarms
+  }
+
+  revertToLimitedView() {
+    this.showAllAlarms = false;
   }
 
   // Chart methods

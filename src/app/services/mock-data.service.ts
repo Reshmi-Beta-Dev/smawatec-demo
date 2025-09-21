@@ -280,7 +280,7 @@ export class MockDataService {
     const additionalAlarms = [];
     const now = new Date();
 
-    for (let i = 4; i <= 15; i++) {
+    for (let i = 4; i <= 100; i++) {
       const building = buildings[i % buildings.length];
       const alarmType = alarmTypes[Math.floor(Math.random() * alarmTypes.length)];
       const tenant = tenants[Math.floor(Math.random() * tenants.length)];
