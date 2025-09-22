@@ -144,9 +144,9 @@ export class PdfExportService {
 
     const cols = 3;
     const colWidth = (pageWidth - 60) / cols;
-    const rowHeight = 5;
+    const rowHeight = 6; // a bit more space for readability
     const rows = Math.ceil(stats.length / cols);
-    const boxHeight = 10 + rows * rowHeight + 6;
+    const boxHeight = 10 + rows * rowHeight + 8;
 
     // Statistics box
     pdf.setDrawColor(46, 204, 113);
@@ -168,30 +168,26 @@ export class PdfExportService {
       const col = index % cols;
       const row = Math.floor(index / cols);
       const x = 25 + (col * colWidth);
-      const y = yPosition + 12 + (row * rowHeight);
-      
-      const label = `${stat.label}:`;
-      const value = String(stat.value || '-');
+      const y = yPosition + 14 + (row * rowHeight);
 
-      // draw label
+      // label (truncate to fit left side without colliding value)
+      let label = `${stat.label}:`;
+      const maxLabelChars = 24; // generous given we right-align value
+      if (label.length > maxLabelChars) {
+        label = label.substring(0, maxLabelChars - 1) + '…';
+      }
       pdf.setFont('helvetica', 'normal');
-      pdf.setFontSize(9);
       pdf.setTextColor(52, 73, 94);
       pdf.text(label, x, y);
 
-      // compute dynamic label width and place value safely after it
-      const labelPixelWidth = pdf.getTextWidth(label);
-      // convert an approximate padding in mm based on font size: add ~2mm gap
-      const gap = 2;
-      const valueX = x + Math.min(labelPixelWidth + gap, colWidth - 10);
-
-      // ensure value stays inside the column
-      const valueMaxWidth = Math.max(10, colWidth - (valueX - x) - 2);
-
+      // value (right-aligned within the column)
+      const value = String(stat.value || '-');
+      const valueX = x + colWidth - 2; // padding from right
       pdf.setFont('helvetica', 'bold');
       pdf.setTextColor(44, 62, 80);
-      const trimmed = value.length > 24 ? value.substring(0, 24) + '…' : value;
-      pdf.text(trimmed, valueX, y, { maxWidth: valueMaxWidth });
+      // trim value if extremely long
+      const valueTrim = value.length > 28 ? value.substring(0, 28) + '…' : value;
+      pdf.text(valueTrim, valueX, y, { align: 'right' });
     });
 
     return yPosition + boxHeight + 6;
