@@ -88,6 +88,13 @@ export class BuildingComponent implements OnInit {
 
   ngOnInit() {
     this.loadData();
+    // Populate building group options for select
+    setTimeout(() => {
+      const groupField = this.buildingFields.find(f => f.name === 'buildingGroup');
+      if (groupField) {
+        (groupField as any).options = this.buildingGroups.map(g => ({ label: g.name, value: g.name }));
+      }
+    }, 0);
   }
 
   async loadData() {
@@ -819,7 +826,11 @@ export class BuildingComponent implements OnInit {
   buildingFields = [
     { name: 'name', label: 'Building Name', type: 'text', required: true, placeholder: 'Enter building name...', maxlength: 100 },
     { name: 'address', label: 'Address', type: 'text', required: true, placeholder: 'Enter building address...', maxlength: 200 },
-    { name: 'zip_code', label: 'Zip Code', type: 'text', required: true, placeholder: 'Enter zip code...', maxlength: 10 }
+    { name: 'city', label: 'City', type: 'text', required: false, placeholder: 'Enter city...', maxlength: 80 },
+    { name: 'zip_code', label: 'Zip Code', type: 'text', required: false, placeholder: 'Enter zip code...', maxlength: 10 },
+    { name: 'buildingGroup', label: 'Building Group', type: 'select', required: false, placeholder: 'Select building group...', options: [] },
+    { name: 'apartmentCount', label: 'Apartment Count', type: 'number', required: false, placeholder: 'Enter apartment count...' },
+    { name: 'deviceCount', label: 'Device Count', type: 'number', required: false, placeholder: 'Enter device count...' }
   ];
 
   apartmentFields = [
@@ -1051,10 +1062,12 @@ export class BuildingComponent implements OnInit {
       id: `b-${Date.now()}`,
       name: data.name,
       address: data.address,
+      city: data.city || '',
       zip_code: data.zip_code,
-      apartmentCount: 0,
-      deviceCount: 0,
-      building_group_id: this.selectedGroupRow !== null ? this.paginatedBuildingGroups[this.selectedGroupRow].id : null
+      apartmentCount: Number(data.apartmentCount ?? 0),
+      deviceCount: Number(data.deviceCount ?? 0),
+      building_group_id: this.selectedGroupRow !== null ? this.paginatedBuildingGroups[this.selectedGroupRow].id : null,
+      buildingGroup: data.buildingGroup || (this.selectedGroupRow !== null ? this.paginatedBuildingGroups[this.selectedGroupRow].name : '')
     };
     
     this.buildings.unshift(newBuilding);
@@ -1068,7 +1081,11 @@ export class BuildingComponent implements OnInit {
       const building = this.paginatedBuildings[this.selectedBuildingRow];
       building.name = data.name;
       building.address = data.address;
+      building.city = data.city || building.city;
       building.zip_code = data.zip_code;
+      building.apartmentCount = Number(data.apartmentCount ?? building.apartmentCount ?? 0);
+      building.deviceCount = Number(data.deviceCount ?? building.deviceCount ?? 0);
+      building.buildingGroup = data.buildingGroup || building.buildingGroup;
       
       // Update in source data
       const sourceIndex = this.buildings.findIndex(b => b.id === building.id);

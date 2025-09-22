@@ -5,10 +5,11 @@ import { FormsModule } from '@angular/forms';
 interface FieldConfig {
   name: string;
   label: string;
-  type: 'text' | 'number' | 'email' | 'tel';
+  type: 'text' | 'number' | 'email' | 'tel' | 'select';
   required: boolean;
   placeholder: string;
   maxlength?: number;
+  options?: Array<{ label: string; value: string | number }>; // for select
 }
 
 @Component({
@@ -27,15 +28,28 @@ interface FieldConfig {
           <div class="form-group" *ngIf="modalType !== 'delete'">
             <div *ngFor="let field of fieldConfigs" class="field-group">
               <label [for]="field.name">{{ field.label }}<span *ngIf="field.required"> *</span></label>
-              <input 
-                [type]="field.type"
-                [id]="field.name"
-                [(ngModel)]="formData[field.name]"
-                (input)="onFieldChange(field.name)"
-                [class.error]="hasFieldError(field.name)"
-                [placeholder]="field.placeholder"
-                [maxlength]="field.maxlength || null"
-                [required]="field.required">
+              
+              <ng-container [ngSwitch]="field.type">
+                <select *ngSwitchCase="'select'"
+                        [id]="field.name"
+                        [(ngModel)]="formData[field.name]"
+                        (change)="onFieldChange(field.name)"
+                        [class.error]="hasFieldError(field.name)">
+                  <option [ngValue]="''" disabled selected hidden>{{ field.placeholder }}</option>
+                  <option *ngFor="let opt of field.options || []" [ngValue]="opt.value">{{ opt.label }}</option>
+                </select>
+                
+                <input *ngSwitchDefault
+                  [type]="field.type"
+                  [id]="field.name"
+                  [(ngModel)]="formData[field.name]"
+                  (input)="onFieldChange(field.name)"
+                  [class.error]="hasFieldError(field.name)"
+                  [placeholder]="field.placeholder"
+                  [maxlength]="field.maxlength || null"
+                  [required]="field.required">
+              </ng-container>
+
               <div class="error-message" *ngIf="hasFieldError(field.name)">
                 {{ getFieldError(field.name) }}
               </div>
@@ -144,7 +158,7 @@ interface FieldConfig {
       color: #2c3e50;
     }
 
-    .field-group input {
+    .field-group input, .field-group select {
       width: 100%;
       padding: 12px;
       border: 2px solid #e0e0e0;
@@ -154,13 +168,13 @@ interface FieldConfig {
       box-sizing: border-box;
     }
 
-    .field-group input:focus {
+    .field-group input:focus, .field-group select:focus {
       outline: none;
       border-color: #3498db;
       box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
     }
 
-    .field-group input.error {
+    .field-group input.error, .field-group select.error {
       border-color: #e74c3c;
       box-shadow: 0 0 0 3px rgba(231, 76, 96, 0.1);
     }
