@@ -173,12 +173,25 @@ export class PdfExportService {
       const label = `${stat.label}:`;
       const value = String(stat.value || '-');
 
-      pdf.text(label, x, y);
-      pdf.setFont('helvetica', 'bold');
-      // ensure value doesn't overlap next column
-      const valueMaxWidth = colWidth - 28;
-      pdf.text(value.length > 18 ? value.substring(0, 18) + '…' : value, x + 26, y, { maxWidth: valueMaxWidth });
+      // draw label
       pdf.setFont('helvetica', 'normal');
+      pdf.setFontSize(9);
+      pdf.setTextColor(52, 73, 94);
+      pdf.text(label, x, y);
+
+      // compute dynamic label width and place value safely after it
+      const labelPixelWidth = pdf.getTextWidth(label);
+      // convert an approximate padding in mm based on font size: add ~2mm gap
+      const gap = 2;
+      const valueX = x + Math.min(labelPixelWidth + gap, colWidth - 10);
+
+      // ensure value stays inside the column
+      const valueMaxWidth = Math.max(10, colWidth - (valueX - x) - 2);
+
+      pdf.setFont('helvetica', 'bold');
+      pdf.setTextColor(44, 62, 80);
+      const trimmed = value.length > 24 ? value.substring(0, 24) + '…' : value;
+      pdf.text(trimmed, valueX, y, { maxWidth: valueMaxWidth });
     });
 
     return yPosition + boxHeight + 6;
