@@ -110,7 +110,7 @@ interface FieldConfig {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding: 20px 24px;
+      padding: 8px 12px;
       border-bottom: 1px solid #e0e0e0;
       background: #f8f9fa;
       border-radius: 8px 8px 0 0;
@@ -144,26 +144,26 @@ interface FieldConfig {
     }
 
     .modal-body {
-      padding: 24px;
+      padding: 8px 12px;
     }
 
     .field-group {
-      margin-bottom: 20px;
+      margin-bottom: 8px;
     }
 
     .field-group label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 4px;
       font-weight: 600;
       color: #2c3e50;
     }
 
     .field-group input, .field-group select {
       width: 100%;
-      padding: 12px;
-      border: 2px solid #e0e0e0;
+      padding: 6px 8px;
+      border: 1px solid #e0e0e0;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 12px;
       transition: all 0.2s ease;
       box-sizing: border-box;
     }
@@ -189,22 +189,22 @@ interface FieldConfig {
     .modal-footer {
       display: flex;
       justify-content: flex-end;
-      gap: 12px;
-      padding: 20px 24px;
+      gap: 6px;
+      padding: 8px 12px;
       border-top: 1px solid #e0e0e0;
       background: #f8f9fa;
       border-radius: 0 0 8px 8px;
     }
 
     .btn {
-      padding: 10px 20px;
+      padding: 6px 12px;
       border: none;
       border-radius: 6px;
-      font-size: 14px;
+      font-size: 12px;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
-      min-width: 80px;
+      min-width: 72px;
     }
 
     .btn:disabled {
