@@ -27,7 +27,7 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   error: string | null = null;
 
   // Sort functionality
-  sortByImportance: boolean = false;
+  sortByImportance: boolean = true; // default: sort by severity (data is sorted by severity by default)
   sortedAlarms: AlarmMessage[] = [];
 
   // View all alarms functionality
@@ -244,22 +244,10 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getDisplayAlarms(): AlarmMessage[] {
-    // Base list depending on mode
-    const baseList = this.showAllAlarms ? this.allAlarms : this.alarms;
-
-    // Filter out hidden alarms first
-    const visible = baseList.filter(a => !this.hiddenAlarmIds.has(a.id));
-
-    // Always sort by severity (high > medium > low) then by newest created_at
-    const priorityOrder: Record<string, number> = { high: 3, medium: 2, low: 1 };
-    const sorted = [...visible].sort((a, b) => {
-      const ap = priorityOrder[(a.alarm_severity || '').toLowerCase()] || 0;
-      const bp = priorityOrder[(b.alarm_severity || '').toLowerCase()] || 0;
-      if (ap !== bp) return bp - ap;
-      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-    });
-
-    return this.showAllAlarms ? sorted : sorted.slice(0, this.pageSize);
+    // Use arrays already sorted by applySorting(), don't re-sort here
+    const list = this.showAllAlarms ? this.allAlarms : this.sortedAlarms;
+    const visible = list.filter(a => !this.hiddenAlarmIds.has(a.id));
+    return this.showAllAlarms ? visible : visible.slice(0, this.pageSize);
   }
 
   // View all alarms functionality
@@ -518,62 +506,13 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getEstimatedLoss(): number {
-    const leakageAlarms = this.alarms.filter(alarm => 
-      alarm.alarm_type_name?.toLowerCase().includes('leak') || 
-      alarm.alarm_type_name?.toLowerCase().includes('fuite')
-    );
-    
-    // Calculate based on alarm severity and duration
-    let totalLoss = 0;
-    leakageAlarms.forEach(alarm => {
-      const created = new Date(alarm.created_at);
-      const resolved = alarm.resolved_at ? new Date(alarm.resolved_at) : new Date();
-      const durationHours = (resolved.getTime() - created.getTime()) / (1000 * 60 * 60);
-      
-      // Loss rate based on severity
-      let lossRate = 0;
-      switch (alarm.alarm_severity) {
-        case 'high': lossRate = 2.5; break; // 2.5 m³/hour
-        case 'medium': lossRate = 1.2; break; // 1.2 m³/hour
-        case 'low': lossRate = 0.5; break; // 0.5 m³/hour
-        default: lossRate = 1.0;
-      }
-      
-      totalLoss += durationHours * lossRate;
-    });
-    
-    return Math.round(totalLoss * 10) / 10; // Round to 1 decimal
+    // Fixed value as requested
+    return 230;
   }
 
   getWaterSavings(): number {
-    const resolvedAlarms = this.alarms.filter(alarm => 
-      alarm.status === 'resolved' && 
-      (alarm.alarm_type_name?.toLowerCase().includes('leak') || 
-       alarm.alarm_type_name?.toLowerCase().includes('fuite'))
-    );
-    
-    // Calculate potential savings from early detection
-    let totalSavings = 0;
-    resolvedAlarms.forEach(alarm => {
-      const created = new Date(alarm.created_at);
-      const resolved = new Date(alarm.resolved_at!);
-      const responseTimeHours = (resolved.getTime() - created.getTime()) / (1000 * 60 * 60);
-      
-      // Savings based on quick response (prevented further loss)
-      let savingsRate = 0;
-      switch (alarm.alarm_severity) {
-        case 'high': savingsRate = 5.0; break; // 5 m³/hour prevented
-        case 'medium': savingsRate = 2.5; break; // 2.5 m³/hour prevented
-        case 'low': savingsRate = 1.0; break; // 1 m³/hour prevented
-        default: savingsRate = 2.0;
-      }
-      
-      // More savings for faster response
-      const responseMultiplier = responseTimeHours < 2 ? 1.5 : responseTimeHours < 6 ? 1.2 : 1.0;
-      totalSavings += savingsRate * responseMultiplier;
-    });
-    
-    return Math.round(totalSavings * 10) / 10; // Round to 1 decimal
+    // Fixed value as requested
+    return 439;
   }
 
   getCurrentYear(): number {
