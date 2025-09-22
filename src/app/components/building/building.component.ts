@@ -137,6 +137,11 @@ export class BuildingComponent implements OnInit {
       this.buildingGroups = response.buildingGroups;
       this.buildingGroupTotalPages = response.totalPages;
       this.buildingGroupTotalItems = response.totalCount;
+      // Update Building Group dropdown options after loading
+      const groupField = this.buildingFields.find(f => f.name === 'buildingGroup');
+      if (groupField) {
+        (groupField as any).options = this.buildingGroups.map(g => ({ label: g.name, value: g.name }));
+      }
     } catch (error) {
       console.error('Error loading building groups:', error);
       this.error = 'Failed to load building groups';
