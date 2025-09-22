@@ -92,7 +92,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     thisWeek: '0 Liter',
     thisMonth: '0 m3',
     thisYear: '0 m3',
-    lastYear: '0 m3'
+    lastYear: '0 m3',
+    waterCostLastMonth: '€ 0.00'
   };
 
   // Period controls
@@ -204,6 +205,14 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
     const yearConsumption = Math.floor(baseConsumption * 365 * (0.7 + Math.random() * 0.6));
     const lastYearConsumption = Math.floor(yearConsumption * (0.8 + Math.random() * 0.4));
 
+    // Estimate last month's consumption separately (avoid using incomplete current month)
+    const lastMonthConsumption = Math.floor(baseConsumption * 30 * (0.8 + Math.random() * 0.4));
+
+    // Compute water cost for last month (tariff per m3)
+    const tariffPerM3 = 3.0; // Adjust if needed
+    const lastMonthM3 = parseFloat((lastMonthConsumption / 1000).toFixed(1));
+    const waterCostLastMonth = `€ ${ (lastMonthM3 * tariffPerM3).toFixed(2) }`;
+
     // Update export data
     this.exportData = {
       today: `${todayConsumption} Liter`,
@@ -211,7 +220,8 @@ export class StatisticsComponent implements OnInit, AfterViewInit, OnDestroy {
       thisWeek: `${weekConsumption} Liter`,
       thisMonth: `${(monthConsumption / 1000).toFixed(1)} m3`,
       thisYear: `${(yearConsumption / 1000).toFixed(1)} m3`,
-      lastYear: `${(lastYearConsumption / 1000).toFixed(1)} m3`
+      lastYear: `${(lastYearConsumption / 1000).toFixed(1)} m3`,
+      waterCostLastMonth
     };
   }
 

@@ -402,6 +402,20 @@
     font-size: 13px; /* Consistent with stat-item font size */
 }
 
+/* Emphasis and spacing for Water Cost row */
+.stat-item.water-cost {
+    margin-bottom: 6px; /* extra gap before the next row */
+}
+
+.stat-item.water-cost .stat-value {
+    font-weight: 700; /* medium-bold emphasis for cost */
+    color: #5a4fcf; /* stronger brand shade */
+    font-size: 14px; /* slightly larger for prominence */
+    background: rgba(123, 97, 255, 0.08); /* subtle highlight */
+    padding: 2px 6px;
+    border-radius: 6px;
+}
+
 /* Period Inputs in Statistics */
 .stats-section .period-inputs {
     display: flex;
