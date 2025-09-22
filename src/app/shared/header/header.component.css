@@ -96,7 +96,7 @@
     text-decoration: none;
     border-radius: 16px;
     font-size: 12px;
-    font-weight: 500;
+    font-weight: 500; /* revert to original */
     font-family: 'Nunito', sans-serif;
     transition: all 0.2s ease;
     cursor: pointer;
@@ -117,13 +117,24 @@
 }
 
 .pill.active {
-    background: #7b61ff;
+    background: #7b61ff; /* brand purple */
     opacity: 1;
-    filter: brightness(1.1);
+    filter: brightness(1.18);
+    box-shadow: 0 0 0 4px rgba(123, 97, 255, 0.28), 0 6px 14px rgba(123, 97, 255, 0.35);
+    border: 1px solid #5a4fcf;
+    color: white;
+    font-weight: 700; /* stronger than base */
+    text-decoration: none; /* remove underline */
 }
 
+/* Make inactive headings visibly lighter */
 .pill:not(.active) {
-    opacity: 0.7;
+    opacity: 0.5; /* dim a bit more to increase contrast */
+    filter: none; /* remove grayscale */
+    box-shadow: none; /* no glow */
+    border: none; /* no border for inactive */
+    background: #7b61ff; /* no color change for inactive */
+    color: white;
 }
 
 /* Mobile Responsive */
