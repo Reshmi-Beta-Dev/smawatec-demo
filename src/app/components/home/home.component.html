@@ -25,6 +25,7 @@
                             <tr *ngFor="let alarm of getDisplayAlarms(); let i = index" 
                                 class="alarm-row" 
                                 [class.major]="alarm.alarm_severity === 'high'"
+                                [class.high]="alarm.alarm_severity === 'high'"
                                 [class.medium]="alarm.alarm_severity === 'medium'"
                                 [class.low]="alarm.alarm_severity === 'low'"
                                 (click)="onRowClick(i)" 

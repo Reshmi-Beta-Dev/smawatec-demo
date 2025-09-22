@@ -210,9 +210,11 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
     if (this.sortByImportance) {
       // Sort by priority: high -> medium -> low, then by creation date
       const sorted = [...sourceAlarms].sort((a, b) => {
-        const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 };
-        const aPriority = priorityOrder[a.alarm_severity as keyof typeof priorityOrder] || 0;
-        const bPriority = priorityOrder[b.alarm_severity as keyof typeof priorityOrder] || 0;
+        const priorityOrder = { 'high': 3, 'medium': 2, 'low': 1 } as const;
+        const aSeverity = (a.alarm_severity || '').toLowerCase();
+        const bSeverity = (b.alarm_severity || '').toLowerCase();
+        const aPriority = (priorityOrder as any)[aSeverity] || 0;
+        const bPriority = (priorityOrder as any)[bSeverity] || 0;
         
         if (aPriority !== bPriority) {
           return bPriority - aPriority; // Higher priority first
@@ -242,16 +244,22 @@ export class HomeComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   getDisplayAlarms(): AlarmMessage[] {
-    let alarmsToShow: AlarmMessage[];
-    
-    if (this.showAllAlarms) {
-      alarmsToShow = this.allAlarms;
-    } else {
-      alarmsToShow = this.sortedAlarms.slice(0, this.pageSize);
-    }
-    
-    // Filter out hidden alarms
-    return alarmsToShow.filter(alarm => !this.hiddenAlarmIds.has(alarm.id));
+    // Base list depending on mode
+    const baseList = this.showAllAlarms ? this.allAlarms : this.alarms;
+
+    // Filter out hidden alarms first
+    const visible = baseList.filter(a => !this.hiddenAlarmIds.has(a.id));
+
+    // Always sort by severity (high > medium > low) then by newest created_at
+    const priorityOrder: Record<string, number> = { high: 3, medium: 2, low: 1 };
+    const sorted = [...visible].sort((a, b) => {
+      const ap = priorityOrder[(a.alarm_severity || '').toLowerCase()] || 0;
+      const bp = priorityOrder[(b.alarm_severity || '').toLowerCase()] || 0;
+      if (ap !== bp) return bp - ap;
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+    });
+
+    return this.showAllAlarms ? sorted : sorted.slice(0, this.pageSize);
   }
 
   // View all alarms functionality

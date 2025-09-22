@@ -92,6 +92,10 @@
     background: #f4dfe3;
 }
 
+.message-table tbody tr.alarm-row.high td {
+    background: #f4dfe3;
+}
+
 .message-table tbody tr.alarm-row.high:hover td {
     background: #f4dfe3;
 }
