@@ -49,15 +49,13 @@ export class PdfExportService {
     yPosition += 15;
 
     // Selection Information (enhanced with address and tenant)
-    this.addSelectionInfo(pdf, data.selection, data.period, yPosition, data.exportData);
-    yPosition += 28;
+    yPosition = this.addSelectionInfo(pdf, data.selection, data.period, yPosition, data.exportData);
 
     // Export Statistics (includes water cost)
-    this.addExportStatistics(pdf, data.exportData, yPosition);
-    yPosition += 35;
+    yPosition = this.addExportStatistics(pdf, data.exportData, yPosition);
 
     // Chart Section (compact for single-page)
-    if (data.chartData) {
+    if (data.chartData && yPosition < pageHeight - 80) {
       yPosition = await this.addChartSection(pdf, data.chartData, yPosition, /*compact=*/true);
     }
 
@@ -68,63 +66,72 @@ export class PdfExportService {
     pdf.save(`water-consumption-analytics-${this.formatDateForFilename(data.period.from)}-to-${this.formatDateForFilename(data.period.to)}.pdf`);
   }
 
-  private addSelectionInfo(pdf: jsPDF, selection: any, period: any, yPosition: number, exportData?: any): void {
+  private addSelectionInfo(pdf: jsPDF, selection: any, period: any, yPosition: number, exportData?: any): number {
     const pageWidth = pdf.internal.pageSize.getWidth();
-    
-    // Selection box
-    pdf.setDrawColor(52, 73, 94);
-    pdf.setFillColor(236, 240, 241);
-    pdf.roundedRect(20, yPosition, pageWidth - 40, 22, 3, 3, 'FD');
     
     pdf.setFont('helvetica', 'bold');
     pdf.setFontSize(14);
     pdf.setTextColor(44, 62, 80);
-    pdf.text('Analysis Scope', 25, yPosition + 8);
-    
-    pdf.setFont('helvetica', 'normal');
-    pdf.setFontSize(10);
-    pdf.setTextColor(52, 73, 94);
 
-    const detailLines: string[] = [];
-    detailLines.push(`Selection: ${selection.type} - ${selection.name}`);
-    detailLines.push(`Period: ${this.formatDate(period.from)} to ${this.formatDate(period.to)}`);
+    // Gather lines
+    const lines: string[] = [];
+    lines.push(`Selection: ${selection.type} - ${selection.name}`);
+    lines.push(`Period: ${this.formatDate(period.from)} to ${this.formatDate(period.to)}`);
 
-    // Include address and tenant if available
     const d = selection.details || {};
     const addressParts: string[] = [];
     if (d.street) addressParts.push(d.street);
     if (d.city) addressParts.push(d.city);
     if (d.zipCode || d.zip_code) addressParts.push(d.zipCode || d.zip_code);
-    if (addressParts.length) detailLines.push(`Address: ${addressParts.join(', ')}`);
-    if (d.tenant) detailLines.push(`Tenant: ${d.tenant}`);
+    if (addressParts.length) lines.push(`Address: ${addressParts.join(', ')}`);
+    if (d.tenant) lines.push(`Tenant: ${d.tenant}`);
 
-    // Include water cost (last month) if available
     if (exportData && exportData.waterCostLastMonth) {
-      detailLines.push(`Water Cost (Last Month): ${exportData.waterCostLastMonth}`);
+      lines.push(`Water Cost (Last Month): ${exportData.waterCostLastMonth}`);
     }
 
-    // Render detail lines
-    let lineY = yPosition + 14;
-    detailLines.forEach((line) => {
-      pdf.text(line, 25, lineY);
-      lineY += 4;
+    // Compute box height based on lines
+    const lineHeight = 4;
+    const headerHeight = 8;
+    const boxHeight = headerHeight + 4 + lines.length * lineHeight + 4;
+
+    // Draw box
+    pdf.setDrawColor(52, 73, 94);
+    pdf.setFillColor(236, 240, 241);
+    pdf.roundedRect(20, yPosition, pageWidth - 40, boxHeight, 3, 3, 'FD');
+
+    // Title
+    pdf.text('Analysis Scope', 25, yPosition + 7);
+
+    // Details
+    pdf.setFont('helvetica', 'normal');
+    pdf.setFontSize(10);
+    pdf.setTextColor(52, 73, 94);
+
+    let lineY = yPosition + headerHeight + 6;
+    const labelWidth = 48; // align values after labels consistently
+
+    lines.forEach((line) => {
+      // Split into label/value for alignment if possible
+      const sepIndex = line.indexOf(':');
+      if (sepIndex > -1) {
+        const label = line.substring(0, sepIndex + 1);
+        const value = line.substring(sepIndex + 1).trim();
+        pdf.text(label, 25, lineY);
+        pdf.text(value, 25 + labelWidth, lineY);
+      } else {
+        pdf.text(line, 25, lineY);
+      }
+      lineY += lineHeight;
     });
+
+    return yPosition + boxHeight + 6;
   }
 
-  private addExportStatistics(pdf: jsPDF, exportData: any, yPosition: number): void {
+  private addExportStatistics(pdf: jsPDF, exportData: any, yPosition: number): number {
     const pageWidth = pdf.internal.pageSize.getWidth();
     
-    // Statistics box
-    pdf.setDrawColor(46, 204, 113);
-    pdf.setFillColor(236, 252, 243);
-    pdf.roundedRect(20, yPosition, pageWidth - 40, 25, 3, 3, 'FD');
-    
-    pdf.setFont('helvetica', 'bold');
-    pdf.setFontSize(14);
-    pdf.setTextColor(39, 174, 96);
-    pdf.text('Consumption Statistics', 25, yPosition + 8);
-    
-    // Statistics grid (added water cost last month)
+    // Statistics list (added water cost last month)
     const stats = [
       { label: 'Today', value: exportData.today },
       { label: 'Yesterday', value: exportData.yesterday },
@@ -135,13 +142,27 @@ export class PdfExportService {
       { label: 'Water Cost (Last Month)', value: exportData.waterCostLastMonth }
     ];
 
+    const cols = 3;
+    const colWidth = (pageWidth - 60) / cols;
+    const rowHeight = 5;
+    const rows = Math.ceil(stats.length / cols);
+    const boxHeight = 10 + rows * rowHeight + 6;
+
+    // Statistics box
+    pdf.setDrawColor(46, 204, 113);
+    pdf.setFillColor(236, 252, 243);
+    pdf.roundedRect(20, yPosition, pageWidth - 40, boxHeight, 3, 3, 'FD');
+    
+    // Title
+    pdf.setFont('helvetica', 'bold');
+    pdf.setFontSize(14);
+    pdf.setTextColor(39, 174, 96);
+    pdf.text('Consumption Statistics', 25, yPosition + 7);
+
+    // Grid
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(9);
     pdf.setTextColor(52, 73, 94);
-
-    const cols = 3;
-    const colWidth = (pageWidth - 60) / cols;
-    const rowHeight = 4;
 
     stats.forEach((stat, index) => {
       const col = index % cols;
@@ -149,11 +170,18 @@ export class PdfExportService {
       const x = 25 + (col * colWidth);
       const y = yPosition + 12 + (row * rowHeight);
       
-      pdf.text(`${stat.label}:`, x, y);
+      const label = `${stat.label}:`;
+      const value = String(stat.value || '-');
+
+      pdf.text(label, x, y);
       pdf.setFont('helvetica', 'bold');
-      pdf.text(String(stat.value || '-'), x + 40, y);
+      // ensure value doesn't overlap next column
+      const valueMaxWidth = colWidth - 28;
+      pdf.text(value.length > 18 ? value.substring(0, 18) + '…' : value, x + 26, y, { maxWidth: valueMaxWidth });
       pdf.setFont('helvetica', 'normal');
     });
+
+    return yPosition + boxHeight + 6;
   }
 
   private async addChartSection(pdf: jsPDF, chartData: any, yPosition: number, compact: boolean = false): Promise<number> {
