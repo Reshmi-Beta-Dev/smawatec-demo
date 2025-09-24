@@ -1,6 +1,24 @@
 <div class="app">
     <main class="content">
-        <h1>Settings Page</h1>
-        <p>This page will contain application settings and configuration.</p>
+        <div class="settings-grid">
+            <div class="field">
+                <div class="label">Language</div>
+                <div class="value with-dropdown">
+                    <select [(ngModel)]="selectedLanguage">
+                        <option *ngFor="let lang of languages" [value]="lang">{{ lang }}</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field">
+                <div class="label">Software Version</div>
+                <div class="value">{{ softwareVersion }}</div>
+            </div>
+
+            <div class="field">
+                <div class="label">latest update</div>
+                <div class="value">{{ latestUpdate }}</div>
+            </div>
+        </div>
     </main>
 </div>

@@ -13,3 +13,36 @@
     flex-direction: column;
     gap: 12px;
 }
+
+.settings-grid {
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    row-gap: 18px;
+    column-gap: 48px;
+    align-items: center;
+    max-width: 520px;
+}
+
+.field {
+    display: contents;
+}
+
+.label {
+    color: #000;
+    font-weight: 500;
+}
+
+.value {
+    color: #111;
+}
+
+.with-dropdown select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    padding: 6px 28px 6px 10px;
+    border-radius: 6px;
+    border: 1px solid #d1d5db;
+    background: #fff url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="%236b7280" viewBox="0 0 16 16"><path d="M3.204 5.5L8 10.296 12.796 5.5 14 6.704 8 12.704 2 6.704z"/></svg>') no-repeat right 8px center;
+    min-width: 160px;
+}
