@@ -191,6 +191,7 @@
     border-radius: 18px;
     padding: 20px;
     box-shadow: none;
+    width: 60%;
 }
 
 /* Building Section */
@@ -211,6 +212,7 @@
     border-radius: 18px;
     padding: 20px;
     box-shadow: none;
+    width: 60%;
 }
 
 /* Unassigned Devices Section */
@@ -408,6 +410,10 @@
         flex-direction: column;
         gap: 16px;
         align-items: flex-start;
+    }
+    .groups-panel,
+    .building-panel {
+        width: 100%;
     }
     
     .device-actions {
