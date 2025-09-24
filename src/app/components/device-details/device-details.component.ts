@@ -18,6 +18,7 @@ export class DeviceDetailsComponent implements OnInit {
   selectedRow: number | null = null;
   selectedGroupRow: number | null = null;
   selectedBuildingRow: number | null = null;
+  selectedApartmentRow: number | null = null;
   selectedUnassignedRow: number | null = null;
   
   // Device details properties
@@ -48,6 +49,9 @@ export class DeviceDetailsComponent implements OnInit {
   currentBuildingPage = 1;
   buildingTotalPages = 1;
   buildingTotalItems = 0;
+  currentApartmentPage = 1;
+  apartmentTotalPages = 1;
+  apartmentTotalItems = 0;
   currentUnassignedPage = 1;
   unassignedTotalPages = 1;
   unassignedTotalItems = 0;
@@ -93,6 +97,13 @@ export class DeviceDetailsComponent implements OnInit {
 
   onBuildingRowClick(index: number) {
     this.selectedBuildingRow = this.selectedBuildingRow === index ? null : index;
+    this.selectedApartmentRow = null; // Remove apartment selection
+    this.selectedUnassignedRow = null; // Remove unassigned selection
+    this.loadDeviceDetails();
+  }
+
+  onApartmentRowClick(index: number) {
+    this.selectedApartmentRow = this.selectedApartmentRow === index ? null : index;
     this.selectedUnassignedRow = null; // Remove unassigned selection
     this.loadDeviceDetails();
   }
@@ -183,7 +194,8 @@ export class DeviceDetailsComponent implements OnInit {
       this.loadBuildingGroups(),
       this.loadDevices(),
       this.loadUnassignedDevices(),
-      this.loadDefaultBuildings()
+      this.loadDefaultBuildings(),
+      this.loadApartments()
     ]);
     
     // Store original data for search functionality (building groups already stored in loadBuildingGroups)
@@ -487,6 +499,65 @@ export class DeviceDetailsComponent implements OnInit {
     }
   }
 
+  async loadApartments() {
+    try {
+      this.loading = true;
+      // Mock apartment data
+      const allApartments = [
+        { 
+          id: 1, 
+          name: 'Apt 101', 
+          tenantName: 'Marie Dubois'
+        },
+        { 
+          id: 2, 
+          name: 'Apt 102', 
+          tenantName: 'Pierre Martin'
+        },
+        { 
+          id: 3, 
+          name: 'Apt 201', 
+          tenantName: 'Sophie Laurent'
+        },
+        { 
+          id: 4, 
+          name: 'Apt 202', 
+          tenantName: 'Jean Moreau'
+        },
+        { 
+          id: 5, 
+          name: 'Apt 301', 
+          tenantName: 'Isabelle Petit'
+        },
+        { 
+          id: 6, 
+          name: 'Apt 302', 
+          tenantName: 'François Bernard'
+        },
+        { 
+          id: 7, 
+          name: 'Apt 401', 
+          tenantName: 'Claire Rousseau'
+        },
+        { 
+          id: 8, 
+          name: 'Apt 402', 
+          tenantName: 'Antoine Simon'
+        }
+      ];
+      
+      this.apartments = allApartments;
+      this.apartmentTotalItems = this.apartments.length;
+      this.apartmentTotalPages = Math.ceil(this.apartments.length / this.itemsPerPage);
+      this.currentApartmentPage = 1;
+    } catch (error) {
+      console.error('Error loading apartments:', error);
+      this.error = 'Failed to load apartments';
+    } finally {
+      this.loading = false;
+    }
+  }
+
   // Pagination helper methods
   getGroupPageNumbers(): number[] {
     const pages: number[] = [];
@@ -538,6 +609,21 @@ export class DeviceDetailsComponent implements OnInit {
       const buildingGroup = this.buildingGroups[this.selectedGroupRow];
       this.loadBuildingsForGroup(buildingGroup.id);
     }
+  }
+
+  getApartmentPageNumbers(): number[] {
+    const pages: number[] = [];
+    const startPage = Math.max(1, this.currentApartmentPage - 2);
+    const endPage = Math.min(this.apartmentTotalPages, this.currentApartmentPage + 2);
+    
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i);
+    }
+    return pages;
+  }
+
+  onApartmentPageChange(page: number) {
+    this.currentApartmentPage = page;
   }
 
   onUnassignedPageChange(page: number) {
