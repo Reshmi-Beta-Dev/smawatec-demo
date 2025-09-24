@@ -6,11 +6,12 @@ import { FindDeviceModalComponent } from './find-device-modal.component';
 import { DeviceDetailsModalComponent } from './device-details-modal.component';
 import { AssignLocationModalComponent } from './assign-location-modal.component';
 import { UnassignDeviceModalComponent } from './unassign-device-modal.component';
+import { ChangeNameModalComponent } from './change-name-modal.component';
 
 @Component({
   selector: 'app-device-details',
   standalone: true,
-  imports: [CommonModule, FormsModule, FindDeviceModalComponent, DeviceDetailsModalComponent, AssignLocationModalComponent, UnassignDeviceModalComponent],
+  imports: [CommonModule, FormsModule, FindDeviceModalComponent, DeviceDetailsModalComponent, AssignLocationModalComponent, UnassignDeviceModalComponent, ChangeNameModalComponent],
   templateUrl: './device-details.component.html',
   styleUrls: ['./device-details.component.css']
 })
@@ -33,6 +34,7 @@ export class DeviceDetailsComponent implements OnInit {
   showDeviceDetailsModal = false;
   showAssignLocationModal = false;
   showUnassignDeviceModal = false;
+  showChangeNameModal = false;
   
   // Data properties
   devices: any[] = [];
@@ -972,5 +974,25 @@ export class DeviceDetailsComponent implements OnInit {
     this.showNotification(`Device unassigned. Reason: ${reason}`);
     this.showUnassignDeviceModal = false;
     this.selectedDevice = null;
+  }
+  
+  // Change Name Modal handlers
+  openChangeNameModal() {
+    this.showChangeNameModal = true;
+  }
+
+  onChangeNameClose() {
+    this.showChangeNameModal = false;
+  }
+
+  onChangeNameSave(newName: string) {
+    if (!this.deviceDetails) {
+      this.deviceDetails = {} as any;
+    }
+    this.deviceDetails.name = newName;
+    if (this.selectedDevice) {
+      this.selectedDevice.name = newName;
+    }
+    this.showChangeNameModal = false;
   }
 }

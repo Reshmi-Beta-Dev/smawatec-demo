@@ -62,6 +62,7 @@
                     <div class="device-actions">
                         <button class="pill" (click)="assignToNewLocation()">Assign to New Location</button>
                         <button class="pill outline" (click)="unassignDevice()">Unassign</button>
+                        <button class="pill" (click)="openChangeNameModal()">Change Name</button>
                     </div>
                 </div>
             </div>
@@ -332,4 +333,12 @@
         (close)="onUnassignDeviceClose()"
         (unassign)="onUnassignDevice($event)">
     </app-unassign-device-modal>
+
+    <!-- Change Name Modal -->
+    <app-change-name-modal
+        [isVisible]="showChangeNameModal"
+        [currentName]="deviceDetails?.name || 'Compteur Eau Principal'"
+        (close)="onChangeNameClose()"
+        (save)="onChangeNameSave($event)">
+    </app-change-name-modal>
 </div>
