@@ -89,10 +89,13 @@ export class DeviceDetailsComponent implements OnInit {
 
   onGroupRowClick(index: number) {
     this.selectedGroupRow = this.selectedGroupRow === index ? null : index;
+    this.selectedBuildingRow = null; // Clear building selection
+    this.selectedApartmentRow = null; // Clear apartment selection
     if (this.selectedGroupRow !== null) {
       const buildingGroup = this.buildingGroups[this.selectedGroupRow];
       this.loadBuildingsForGroup(buildingGroup.id);
     }
+    this.loadApartmentsForBuilding(); // Clear apartments
   }
 
   onBuildingRowClick(index: number) {
@@ -100,6 +103,7 @@ export class DeviceDetailsComponent implements OnInit {
     this.selectedApartmentRow = null; // Remove apartment selection
     this.selectedUnassignedRow = null; // Remove unassigned selection
     this.loadDeviceDetails();
+    this.loadApartmentsForBuilding();
   }
 
   onApartmentRowClick(index: number) {
@@ -194,9 +198,14 @@ export class DeviceDetailsComponent implements OnInit {
       this.loadBuildingGroups(),
       this.loadDevices(),
       this.loadUnassignedDevices(),
-      this.loadDefaultBuildings(),
-      this.loadApartments()
+      this.loadDefaultBuildings()
     ]);
+    
+    // Initialize apartments as empty - will be populated when building is selected
+    this.apartments = [];
+    this.apartmentTotalItems = 0;
+    this.apartmentTotalPages = 1;
+    this.currentApartmentPage = 1;
     
     // Store original data for search functionality (building groups already stored in loadBuildingGroups)
     this.originalBuildings = [...this.buildings];
@@ -499,64 +508,6 @@ export class DeviceDetailsComponent implements OnInit {
     }
   }
 
-  async loadApartments() {
-    try {
-      this.loading = true;
-      // Mock apartment data
-      const allApartments = [
-        { 
-          id: 1, 
-          name: 'Apt 101', 
-          tenantName: 'Marie Dubois'
-        },
-        { 
-          id: 2, 
-          name: 'Apt 102', 
-          tenantName: 'Pierre Martin'
-        },
-        { 
-          id: 3, 
-          name: 'Apt 201', 
-          tenantName: 'Sophie Laurent'
-        },
-        { 
-          id: 4, 
-          name: 'Apt 202', 
-          tenantName: 'Jean Moreau'
-        },
-        { 
-          id: 5, 
-          name: 'Apt 301', 
-          tenantName: 'Isabelle Petit'
-        },
-        { 
-          id: 6, 
-          name: 'Apt 302', 
-          tenantName: 'François Bernard'
-        },
-        { 
-          id: 7, 
-          name: 'Apt 401', 
-          tenantName: 'Claire Rousseau'
-        },
-        { 
-          id: 8, 
-          name: 'Apt 402', 
-          tenantName: 'Antoine Simon'
-        }
-      ];
-      
-      this.apartments = allApartments;
-      this.apartmentTotalItems = this.apartments.length;
-      this.apartmentTotalPages = Math.ceil(this.apartments.length / this.itemsPerPage);
-      this.currentApartmentPage = 1;
-    } catch (error) {
-      console.error('Error loading apartments:', error);
-      this.error = 'Failed to load apartments';
-    } finally {
-      this.loading = false;
-    }
-  }
 
   // Pagination helper methods
   getGroupPageNumbers(): number[] {
@@ -624,6 +575,48 @@ export class DeviceDetailsComponent implements OnInit {
 
   onApartmentPageChange(page: number) {
     this.currentApartmentPage = page;
+  }
+
+  loadApartmentsForBuilding() {
+    if (this.selectedBuildingRow === null) {
+      // Clear apartments if no building selected
+      this.apartments = [];
+      this.apartmentTotalItems = 0;
+      this.apartmentTotalPages = 1;
+      this.currentApartmentPage = 1;
+      return;
+    }
+
+    const selectedBuilding = this.buildings[this.selectedBuildingRow];
+    const buildingId = selectedBuilding?.id || `building-${this.selectedBuildingRow}`;
+    const buildingName = selectedBuilding?.name || 'Unknown Building';
+
+    // Generate apartments based on the selected building
+    const apartmentsForBuilding = this.generateApartmentsForBuilding(buildingId, buildingName);
+    
+    this.apartments = apartmentsForBuilding;
+    this.apartmentTotalItems = this.apartments.length;
+    this.apartmentTotalPages = Math.ceil(this.apartments.length / this.itemsPerPage);
+    this.currentApartmentPage = 1;
+  }
+
+  generateApartmentsForBuilding(buildingId: string, buildingName: string) {
+    // Generate 4-8 apartments per building
+    const apartmentCount = 4 + (buildingId.length % 5); // 4-8 apartments
+    const apartments = [];
+
+    for (let i = 1; i <= apartmentCount; i++) {
+      const apartmentNumber = i.toString().padStart(2, '0');
+      const apartmentId = `${buildingId}-apt-${apartmentNumber}`;
+      
+      apartments.push({
+        id: apartmentId,
+        name: `Apt ${apartmentNumber}`,
+        tenantName: this.getRandomTenantName(apartmentId)
+      });
+    }
+
+    return apartments;
   }
 
   onUnassignedPageChange(page: number) {
