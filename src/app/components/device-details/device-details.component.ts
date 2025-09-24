@@ -87,15 +87,26 @@ export class DeviceDetailsComponent implements OnInit {
     this.selectedRow = this.selectedRow === index ? null : index;
   }
 
-  onGroupRowClick(index: number) {
+  async onGroupRowClick(index: number) {
     this.selectedGroupRow = this.selectedGroupRow === index ? null : index;
     this.selectedBuildingRow = null; // Clear building selection
     this.selectedApartmentRow = null; // Clear apartment selection
     if (this.selectedGroupRow !== null) {
       const buildingGroup = this.buildingGroups[this.selectedGroupRow];
-      this.loadBuildingsForGroup(buildingGroup.id);
+      await this.loadBuildingsForGroup(buildingGroup.id);
+      // After buildings are loaded, select the first building by default
+      if (this.buildings.length > 0) {
+        this.selectedBuildingRow = 0;
+      }
+      this.loadApartmentsForBuilding();
+    } else {
+      // No group selected – clear dependent grids
+      this.buildings = [];
+      this.buildingTotalItems = 0;
+      this.buildingTotalPages = 1;
+      this.currentBuildingPage = 1;
+      this.loadApartmentsForBuilding();
     }
-    this.loadApartmentsForBuilding(); // Clear apartments
   }
 
   onBuildingRowClick(index: number) {
@@ -206,6 +217,9 @@ export class DeviceDetailsComponent implements OnInit {
     this.apartmentTotalItems = 0;
     this.apartmentTotalPages = 1;
     this.currentApartmentPage = 1;
+    
+    // Set default selections
+    this.setDefaultSelections();
     
     // Store original data for search functionality (building groups already stored in loadBuildingGroups)
     this.originalBuildings = [...this.buildings];
@@ -598,6 +612,13 @@ export class DeviceDetailsComponent implements OnInit {
     this.apartmentTotalItems = this.apartments.length;
     this.apartmentTotalPages = Math.ceil(this.apartments.length / this.itemsPerPage);
     this.currentApartmentPage = 1;
+    
+    // Select first apartment by default
+    if (this.apartments.length > 0) {
+      this.selectedApartmentRow = 0;
+    } else {
+      this.selectedApartmentRow = null;
+    }
   }
 
   generateApartmentsForBuilding(buildingId: string, buildingName: string) {
@@ -617,6 +638,25 @@ export class DeviceDetailsComponent implements OnInit {
     }
 
     return apartments;
+  }
+
+  setDefaultSelections() {
+    // Set default selections for all grids
+    if (this.buildingGroups.length > 0) {
+      this.selectedGroupRow = 0; // Select first building group
+    }
+    
+    if (this.buildings.length > 0) {
+      this.selectedBuildingRow = 0; // Select first building
+      this.loadApartmentsForBuilding(); // Load apartments for the selected building
+    }
+    
+    if (this.unassignedDevices.length > 0) {
+      this.selectedUnassignedRow = 0; // Select first unassigned device
+    }
+    
+    // Load device details for the selected items
+    this.loadDeviceDetails();
   }
 
   onUnassignedPageChange(page: number) {
